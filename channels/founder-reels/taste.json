@@ -100,6 +100,19 @@
    "last": "2026-11-11",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "khi-ng-i-n-i",
+   "say": "khi người nói cúi người về trước vẫn không được lộ mắt/kính/mũi: đặt đường che theo lúc cúi thấp nhất",
+   "from": "skill",
+   "kind": "note",
+   "origin": "skill-rule",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-11",
+   "last": "2026-11-11",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],

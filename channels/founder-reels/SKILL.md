@@ -22,6 +22,9 @@ Read `STYLE.md` (house style) and `taste.py list` with that GHOST_TASTE before p
 ## Hard rules from the user (all enforced by make_reel.py unless noted)
 - **Privacy:** never show the eyes or nose. `privacy: {top, cx}` crops the RAW recording just under the nose: cheeks,
   chin and beard may show (covering the whole face "looks like a criminal"). Check a sheet of the plate per recording.
+- **Privacy line = the LOWEST the face goes in the whole recording**, not the usual position: the founder leans in
+  while talking and the glasses / nose drop into frame. Sheet the whole plate (1 frame / 3 s) before rendering and
+  check the leaning moments. Measured: office recordings top 680-700, café recordings top 740.
 - **Names of people** (`names`): muted and beeped in the plate, `***` in the captions. Street / brand names stay (`proper`).
 - **Non-standard words** (vãi, đéo, ngu ... `PROFANITY`): cut out of the takes; the run reports each cut.
 - **Captions:** capital letter only at a sentence start and on proper nouns.

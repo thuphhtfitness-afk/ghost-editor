@@ -251,8 +251,9 @@ def main():
                             "-f", "lavfi", "-i", "sine=frequency=1000:sample_rate=48000",
                             "-filter_complex", f"[0:v]crop={cw}:{ch}:{cx}:{cy},scale=1080:1920:flags=lanczos,fps=30,format=yuv420p[v];"
                                                f"[1:a]{af}[va];[2:a]volume=0.18,volume=0:enable='not({beep})'[bp];[va][bp]amix=inputs=2:normalize=0:duration=first[a]",
-                            "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-threads", "4", "-preset", "medium", "-crf", "16", "-g", "30",
-                            "-c:a", "aac", "-b:a", "256k", "-shortest", dst], check=True)
+                            "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-threads", "4", "-preset", "medium", "-crf", "14", "-g", "30",
+                            "-c:a", "aac", "-b:a", "256k", "-shortest", dst + ".part.mp4"], check=True)
+            os.replace(dst + ".part.mp4", dst)  # atomic: an interrupted run never leaves a broken plate behind
         src = dst
     elif spec.get("frame"):  # punch the plate once: speaker at a frame edge, cups in the foreground
         fr = spec["frame"]; z = fr.get("zoom", 1.2); w, h = int(1080 / z) // 2 * 2, int(1920 / z) // 2 * 2
@@ -305,13 +306,14 @@ def main():
     total = sum(b - a for a, b in takes)
     if total < 30: print(f"WARNING: {total:.1f} s of speech: under the 30 s minimum, merge it with another story line")
     json.dump(reel, open(os.path.join(P, "reel.json"), "w"), ensure_ascii=False, indent=1)
-    out = subprocess.run(["node", os.path.join(SKILL, "scripts", "build.mjs"), P], capture_output=True, text=True)
+    post_only = "--post-only" in sys.argv  # re-export from the existing render (new export settings), no rebuild
+    out = subprocess.run(["true"] if post_only else ["node", os.path.join(SKILL, "scripts", "build.mjs"), P], capture_output=True, text=True)
     print("\n".join(l for l in out.stdout.splitlines() if "WARN" in l or "speech" in l or l.startswith("  ") and "s " in l[:12]))
     if out.returncode: print(out.stdout[-2000:], out.stderr[-2000:]); raise SystemExit("build failed")
     warns = out.stdout.split("WARNINGS:")[1] if "WARNINGS:" in out.stdout else ""
     if warns.strip(): print("WARNINGS:", warns.strip()[:1500])
     if "--no-render" in sys.argv: return
-    r = subprocess.run(["bash", os.path.join(SKILL, "scripts", "hf.sh"), "render", "-o", "build/reel.mp4"], cwd=P, capture_output=True, text=True)
+    r = subprocess.run(["true"] if post_only else ["bash", os.path.join(SKILL, "scripts", "hf.sh"), "render", "-o", "build/reel.mp4"], cwd=P, capture_output=True, text=True)
     if r.returncode: print(r.stdout[-1500:]); raise SystemExit("render failed")
     # post: glass crack on "vỡ", and the hook -> main cut gets a white flash + a click (client rule, Refined Ambition)
     inputs, vchain, achain, n = ["-i", "build/reel.mp4"], "[0:v]", "[0:a]", 1
@@ -348,7 +350,7 @@ def main():
     g.append(f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0:duration=first,loudnorm=I=-14:TP=-1.5:LRA=11[a]" if len(mix) > 1 else "[0:a]loudnorm=I=-14:TP=-1.5:LRA=11[a]")
     fc = ";".join(g); vin, extra = inputs, []
     subprocess.run(["ffmpeg", "-v", "error", "-y", *vin, *extra, "-filter_complex", fc, "-map", "[v]", "-map", "[a]",
-                    "-c:v", "libx264", "-threads", "4", "-preset", "medium", "-crf", "18", "-maxrate", "20M", "-bufsize", "40M",
+                    "-c:v", "libx264", "-threads", "4", "-preset", "medium", "-crf", "15", "-maxrate", "20M", "-bufsize", "40M",
                     "-profile:v", "high", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-c:a", "aac", "-b:a", "256k",
                     "-ar", "48000", spec["out"]], cwd=P, check=True)
     dur = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", spec["out"]], capture_output=True, text=True).stdout.strip()
