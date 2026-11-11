@@ -1,0 +1,167 @@
+{
+ "name": "H2",
+ "base": "/tmp/claude-0/-home-user/930efd13-33ee-5335-ac52-4e221b36c4c1/scratchpad/bases/h0374",
+ "out": "/home/user/hpf_2_loi_nga_nguoi.mp4",
+ "origin": "50% 60%",
+ "segments": [
+  [
+   32.0,
+   38.1
+  ],
+  [
+   0.0,
+   3.9
+  ],
+  [
+   9.1,
+   18.1
+  ],
+  [
+   19.1,
+   29.1
+  ],
+  [
+   39.3,
+   43.4
+  ],
+  [
+   46.2,
+   51.1
+  ],
+  [
+   53.0,
+   57.2
+  ],
+  [
+   58.0,
+   64.7
+  ]
+ ],
+ "phrases": {
+  "hộ trị": "hộ chị",
+  "Đêm đạp": "Em đạp",
+  "gặp gối": "gập gối"
+ },
+ "assets": {
+  "broll/heel.mp4": "/tmp/claude-0/-home-user/930efd13-33ee-5335-ac52-4e221b36c4c1/scratchpad/hpf/clips/heel.mp4"
+ },
+ "beats": [
+  {
+   "type": "title",
+   "at": 32.1,
+   "to": 38.0,
+   "text": "LỖI HAY GẶP",
+   "font": "Montserrat",
+   "weight": 900,
+   "color": "#FF3B2F",
+   "size": 104,
+   "y": 210,
+   "glow": true
+  },
+  {
+   "type": "title",
+   "at": 33.9,
+   "to": 38.0,
+   "text": "ĐẠP LÊN BỊ NGẢ RA SAU",
+   "font": "Montserrat",
+   "weight": 900,
+   "color": "#FFFFFF",
+   "size": 64,
+   "y": 340
+  },
+  {
+   "type": "fault",
+   "at": 32.1,
+   "to": 38.0,
+   "y": 760
+  },
+  {
+   "type": "label",
+   "at": 0.9,
+   "to": 3.8,
+   "text": "1. Chân rộng bằng hông, bước 1 chân ra sau"
+  },
+  {
+   "type": "label",
+   "at": 9.7,
+   "to": 15.0,
+   "text": "2. Xoay gót, ngón út chạm sàn"
+  },
+  {
+   "type": "broll",
+   "src": "assets/broll/heel.mp4",
+   "in": 0.6,
+   "at": 11.8,
+   "to": 15.0,
+   "zoom": [
+    1,
+    1.05
+   ]
+  },
+  {
+   "type": "guide",
+   "at": 13.6,
+   "to": 15.0,
+   "shapes": [
+    {
+     "type": "circle",
+     "cx": 680,
+     "cy": 1150,
+     "r": 130,
+     "color": "red"
+    }
+   ]
+  },
+  {
+   "type": "label",
+   "at": 16.3,
+   "to": 18.0,
+   "text": "3. Dồn trọng tâm chân trước"
+  },
+  {
+   "type": "label",
+   "at": 19.1,
+   "to": 23.2,
+   "text": "4. Hơi xoay người về chân trụ"
+  },
+  {
+   "type": "label",
+   "at": 24.2,
+   "to": 29.0,
+   "text": "5. Gập gối chân sau, ngồi xuống"
+  },
+  {
+   "type": "label",
+   "at": 40.8,
+   "to": 43.3,
+   "text": "Giữ trọng tâm ở chân trước",
+   "kind": "ok"
+  },
+  {
+   "type": "label",
+   "at": 47.0,
+   "to": 51.0,
+   "text": "Xoay nhẹ hông về chân trụ"
+  },
+  {
+   "type": "label",
+   "at": 53.7,
+   "to": 57.1,
+   "text": "Xuống chậm 3 giây, đạp mạnh"
+  },
+  {
+   "type": "punch",
+   "at": 54.2,
+   "to": 57.1,
+   "z": 1.25,
+   "origin": "50% 70%"
+  },
+  {
+   "type": "label",
+   "at": 62.6,
+   "to": 64.6,
+   "text": "Đạp thẳng lên, không ngả ra sau",
+   "kind": "ok"
+  }
+ ]
+}

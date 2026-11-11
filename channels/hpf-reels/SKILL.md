@@ -1,11 +1,11 @@
 ---
 name: hpf-reels
-description: "Edit HPF (the gym's training channel) workout and form-correction videos: a coach cueing a client through an exercise (split squat, RDL, deadlift ...), filmed handheld in the gym, Vietnamese voice. Use when the user sends a training / exercise tutorial / form-fix recording and asks to edit it, 'like the HPF references', or for HPF captions. Max 90 s per video. Not for the founder's interviews (that is founder-reels)."
+description: "Edit HPF (the gym's training channel) workout and form-correction videos: a coach cueing a client through an exercise (split squat, RDL, deadlift ...), filmed handheld in the gym, Vietnamese voice. Use when the user sends a training / exercise tutorial / form-fix recording and asks to edit it, 'like the HPF references', or for HPF captions. Up to 2 minutes per video. Not for the founder's interviews (that is founder-reels)."
 ---
 
 # hpf-reels
 
-The gym's training channel. One coaching session -> one tutorial reel of at most **90 s** (at least 30 s), built on the
+The gym's training channel. One coaching session -> one tutorial reel of 30 s to **2 minutes** (use the extra time for every useful cue rather than ending abruptly), built on the
 `ghost-editor` engine. This skill has its OWN taste file (`taste.json` here): record the user's corrections with
 `GHOST_TASTE=<this dir>/taste.json python3 ~/.claude/skills/ghost-editor/scripts/taste.py add "..."`.
 
@@ -25,6 +25,17 @@ The gym's training channel. One coaching session -> one tutorial reel of at most
 - Gym branding / address corner tag optional (ask the user for the text).
 - Music: upbeat light bed under the voice (not the founder's piano); cue sounds: soft pop on a label, click on a cut.
 
+## The anatomy look (third reference, a hip-extension edit)
+- **Hook title:** big Montserrat 900 uppercase at the top, yellow (#FFD21E) for the exercise ("SPLIT SQUAT"), white or
+  red under it for the promise / the fault ("TẬP TRUNG MÔNG", "LỖI HAY GẶP"). Red = wrong, green (#35E06B) = correct.
+- **Anatomy scene** (`anatomy` beat) whenever a muscle is named or felt ("thấy mông hơn không"): black stage, red floor
+  glow, the self-drawn posterior figure (scripts/lib/anatomy.mjs) with the named group glowing (glute, glute_med,
+  hamstring, calf), a yellow title ("CƠ MÔNG"), yellow labels ("Kéo căng") and red arrows ON the muscle. 2-4 s.
+  The reference's 3D renders are licensed artwork: never copy them; the user may send licensed images later.
+- **All text in Montserrat.** Cue labels sit near the middle of the frame (y ~600), or as a `note` AT the body point
+  (glowing dot or red ring + a leader line to the words): "Ngón út chạm sàn" on the toe, "Trọng tâm" on the front foot.
+- Measure body points on a gridded frame of the base before placing guides / notes (handheld footage moves).
+
 ## Status
-The reference analysis is done; the HPF builder (labels, guides, B&W fault replay, punch-ins) is being added to the
-engine. Until it lands, edits use ghost-editor beats (quote/compare cards, broll, zoom) as the closest match.
+Builder: `hpf_reel.py spec.json` (same spec as founder-reels/make_reel.py) with the beats `label`, `guide`, `note`, `fault`,
+`punch`, `anatomy`, `title` (references/reel-json.md). Done: HPF 1 and HPF 2 (split squat, from DJI 0373 / 0374 / 0375).

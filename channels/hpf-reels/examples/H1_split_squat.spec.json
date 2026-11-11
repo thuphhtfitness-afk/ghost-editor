@@ -1,0 +1,313 @@
+{
+ "name": "H1",
+ "base": "/tmp/claude-0/-home-user/930efd13-33ee-5335-ac52-4e221b36c4c1/scratchpad/bases/h0373",
+ "out": "/home/user/hpf_1_split_squat_5_buoc.mp4",
+ "origin": "50% 60%",
+ "segments": [
+  [
+   118.4,
+   121.6
+  ],
+  [
+   9.2,
+   11.3
+  ],
+  [
+   81.3,
+   83.8
+  ],
+  [
+   17.6,
+   22.7
+  ],
+  [
+   23.8,
+   30.1
+  ],
+  [
+   71.3,
+   76.7
+  ],
+  [
+   33.1,
+   44.6
+  ],
+  [
+   95.2,
+   97.9
+  ],
+  [
+   53.6,
+   56.9
+  ],
+  [
+   111.3,
+   115.6
+  ],
+  [
+   122.2,
+   124.3
+  ],
+  [
+   127.9,
+   133.3
+  ],
+  [
+   136.9,
+   144.6
+  ],
+  [
+   145.1,
+   150.8
+  ]
+ ],
+ "phrases": {
+  "vượt xuống": "xuống",
+  "gặp gối": "gập gối",
+  "gặp cái gối": "gập cái gối",
+  "gặp xuống": "gập xuống",
+  "thông bằng": "thăng bằng",
+  "phi gối": "mở gối",
+  "cầm tãi": "cầm tạ",
+  "Ngôi phẳng": "Ngồi thẳng",
+  "gặp người": "gập người",
+  "ngon ạ út": "ngón út",
+  "bán chặt con cái ra": "mở gối ra"
+ },
+ "assets": {
+  "broll/heel.mp4": "/tmp/claude-0/-home-user/930efd13-33ee-5335-ac52-4e221b36c4c1/scratchpad/hpf/clips/heel.mp4",
+  "broll/fault.mp4": "/tmp/claude-0/-home-user/930efd13-33ee-5335-ac52-4e221b36c4c1/scratchpad/hpf/clips/fault_leanback.mp4"
+ },
+ "beats": [
+  {
+   "type": "title",
+   "at": 118.5,
+   "to": 121.5,
+   "text": "SPLIT SQUAT",
+   "font": "Montserrat",
+   "weight": 900,
+   "color": "#FFD21E",
+   "size": 112,
+   "y": 210,
+   "glow": true
+  },
+  {
+   "type": "title",
+   "at": 120.2,
+   "to": 121.5,
+   "text": "TẬP TRUNG MÔNG",
+   "font": "Montserrat",
+   "weight": 900,
+   "color": "#FFFFFF",
+   "size": 80,
+   "y": 350
+  },
+  {
+   "type": "label",
+   "at": 9.3,
+   "to": 11.2,
+   "text": "1. Bước dài 1 chân ra sau"
+  },
+  {
+   "type": "label",
+   "at": 81.3,
+   "to": 83.7,
+   "text": "2. Tách chân rộng bằng hông"
+  },
+  {
+   "type": "guide",
+   "at": 81.4,
+   "to": 83.7,
+   "shapes": [
+    {
+     "type": "arrow",
+     "x1": 380,
+     "y1": 1800,
+     "x2": 760,
+     "y2": 1800
+    }
+   ]
+  },
+  {
+   "type": "label",
+   "at": 18.1,
+   "to": 22.6,
+   "text": "3. Xoay gót, ngón út chạm sàn"
+  },
+  {
+   "type": "broll",
+   "src": "assets/broll/heel.mp4",
+   "in": 0.1,
+   "at": 19.0,
+   "to": 22.6,
+   "zoom": [
+    1,
+    1.05
+   ]
+  },
+  {
+   "type": "note",
+   "at": 20.2,
+   "to": 22.6,
+   "px": 680,
+   "py": 1150,
+   "ring": true,
+   "r": 120,
+   "color": "red",
+   "text": "Ngón út chạm sàn",
+   "tx": 560,
+   "ty": 860
+  },
+  {
+   "type": "label",
+   "at": 24.4,
+   "to": 30.0,
+   "text": "4. Dồn trọng tâm vào chân trước"
+  },
+  {
+   "type": "note",
+   "at": 29.0,
+   "to": 30.0,
+   "px": 680,
+   "py": 1620,
+   "text": "Trọng tâm",
+   "tx": 700,
+   "ty": 1250
+  },
+  {
+   "type": "label",
+   "at": 71.3,
+   "to": 76.6,
+   "text": "Hạ vai, giữ tạ không lắc"
+  },
+  {
+   "type": "label",
+   "at": 34.2,
+   "to": 44.5,
+   "text": "5. Gập gối chân sau, ngồi xuống"
+  },
+  {
+   "type": "guide",
+   "at": 35.4,
+   "to": 38.9,
+   "shapes": [
+    {
+     "type": "arrow",
+     "x1": 300,
+     "y1": 1380,
+     "x2": 300,
+     "y2": 1700
+    }
+   ]
+  },
+  {
+   "type": "label",
+   "at": 95.2,
+   "to": 97.8,
+   "text": "Hông song song, hướng về trước"
+  },
+  {
+   "type": "label",
+   "at": 53.6,
+   "to": 56.8,
+   "text": "Đạp bằng cả bàn chân trước"
+  },
+  {
+   "type": "broll",
+   "src": "assets/broll/fault.mp4",
+   "in": 1.2,
+   "at": 111.3,
+   "to": 115.5,
+   "grade": "grayscale(1) contrast(1.08)",
+   "zoom": [
+    1,
+    1.03
+   ]
+  },
+  {
+   "type": "label",
+   "at": 111.8,
+   "to": 115.5,
+   "text": "Đứng dậy bị ngửa người ra sau",
+   "kind": "bad"
+  },
+  {
+   "type": "fault",
+   "at": 111.8,
+   "to": 115.5,
+   "y": 820
+  },
+  {
+   "type": "label",
+   "at": 122.2,
+   "to": 124.2,
+   "text": "Hơi xoay người về chân trụ"
+  },
+  {
+   "type": "guide",
+   "at": 128.3,
+   "to": 130.0,
+   "shapes": [
+    {
+     "type": "arrow",
+     "x1": 520,
+     "y1": 1500,
+     "x2": 520,
+     "y2": 1080
+    }
+   ]
+  },
+  {
+   "type": "anatomy",
+   "at": 130.1,
+   "to": 133.2,
+   "highlight": [
+    "glute"
+   ],
+   "title": "CƠ MÔNG",
+   "labels": [
+    {
+     "text": "Kéo căng",
+     "at": 131.5,
+     "x": 540,
+     "y": 1560
+    }
+   ],
+   "arrows": [
+    {
+     "x1": 150,
+     "y1": 640,
+     "x2": 360,
+     "y2": 740,
+     "at": 131.5
+    },
+    {
+     "x1": 930,
+     "y1": 640,
+     "x2": 720,
+     "y2": 740,
+     "at": 131.5
+    }
+   ]
+  },
+  {
+   "type": "label",
+   "at": 137.3,
+   "to": 144.5,
+   "text": "Giữ thẳng người, đạp mạnh lên"
+  },
+  {
+   "type": "label",
+   "at": 144.0,
+   "to": 144.5,
+   "text": "Mông được kéo căng",
+   "kind": "ok"
+  },
+  {
+   "type": "label",
+   "at": 145.6,
+   "to": 150.7,
+   "text": "Xuống chậm 3 giây, đạp lên nhanh"
+  }
+ ]
+}

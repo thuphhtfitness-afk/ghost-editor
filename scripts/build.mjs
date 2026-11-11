@@ -40,6 +40,7 @@ import { loadManifest as emojiManifest, installEmoji, emojiPopHtml, emojiPopJs, 
 import { makePlacer, PLATFORMS } from "./lib/safezone.mjs";
 import { TEMPLATE_NAMES, buildTemplateCaptions } from "./lib/caption-templates.mjs";
 import { aiTag } from "./lib/ai-tag.mjs";
+import { anatomySvg } from "./lib/anatomy.mjs";
 import { findTaste, loadTaste, applyTaste, checkTaste, bannedSfx } from "./lib/taste.mjs";
 import { STAN_CSS, isStanBeat, stanPrepare, stanBeat, stanPipTweens, buildChestCaptions, stanMatteWindows } from "./lib/stan.mjs";
 
@@ -639,10 +640,42 @@ for (const b of beatsList) {
       // "ok" a green check (drawn in SVG, no emoji font needed), "step" is just the box (write "1. ..." in text)
       const icon = b.kind === "bad" ? `<svg width="44" height="44" viewBox="0 0 44 44" style="margin-left:12px;flex:none"><circle cx="22" cy="22" r="20" fill="#E5322D"/><path d="M14 14L30 30M30 14L14 30" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>`
                  : b.kind === "ok" ? `<svg width="44" height="44" viewBox="0 0 44 44" style="margin-left:12px;flex:none"><rect x="2" y="2" width="40" height="40" rx="9" fill="#2EB85C"/><path d="M12 23L19 30L32 15" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>` : "";
-      const lx = b.x ?? 70, ly = b.y ?? 330;
-      inner = `<div id="${id}-in" class="ov" style="left:${lx}px;top:${ly}px;display:flex;align-items:center"><div style="background:${b.bg || "#F07A1A"};color:${b.color || "#fff"};font-family:Inter,sans-serif;font-weight:800;font-size:${b.size ?? 40}px;line-height:1.15;padding:10px 20px;border-radius:12px;max-width:${b.w ?? 820}px">${esc(b.text)}</div>${icon}</div>`;
+      const lx = b.x ?? 70, ly = b.y ?? 600;
+      inner = `<div id="${id}-in" class="ov" style="left:${lx}px;top:${ly}px;display:flex;align-items:center"><div style="background:${b.bg || "#F07A1A"};color:${b.color || "#fff"};font-family:Montserrat,sans-serif;font-weight:800;font-size:${b.size ?? 42}px;line-height:1.15;padding:10px 20px;border-radius:12px;max-width:${b.w ?? 820}px">${esc(b.text)}</div>${icon}</div>`;
       tl.push(`ft("#${id}-in", { autoAlpha: 0, y: -12, scale: 0.92 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.22, ease: "back.out(2)" }, ${t0});`);
       beatSfx(b, t0, "ui", "label");
+      break;
+    }
+    case "anatomy": {
+      // full-screen anatomy scene (self-drawn SVG, scripts/lib/anatomy.mjs): black stage, red floor glow, the named
+      // muscle group glowing with a yellow halo; yellow Montserrat labels and red arrows land on their words
+      const title = b.title ? `<div id="${id}-t" style="position:absolute;left:0;right:0;top:${b.titleY ?? 210}px;text-align:center;font-family:Montserrat,sans-serif;font-weight:900;font-size:${b.titleSize ?? 92}px;color:#FFD21E;text-shadow:0 0 18px rgba(255,170,0,.55),0 4px 0 #6B3A00">${esc(b.title)}</div>` : "";
+      const labs = (b.labels || []).map((l, k) => `<div id="${id}-l${k}" style="position:absolute;left:${l.x ?? 540}px;top:${l.y ?? 400}px;transform:translateX(-50%);white-space:nowrap;font-family:Montserrat,sans-serif;font-weight:900;font-size:${l.size ?? 62}px;color:${l.color || "#FFD21E"};text-shadow:0 0 14px rgba(255,170,0,.5),0 3px 0 #5A2E00">${esc(l.text)}</div>`).join("");
+      const arrows = (b.arrows || []).map((a, k) => { const ang = Math.atan2(a.y2 - a.y1, a.x2 - a.x1), L = 30;
+        return `<g id="${id}-a${k}"><line x1="${a.x1}" y1="${a.y1}" x2="${a.x2}" y2="${a.y2}" stroke="#FF3B2F" stroke-width="10" stroke-linecap="round"/><path d="M${a.x2} ${a.y2} L${r3(a.x2 - L * Math.cos(ang - 0.5))} ${r3(a.y2 - L * Math.sin(ang - 0.5))} L${r3(a.x2 - L * Math.cos(ang + 0.5))} ${r3(a.y2 - L * Math.sin(ang + 0.5))} Z" fill="#FF3B2F"/></g>`; }).join("");
+      inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 96%, rgba(200,34,22,.62) 0%, rgba(60,10,8,.35) 32%, rgba(0,0,0,0) 62%), #000">
+        <div id="${id}-fig" style="position:absolute;left:${540 - 330}px;top:${b.figY ?? 420}px;width:660px;height:1100px">${anatomySvg({ highlight: b.highlight || ["glute"], side: b.side || "both", id: `${id}-s`, w: 660, h: 1100 })}</div>
+        <svg width="1080" height="1920" style="position:absolute;left:0;top:0">${arrows}</svg>${title}${labs}</div>`;
+      tl.push(`ft("#${id}-in", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.18 }, ${t0});`);
+      tl.push(`ft("#${id}-fig", { scale: 0.9, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.45, ease: "power3.out" }, ${t0});`);
+      if (b.title) tl.push(`ft("#${id}-t", { autoAlpha: 0, y: -20 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: "back.out(2)" }, ${r3(t0 + 0.1)});`);
+      (b.labels || []).forEach((l, k) => tl.push(`ft("#${id}-l${k}", { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.28, ease: "back.out(2.2)" }, ${E(l.at ?? b.at, "anatomy label")});`));
+      (b.arrows || []).forEach((a, k) => tl.push(`ft("#${id}-a${k}", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, ${E(a.at ?? b.at, "anatomy arrow")});`));
+      if (b.captions !== true) hiddenCaps.push([t0, t1]);
+      beatSfx(b, t0, "whoosh", "anatomy");
+      break;
+    }
+    case "note": {
+      // a cite note AT the body point being talked about: a glowing yellow dot (or a red ring) with a leader line to a
+      // short Montserrat note placed near the frame centre; colours: yellow (cue), red (fault), green (correct)
+      const C = { yellow: "#FFD21E", red: "#FF3B2F", green: "#35E06B", white: "#FFFFFF" }[b.color || "yellow"] || b.color;
+      const px = b.px, py = b.py, tx = b.tx ?? 540, ty = b.ty ?? 760;
+      const mark = b.ring ? `<circle cx="${px}" cy="${py}" r="${b.r ?? 70}" fill="none" stroke="${C}" stroke-width="8"/>`
+                          : `<circle cx="${px}" cy="${py}" r="16" fill="${C}"/><circle cx="${px}" cy="${py}" r="34" fill="none" stroke="${C}" stroke-width="4" opacity=".6"/>`;
+      inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px"><svg width="1080" height="1920" style="position:absolute;left:0;top:0;filter:drop-shadow(0 0 8px ${C})">${b.line === false ? "" : `<line x1="${px}" y1="${py}" x2="${tx}" y2="${ty + 40}" stroke="${C}" stroke-width="4" opacity=".9"/>`}${mark}</svg>
+        <div style="position:absolute;left:${tx}px;top:${ty}px;transform:translate(-50%,-100%);white-space:nowrap;font-family:Montserrat,sans-serif;font-weight:900;font-size:${b.size ?? 64}px;color:${C};text-shadow:0 3px 0 rgba(0,0,0,.65),0 0 16px rgba(0,0,0,.5)">${esc(b.text)}</div></div>`;
+      tl.push(`ft("#${id}-in", { autoAlpha: 0, scale: 0.85, transformOrigin: "${px}px ${py}px" }, { autoAlpha: 1, scale: 1, duration: 0.25, ease: "back.out(2)" }, ${t0});`);
+      beatSfx(b, t0, "ui", "note");
       break;
     }
     case "guide": {

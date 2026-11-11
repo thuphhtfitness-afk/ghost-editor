@@ -1,6 +1,47 @@
 {
  "version": 1,
  "about": "Your corrections across reels, recorded with scripts/taste.py add (from: user, quoted as 'you said') next to rules the skill learned (from: skill). A prior, not evidence: reel.json always wins.",
- "rules": [],
- "reels": []
+ "rules": [
+  {
+   "id": "font-ch-montserrat-nh-n",
+   "say": "font chữ Montserrat; nhãn đẩy gần giữa khung hoặc ghi chú ngay tại điểm được nhắc tới",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-11",
+   "last": "2026-11-11",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "c-nh-anatomy-highlight-nh",
+   "say": "có ảnh anatomy, highlight nhóm cơ được nhắc tới",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-11",
+   "last": "2026-11-11",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "video-c-th-d-i",
+   "say": "video có thể dài hơn để không bị cụt, nhưng không quá 2 phút",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-11",
+   "last": "2026-11-11",
+   "times": 1,
+   "active": true
+  }
+ ],
+ "reels": [],
+ "updated": "2026-11-11"
 }
