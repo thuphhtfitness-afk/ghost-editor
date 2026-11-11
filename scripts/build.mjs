@@ -634,6 +634,55 @@ for (const b of beatsList) {
       beatSfx(b, st, "whoosh", "strike");
       break;
     }
+    case "label": {
+      // HPF coaching label: a small orange rounded box in the top third, one cue at a time; kind "bad" adds a red X,
+      // "ok" a green check (drawn in SVG, no emoji font needed), "step" is just the box (write "1. ..." in text)
+      const icon = b.kind === "bad" ? `<svg width="44" height="44" viewBox="0 0 44 44" style="margin-left:12px;flex:none"><circle cx="22" cy="22" r="20" fill="#E5322D"/><path d="M14 14L30 30M30 14L14 30" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>`
+                 : b.kind === "ok" ? `<svg width="44" height="44" viewBox="0 0 44 44" style="margin-left:12px;flex:none"><rect x="2" y="2" width="40" height="40" rx="9" fill="#2EB85C"/><path d="M12 23L19 30L32 15" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>` : "";
+      const lx = b.x ?? 70, ly = b.y ?? 330;
+      inner = `<div id="${id}-in" class="ov" style="left:${lx}px;top:${ly}px;display:flex;align-items:center"><div style="background:${b.bg || "#F07A1A"};color:${b.color || "#fff"};font-family:Inter,sans-serif;font-weight:800;font-size:${b.size ?? 40}px;line-height:1.15;padding:10px 20px;border-radius:12px;max-width:${b.w ?? 820}px">${esc(b.text)}</div>${icon}</div>`;
+      tl.push(`ft("#${id}-in", { autoAlpha: 0, y: -12, scale: 0.92 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.22, ease: "back.out(2)" }, ${t0});`);
+      beatSfx(b, t0, "ui", "label");
+      break;
+    }
+    case "guide": {
+      // drawn guides on the body: dashed white lines / arrows, red arrows, red circles; each draws itself in 0.35 s
+      const shapes = (b.shapes || []).map((g, k) => {
+        const col = g.color === "red" ? "#E5322D" : g.color || "#FFFFFF", dash = g.dashed === false ? "" : `stroke-dasharray="${g.dash ?? "26 16"}"`;
+        const sw = g.width ?? 8, gid = `${id}-g${k}`;
+        if (g.type === "circle") return `<circle id="${gid}" cx="${g.cx}" cy="${g.cy}" r="${g.r ?? 70}" fill="none" stroke="${col}" stroke-width="${sw}" pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:1"/>`;
+        const ang = Math.atan2(g.y2 - g.y1, g.x2 - g.x1), L = g.head ?? 34;
+        const head = g.type === "arrow" ? `<path d="M${g.x2} ${g.y2} L${r3(g.x2 - L * Math.cos(ang - 0.45))} ${r3(g.y2 - L * Math.sin(ang - 0.45))} M${g.x2} ${g.y2} L${r3(g.x2 - L * Math.cos(ang + 0.45))} ${r3(g.y2 - L * Math.sin(ang + 0.45))}" stroke="${col}" stroke-width="${sw}" stroke-linecap="round" fill="none"/>` : "";
+        return `<g id="${gid}"><line x1="${g.x1}" y1="${g.y1}" x2="${g.x2}" y2="${g.y2}" stroke="${col}" stroke-width="${sw}" stroke-linecap="round" ${dash}/>${head}</g>`;
+      }).join("");
+      inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px"><svg width="1080" height="1920" viewBox="0 0 1080 1920" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,.45))">${shapes}</svg></div>`;
+      tl.push(`ft("#${id}-in", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05 }, ${t0});`);
+      (b.shapes || []).forEach((g, k) => {
+        const at = r3(t0 + (g.delay ?? k * 0.12));
+        if (g.type === "circle") tl.push(`ft("#${id}-g${k}", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.35, ease: "power2.out" }, ${at});`);
+        else tl.push(`ft("#${id}-g${k}", { autoAlpha: 0, scale: 0.6, transformOrigin: "${g.x1}px ${g.y1}px" }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "power2.out" }, ${at});`);
+      });
+      break;
+    }
+    case "fault": {
+      // the fault replays in black and white with a big red X badge (the fix stays in colour)
+      tl.push(`ft("#base", { filter: "grayscale(0) contrast(1)" }, { filter: "grayscale(1) contrast(1.08)", duration: 0.15 }, ${t0});`);
+      tl.push(`tl.fromTo("#base", { filter: "grayscale(1) contrast(1.08)" }, { filter: "grayscale(0) contrast(1)", duration: 0.15, immediateRender: false }, ${r3(t1 - 0.15)});`);
+      const bx = b.x ?? 120, by = b.y ?? 760;
+      inner = `<div id="${id}-in" class="ov" style="left:${bx}px;top:${by}px;width:170px;height:170px"><svg width="170" height="170" viewBox="0 0 44 44"><circle cx="22" cy="22" r="20" fill="#E5322D" stroke="#fff" stroke-width="2"/><path d="M14 14L30 30M30 14L14 30" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg></div>`;
+      tl.push(`ft("#${id}-in", { autoAlpha: 0, scale: 0.3 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "back.out(2.4)" }, ${r3(t0 + 0.1)});`);
+      beatSfx(b, t0, "ui", "fault");
+      break;
+    }
+    case "punch": {
+      // punch-in on a body part from the same shot (feet, knee, hip): origin "x% y%", z scale; snaps in, eases out
+      const z = b.z ?? 1.6, org = b.origin ?? "50% 80%";
+      tl.push(`tl.set("#punch", { transformOrigin: "${org}" }, ${t0});`);
+      tl.push(`ft("#punch", { scale: 1 }, { scale: ${z}, duration: ${b.snap === false ? 0.35 : 0.12}, ease: "power2.out" }, ${t0});`);
+      tl.push(`tl.fromTo("#punch", { scale: ${z} }, { scale: 1, duration: 0.12, ease: "power2.in", immediateRender: false }, ${r3(t1 - 0.12)});`);
+      inner = "";
+      break;
+    }
     case "quotestack": {
       // Refined-Ambition-style quote: the spoken words stack up on their own times, filler words small in a serif,
       // key words big heavy italic sans (every other one in an accent); a sentence end starts a new page. The
@@ -893,7 +942,7 @@ for (const b of beatsList) {
       die(`unknown beat type '${b.type}'`);
   }
   if (b.type === "behind") continue;
-  if (!["endcard", "scene", "broll", "textfx"].includes(b.type) && !isStanBeat(b) && !fluentBeats.has(id) && !(b.type === "meme" && memeLib(b.id).meta.clip)) tl.push(exit(`#${id}-in`, t1));
+  if (!["endcard", "scene", "broll", "textfx", "punch"].includes(b.type) && !isStanBeat(b) && !fluentBeats.has(id) && !(b.type === "meme" && memeLib(b.id).meta.clip)) tl.push(exit(`#${id}-in`, t1));
   // a timed <video> inside (B-roll, meme clip, animated emoji, a stan panel) needs an untimed wrapper; the emoji pop has its own exit
   const clipMeme = b.type === "broll" || b._timedInside || fluentBeats.has(id) || (b.type === "meme" && memeLib(b.id).meta.clip);
   overlays.push({ html: clipMeme

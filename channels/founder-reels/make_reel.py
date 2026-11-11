@@ -254,6 +254,7 @@ def main():
     }
     if spec.get("origin") is None and pv: reel["zoom"]["origin"] = "50% 40%"
     chain_broll(reel["beats"], takes)
+    reel["beats"].sort(key=lambda b: b["type"] != "broll")  # B-roll at the bottom: labels, guides and cards draw over it
     total = sum(b - a for a, b in takes)
     if total < 30: print(f"WARNING: {total:.1f} s of speech: under the 30 s minimum, merge it with another story line")
     json.dump(reel, open(os.path.join(P, "reel.json"), "w"), ensure_ascii=False, indent=1)
