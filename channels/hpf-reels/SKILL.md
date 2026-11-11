@@ -12,7 +12,7 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
 ## The look (from the user's two references, a ProLifting RDL fix and a deadlift setup)
 - **Story:** the wrong way first (or the client's first attempt), then each cue in order, then the corrected rep.
   Cut setup chatter, repeated cues and counting; keep the cue words and the reps that show them.
-- **Cue labels:** small orange rounded boxes (bg #F07A1A, white or black bold Inter, ~34 px), top third, one at a time,
+- **Cue labels:** small orange rounded boxes (bg #F07A1A, white or black bold Montserrat, ~42 px), near the middle of the frame, one at a time,
   with ❌ for the fault ("Trọng tâm dồn vào gót chân ❌") and ✅ for the fix ("Mông được kéo căng ✅"); numbered steps for a
   setup ("1. Tạo khoảng cách", "2. Đứng rộng chân", "5. Hinge").
 - **Drawn guides on the body, on the cue word:** white dashed lines (hip line, shin line, bar path), white dashed
