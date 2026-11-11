@@ -3,6 +3,7 @@
 #   bash scripts/doctor.sh
 S="$(cd "$(dirname "$0")/.." && pwd)"
 ok=0; bad=0
+. "$S/scripts/platform.sh"
 pass() { echo "  ok    $1"; ok=$((ok+1)); }
 fail() { echo "  MISS  $1  ->  $2"; bad=$((bad+1)); }
 
@@ -10,10 +11,15 @@ fail() { echo "  MISS  $1  ->  $2"; bad=$((bad+1)); }
 PY=${MEDIA_PY:-python3}; "$PY" -c "import numpy" 2>/dev/null || { [ -x "$HOME/.venvs/media/bin/python" ] && PY="$HOME/.venvs/media/bin/python"; }
 
 echo "tools"
-command -v ffmpeg >/dev/null && pass "ffmpeg $(ffmpeg -version | head -1 | awk '{print $3}')" || fail ffmpeg "brew install ffmpeg"
-ffmpeg -hide_banner -buildconf 2>/dev/null | grep -q enable-libvpx && pass "ffmpeg libvpx (alpha WebM memes)" || fail "ffmpeg libvpx" "brew reinstall ffmpeg"
-ffmpeg -hide_banner -buildconf 2>/dev/null | grep -q enable-libass && pass "ffmpeg libass" || fail "ffmpeg libass" "brew reinstall ffmpeg"
-command -v node >/dev/null && [ "$(node -p 'process.versions.node.split(".")[0]')" -ge 18 ] && pass "node $(node -v)" || fail "node >= 18" "brew install node"
+if is_windows; then
+  python3 -c "import sys" >/dev/null 2>&1 && pass "python3 ($(command -v python3))" || fail "python3 (Windows ships only python.exe)" "bash $S/scripts/win_python3.sh"
+  # without UTF-8 mode Windows Python reads files as cp1252 and breaks on Cyrillic / Vietnamese text in the JSON files
+  [ "${PYTHONUTF8:-}" = 1 ] && pass "PYTHONUTF8=1 (UTF-8 file reading)" || fail "PYTHONUTF8 not set (Python would read files as cp1252)" "setx PYTHONUTF8 1, then open a new terminal"
+fi
+command -v ffmpeg >/dev/null && pass "ffmpeg $(ffmpeg -version | head -1 | awk '{print $3}')" || fail ffmpeg "$(inst "brew install ffmpeg" "sudo apt install ffmpeg" "winget install Gyan.FFmpeg")"
+ffmpeg -hide_banner -buildconf 2>/dev/null | grep -q enable-libvpx && pass "ffmpeg libvpx (alpha WebM memes)" || fail "ffmpeg libvpx" "$(inst "brew reinstall ffmpeg" "sudo apt install ffmpeg" "winget install Gyan.FFmpeg (the full build)")"
+ffmpeg -hide_banner -buildconf 2>/dev/null | grep -q enable-libass && pass "ffmpeg libass" || fail "ffmpeg libass" "$(inst "brew reinstall ffmpeg" "sudo apt install ffmpeg" "winget install Gyan.FFmpeg (the full build)")"
+command -v node >/dev/null && [ "$(node -p 'process.versions.node.split(".")[0]')" -ge 18 ] && pass "node $(node -v)" || fail "node >= 18" "$(inst "brew install node" "sudo apt install nodejs npm" "winget install OpenJS.NodeJS.LTS")"
 # HyperFrames is pinned in ONE place (scripts/HF_VERSION), read by hf.sh, hf_version.py and build.mjs
 hv=$(cat "$S/scripts/HF_VERSION" 2>/dev/null)
 v=$(bash "$S/scripts/hf.sh" --version 2>/dev/null | tail -1)
@@ -35,11 +41,14 @@ hx=$(HF_REAL_FFMPEG=echo bash "$S/scripts/hf_ffmpeg.sh" -i in.mp4 -c:v libx264 -
        [ "$hx" = "-i in.mp4 -c:v libx264 -threads $xt -preset medium out.mp4" ] || echo "          scripts/hf_ffmpeg.sh does not add it to HyperFrames' encodes"
        [ -n "$ux" ] && echo "$ux" | sed 's/^/          /'; }
 w=${WHISPER:-$(command -v whisper)}; [ -n "$w" ] && pass "whisper ($w)" || fail whisper "pip install openai-whisper (or set WHISPER=/path)"
-command -v yt-dlp >/dev/null && pass "yt-dlp $(yt-dlp --version)" || echo "  opt   yt-dlp not installed: only needed to pull a reference video from a link -> brew install yt-dlp"
+command -v yt-dlp >/dev/null && pass "yt-dlp $(yt-dlp --version)" || echo "  opt   yt-dlp not installed: only needed to pull a reference video from a link -> $(inst "brew install yt-dlp" "pip install yt-dlp" "winget install yt-dlp.yt-dlp")"
 "$PY" -c "import numpy" 2>/dev/null && pass "python numpy ($PY)" || fail numpy "pip install numpy"
 "$PY" -c "import cv2; cv2.FaceDetectorYN" 2>/dev/null && pass "python opencv (face tracking)" || fail opencv "pip install opencv-python"
 "$PY" -c "import google.genai" 2>/dev/null && pass "python google-genai" || fail "python google-genai (B-roll people/line checks, QA)" "$PY -m pip install google-genai"
 "$PY" -c "import PIL" 2>/dev/null && pass "python pillow" || fail pillow "$PY -m pip install pillow"
+# caption check (broll_qa.py): macOS Vision on a Mac, EasyOCR anywhere else
+if [ "$(uname -s)" = Darwin ]; then pass "caption OCR (macOS Vision)"
+else "$PY" -c "import easyocr" 2>/dev/null && pass "caption OCR (EasyOCR, languages: ${GHOST_OCR_LANGS:-ru,en})" || echo "  opt   caption OCR: without it broll_qa.py skips the caption check -> $PY -m pip install easyocr"; fi
 
 echo "keys"
 # required: insert_prep.py, broll_vision.py and broll_qa.py's people / match checks ask Gemini, and an unchecked shot FAILS

@@ -4,10 +4,12 @@
 # Applying a look afterwards needs only ffmpeg (scripts/film_look.py). Transitions (scripts/transitions.py) need no setup.
 #   bash scripts/setup_looks.sh            -> ~/.venvs/ghost-looks (override with LOOKS_VENV=/path), library/luts/*.cube
 set -euo pipefail
+. "$(cd "$(dirname "$0")" && pwd)/platform.sh"
 S="$(cd "$(dirname "$0")/.." && pwd)"
 V="${LOOKS_VENV:-$HOME/.venvs/ghost-looks}"
-PY="${PYTHON311:-$(command -v python3.11 || echo /opt/homebrew/bin/python3.11)}"
+PY="${PYTHON311:-$(find_py311)}"
 [ -x "$V/bin/python" ] || "$PY" -m venv "$V"
+venv_bin_link "$V"
 "$V/bin/pip" install -q --upgrade pip
 "$V/bin/pip" install -q "spectral_film_lut==0.18.12"
 "$V/bin/python" "$S/scripts/gen_luts.py" "$@"

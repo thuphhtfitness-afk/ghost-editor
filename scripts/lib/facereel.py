@@ -575,7 +575,10 @@ def new_project(P, src, plate=None):
     for f in (plate, "voice.wav"):
         dst = os.path.join(P, "assets", f)
         if not os.path.lexists(dst):
-            os.symlink(os.path.join(src, "assets", f), dst)
+            try:
+                os.symlink(os.path.join(src, "assets", f), dst)
+            except OSError:  # Windows without Developer Mode cannot make symlinks
+                shutil.copy2(os.path.join(src, "assets", f), dst)
     for f, g in (("words.cut.json", "words.cut.json"), ("words.json", "words.json"), ("plan.json", "cut_plan.json"),
                  ("cover_windows.json", "cover_windows.json")):
         s_, d_ = os.path.join(src, "build", f), os.path.join(P, "build", g)

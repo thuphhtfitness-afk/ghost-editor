@@ -97,7 +97,10 @@ def setup(project, cut=None, tag=None, clip=None):
     vsrc = f"{cut}/assets/voice.wav"
     if os.path.exists(vsrc) and not os.path.lexists(f"{P}/assets/voice.wav"):
         os.makedirs(f"{P}/assets", exist_ok=True)
-        os.symlink(vsrc, f"{P}/assets/voice.wav")
+        try:
+            os.symlink(vsrc, f"{P}/assets/voice.wav")
+        except OSError:  # Windows without Developer Mode cannot make symlinks
+            shutil.copy2(vsrc, f"{P}/assets/voice.wav")
     st = f"{P}/build/plate_stats.json"
     if not os.path.exists(st):          # reference grade of the plate as shot (wide), computed here: no cache file beside the shared plate
         sh([PY, "-c", f"import sys, json; sys.path.insert(0, '{SK}/scripts'); import grade_lib as g; "

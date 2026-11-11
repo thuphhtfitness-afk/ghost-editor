@@ -5,10 +5,12 @@
 # into ~/.cache/ghost-matte, never into the repo). Weights: BiRefNet-portrait + BiRefNet_lite, MIT. bria models are refused.
 #   bash scripts/setup_matte.sh            -> ~/.venvs/ghost-matte (override with MATTE_VENV=/path)
 set -euo pipefail
+. "$(cd "$(dirname "$0")" && pwd)/platform.sh"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 V="${MATTE_VENV:-$HOME/.venvs/ghost-matte}"
-PY="${PYTHON311:-$(command -v python3.11 || echo /opt/homebrew/bin/python3.11)}"
+PY="${PYTHON311:-$(find_py311)}"
 [ -x "$V/bin/python" ] || "$PY" -m venv "$V"
+venv_bin_link "$V"
 "$V/bin/pip" install -q --upgrade pip
 "$V/bin/pip" install -q -r "$HERE/matte-requirements.txt"
 # warm the weights so the first build does not stall on a download

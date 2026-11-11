@@ -29,6 +29,10 @@ import path from "node:path";
 import os from "node:os";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+// npx is npx.cmd on Windows, which execFileSync will not start without a shell: run npm's npx-cli.js with node instead
+const npxCmd = (args) => process.platform === "win32"
+  ? [process.execPath, [path.join(path.dirname(process.execPath), "node_modules", "npm", "bin", "npx-cli.js"), ...args]]
+  : ["npx", args];
 import { MOTION_CSS, buildScene, buildEditorialCaptions, buildMusic } from "./lib/motion.mjs";
 import { KINETIC_CSS, buildKinetic, blockHeight, placeY } from "./lib/kinetic.mjs";
 import { installShaderRuntime, shaderLayerHtml, extractStill } from "./lib/shader-layer.mjs";
@@ -486,7 +490,7 @@ if (spec.matte || panelMatte.length) {
   } else if (!fs.existsSync(mp)) {
     if (mcfg.engine !== "hyperframes") warn.push(`matte: BiRefNet venv not set up (bash ${path.join(SKILL, "scripts", "setup_matte.sh")}); used hyperframes remove-background (u2net: softer, jumpier edges)`);
     console.log("cutting the speaker out (hyperframes remove-background, ~4 fps; cached in assets/talk-matte.webm)...");
-    execFileSync("npx", ["-y", HF, "remove-background", path.resolve(proj, SRC), "-o", mp], { stdio: ["ignore", "ignore", "pipe"], cwd: proj, maxBuffer: 1 << 28 }); console.log("  matte done");
+    execFileSync(...npxCmd(["-y", HF, "remove-background", path.resolve(proj, SRC), "-o", mp]), { stdio: ["ignore", "ignore", "pipe"], cwd: proj, maxBuffer: 1 << 28 }); console.log("  matte done");
   }
   if (spec.matte) matteHtml = takes.map((k, i) => `
       <video id="matte-${i}" class="matte" src="assets/talk-matte.webm" data-start="${fgrid(k.f0)}" data-duration="${fgrid(k.frames)}" data-media-start="${k.a}" data-track-index="2" muted playsinline></video>`).join("");

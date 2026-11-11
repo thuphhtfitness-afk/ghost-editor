@@ -535,7 +535,7 @@ def context_visible(ren_g, src_g, A, box):
 # ------------------------------------------------------------------ OCR
 def ocr(paths):
     if sys.platform != "darwin" or not shutil.which("osascript"):
-        return None
+        return ocr_easyocr(paths)
     out = {}
     for i in range(0, len(paths), 40):
         r = subprocess.run(["osascript", "-l", "JavaScript", os.path.join(HERE, "ocr_text.js")] + paths[i:i + 40], capture_output=True, text=True)
@@ -545,6 +545,42 @@ def ocr(paths):
                 out[j["img"]] = j
             except (json.JSONDecodeError, KeyError):
                 pass
+    return out
+
+
+_READER = None
+
+
+def ocr_easyocr(paths):
+    """Off macOS (Windows, Linux): EasyOCR, same output shape as ocr_text.js. Languages from GHOST_OCR_LANGS
+    (default "ru,en"; EasyOCR pairs Cyrillic with English, or one Latin-script language with English, e.g. "vi,en").
+    None when EasyOCR is not installed (pip install easyocr): the caption check is then skipped."""
+    global _READER
+    try:
+        import easyocr
+    except ImportError:
+        return None
+    if _READER is None:
+        langs = [x.strip() for x in os.environ.get("GHOST_OCR_LANGS", "ru,en").split(",") if x.strip()]
+        try:
+            import torch
+            gpu = torch.cuda.is_available()
+        except ImportError:
+            gpu = False
+        _READER = easyocr.Reader(langs, gpu=gpu, verbose=False)
+    out = {}
+    for p in paths:
+        img = cv2.imread(p)
+        if img is None:
+            out[p] = {"img": p, "error": "unreadable"}
+            continue
+        h, w = img.shape[:2]
+        lines = []
+        for quad, text, conf in _READER.readtext(img, paragraph=False):
+            xs, ys = [q[0] for q in quad], [q[1] for q in quad]
+            lines.append({"text": text, "conf": float(conf),
+                          "box": [float(min(xs)), float(min(ys)), float(max(xs) - min(xs)), float(max(ys) - min(ys))]})
+        out[p] = {"img": p, "w": w, "h": h, "lines": lines}
     return out
 
 
@@ -927,7 +963,7 @@ def analyse(video, project=None, profile="talking-head", words=None, allow_hold=
         log(f"  OCR on {len(imgs)} frames...")
         res = ocr(imgs)
         if res is None:
-            ocr_note = "OCR unavailable (needs macOS osascript): captions not checked"
+            ocr_note = "OCR unavailable (macOS Vision, or pip install easyocr elsewhere): captions not checked"
         else:
             spoken = [(w["s"], w["e"], norm(w["w"])) for w in (words or []) if norm(w["w"])]
             cyr = sum(bool(re.search("[а-яё]", w[2])) for w in spoken) > 0.5 * max(1, len(spoken))

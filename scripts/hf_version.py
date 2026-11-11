@@ -11,6 +11,7 @@ Importing this also points HyperFrames at scripts/hf_ffmpeg.sh (HYPERFRAMES_FFMP
 fixes the audio mix's input order so the same reel gets the same audio on every render (why: hf_mix_order.py).
 """
 import os
+import shutil
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FILE = os.path.join(HERE, "HF_VERSION")
@@ -20,4 +21,4 @@ os.environ.setdefault("HYPERFRAMES_FFMPEG_PATH", os.path.join(HERE, "hf_ffmpeg.s
 
 
 def hf(*args):
-    return ["npx", "-y", f"hyperframes@{VERSION}", *args]
+    return [shutil.which("npx") or "npx", "-y", f"hyperframes@{VERSION}", *args]

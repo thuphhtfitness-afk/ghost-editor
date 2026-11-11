@@ -5,15 +5,17 @@
 # 20 dB + a little low-mid warmth (done later in the cut) sounds natural.
 # First run creates a Python 3.11 venv at <skill>/.venv-df (no py3.13 wheel exists; building needs Rust).
 set -euo pipefail
+. "$(cd "$(dirname "$0")" && pwd)/platform.sh"
 S="$(cd "$(dirname "$0")/.." && pwd)"
 IN="$1"; OUT="$2"; ATT="${3:-20}"
 V="${DF_VENV:-$S/.venv-df}"
 if [ ! -x "$V/bin/deepFilter" ]; then
-  PY=$(command -v python3.11 || echo /opt/homebrew/bin/python3.11)
-  [ -x "$PY" ] || { echo "needs python3.11 (brew install python@3.11)"; exit 1; }
+  PY=$(find_py311)
+  [ -x "$PY" ] || { echo "needs python3.11 ($(inst "brew install python@3.11" "sudo apt install python3.11" "winget install Python.Python.3.11"))"; exit 1; }
   command -v uv >/dev/null || { echo "needs uv (pip install uv)"; exit 1; }
   echo "setting up DeepFilterNet in $V (one time, ~1 GB with torch)..."
   uv venv -q -p "$PY" "$V"
+  venv_bin_link "$V"
   VIRTUAL_ENV="$V" uv pip install -q deepfilternet "torch<2.6" "torchaudio<2.6" soundfile
 fi
 TMP=$(mktemp -d)

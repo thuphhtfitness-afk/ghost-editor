@@ -173,7 +173,10 @@ def copy_project(src, dst, reel):
         if os.path.isdir(p):
             shutil.copytree(p, os.path.join(dst, "assets", f), symlinks=True)
         else:
-            os.symlink(os.path.realpath(p), os.path.join(dst, "assets", f))
+            try:
+                os.symlink(os.path.realpath(p), os.path.join(dst, "assets", f))
+            except OSError:  # Windows without Developer Mode cannot make symlinks
+                shutil.copy2(p, os.path.join(dst, "assets", f))
     # build inputs made by other tools: words, face track, pre-rendered transition windows, AI caption tags
     for f in ("words.whisper.json", "face.json", "transitions.json", "ai-tags.json"):
         if os.path.exists(os.path.join(src, "build", f)):

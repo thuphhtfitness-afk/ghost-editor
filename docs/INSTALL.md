@@ -53,10 +53,47 @@ Restart Claude Code (or start a new session) so the skill shows up.
 
 ---
 
+## On Windows
+
+Untested on a real Windows machine so far (the changes were checked on Linux); please report what breaks.
+Run everything from Claude Code, whose shell on Windows is Git Bash, so the `bash scripts/...` commands work as written.
+
+1. Install the tools (PowerShell or Git Bash), then open a **new** terminal so PATH picks them up:
+   ```bash
+   winget install Git.Git
+   winget install Gyan.FFmpeg
+   winget install OpenJS.NodeJS.LTS
+   winget install Python.Python.3.12
+   ```
+   Tick "Add python.exe to PATH" if the Python installer asks. `Gyan.FFmpeg` is the full build (libvpx + libass).
+2. Make `python3` work (Windows ships only `python.exe`) and switch Python to UTF-8 file reading:
+   ```bash
+   bash ~/.claude/skills/ghost-editor/scripts/win_python3.sh
+   ```
+   ```bash
+   setx PYTHONUTF8 1
+   ```
+   Open a new terminal after `setx`.
+3. Python packages, including EasyOCR for the caption check (macOS uses its built-in Vision instead):
+   ```bash
+   pip install openai-whisper numpy opencv-python pillow google-genai easyocr
+   ```
+   The caption check reads Russian + English by default; set `GHOST_OCR_LANGS` for other captions, e.g. `vi,en`
+   for Vietnamese (EasyOCR pairs English with either one Cyrillic or one Latin-script language).
+4. Continue from step 3 of the agent steps above (`library_restore.py`, then `doctor.sh` until `0 missing`).
+
+Notes:
+- The optional setups (`setup_looks.sh`, `setup_matte.sh`, `setup_audioqa.sh`, `denoise.sh`) need Python 3.11:
+  `winget install Python.Python.3.11`. They find it through the `py` launcher and link each venv's `Scripts\` folder
+  as `bin\`, so the skill's paths work unchanged.
+- Without Developer Mode, Windows cannot make symlinks; the scripts then copy the file instead (uses more disk).
+- Whisper runs on the CPU unless you have an NVIDIA GPU with CUDA PyTorch, so transcription is slower.
+- WSL2 (Ubuntu) is an alternative: there, follow the Linux path (`apt` instead of `brew`).
+
 ## Doing it by hand
 
-You need a Mac with Apple silicon (what it is built and tested on; the caption check uses macOS text recognition, so
-it needs a Mac; Linux and Intel Macs are untested) with:
+You need a Mac with Apple silicon (what it is built and tested on; Linux, Intel Macs and Windows are less tested,
+and off macOS the caption check uses EasyOCR, see "On Windows" above) with:
 - ffmpeg (with libvpx and libass): `brew install ffmpeg`
 - Node 18 or newer: `brew install node`
 - Whisper: `pip install openai-whisper`

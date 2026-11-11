@@ -4,6 +4,7 @@
 # (ClearerVoice SE + SR ~0.65 GB, Apache-2.0). Prints the venv's python path on the last line.
 #   bash scripts/setup_audioqa.sh [--no-clearvoice]   -> ~/.venvs/ghost-audioqa (AUDIOQA_VENV), ~/.cache/ghost-audioqa (GHOST_AUDIOQA_CACHE)
 set -euo pipefail
+. "$(cd "$(dirname "$0")" && pwd)/platform.sh"
 S="$(cd "$(dirname "$0")/.." && pwd)"
 V="${AUDIOQA_VENV:-$HOME/.venvs/ghost-audioqa}"
 C="${GHOST_AUDIOQA_CACHE:-$HOME/.cache/ghost-audioqa}"
@@ -11,9 +12,10 @@ C="${GHOST_AUDIOQA_CACHE:-$HOME/.cache/ghost-audioqa}"
 PKGS=("clearvoice==0.1.2" "silero-vad==6.2.3" "torch==2.8.0" "torchaudio==2.8.0" "torchvision==0.23.0" "numpy==1.26.4"
       "pyloudnorm==0.2.0" "matplotlib==3.11.2" "python_speech_features==0.6" "opencv-python==4.10.0.84" "soundfile==0.12.1")
 if [ ! -x "$V/bin/python" ]; then
-  PY="${PYTHON311:-$(command -v python3.11 || echo /opt/homebrew/bin/python3.11)}"
+  PY="${PYTHON311:-$(find_py311)}"
   if command -v uv >/dev/null; then uv venv -q -p "$PY" "$V"; else "$PY" -m venv "$V"; fi
 fi
+venv_bin_link "$V"
 if command -v uv >/dev/null; then VIRTUAL_ENV="$V" uv pip install -q "${PKGS[@]}" >&2
 else "$V/bin/python" -m pip install -q "${PKGS[@]}" >&2; fi
 mkdir -p "$C"
