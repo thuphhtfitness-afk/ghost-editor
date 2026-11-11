@@ -40,6 +40,45 @@
    "last": "2026-11-11",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "m-i-c-u-ch",
+   "say": "mọi câu chỉ dẫn phải có minh họa (anatomy theo tư thế bài tập, highlight hoặc vẽ lên phần được nhắc), không nói suông",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-11",
+   "last": "2026-11-11",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "u-ti-n-anatomy-highlight",
+   "say": "ưu tiên anatomy highlight nhóm cơ / vị trí trong chuyển động của bài tập được sửa",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-11",
+   "last": "2026-11-11",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "subtitles-v-titles-kh-ng",
+   "say": "subtitles và titles không được chồng lên nhau",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-11",
+   "last": "2026-11-11",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],

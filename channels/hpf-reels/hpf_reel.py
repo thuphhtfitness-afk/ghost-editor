@@ -170,6 +170,45 @@ def chain_broll(beats, takes):
             p["cutOut"] = True; q["cutIn"] = True
 
 
+def text_layout(beats):
+    """client rule: no text ever sits on other text. Zones: titles top, labels near the middle, notes beside their
+    point, captions at the bottom. A note that hits a label moves below it; a label that hits a title moves under the
+    title; a label never shows during an anatomy scene (the scene carries its own words)."""
+    def box(b):
+        if b["type"] == "label":
+            sz = b.get("size", 42); x = b.get("x", 70); y = b.get("y", 600)
+            return (x, y, x + len(b["text"]) * sz * 0.58 + 90, y + sz * 1.4)
+        if b["type"] == "note":
+            sz = b.get("size", 64); w = len(b["text"]) * sz * 0.6; tx = b.get("tx", 540); ty = b.get("ty", 760)
+            return (tx - w / 2, ty - sz * 1.25, tx + w / 2, ty)
+        if b["type"] == "title":
+            sz = b.get("size", 96); y = b.get("y", 190)
+            return (60, y, 1020, y + sz * 1.25)
+    def hit(a, b): return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
+    def overlap_t(a, b):
+        ta, tb = (a["at"], a["to"]), (b["at"], b["to"])
+        return isinstance(ta[1], (int, float)) and isinstance(tb[1], (int, float)) and ta[0] < tb[1] and tb[0] < ta[1]
+    anat = [b for b in beats if b["type"] == "anatomy"]
+    for l in [b for b in beats if b["type"] == "label"]:
+        for a in anat:
+            if overlap_t(l, a):
+                if l["at"] < a["at"]: l["to"] = round(a["at"] - 0.02, 3)
+                else: l["at"] = round(min(a["to"] + 0.02, l["to"] - 0.3), 3)
+    for _ in range(3):
+        for p in beats:
+            for q in beats:
+                if p is q or not overlap_t(p, q): continue
+                bp, bq = box(p), box(q)
+                if not bp or not bq or not hit(bp, bq): continue
+                if p["type"] == "note" and q["type"] in ("label", "title"):
+                    p["ty"] = round(bq[3] + p.get("size", 64) * 1.25 + 30)
+                elif p["type"] == "label" and q["type"] == "title":
+                    p["y"] = round(bq[3] + 30)
+        for p in beats:
+            if p["type"] == "note" and p.get("ty", 760) > 1480: p["ty"] = 1480  # keep clear of the captions
+    return beats
+
+
 def edit_time(t, takes):
     acc = 0.0
     for a, b in takes:
@@ -255,6 +294,7 @@ def main():
     }
     if spec.get("origin") is None and pv: reel["zoom"]["origin"] = "50% 40%"
     chain_broll(reel["beats"], takes)
+    text_layout(reel["beats"])
     reel["beats"].sort(key=lambda b: b["type"] != "broll")  # B-roll at the bottom: labels, guides and cards draw over it
     total = sum(b - a for a, b in takes)
     if total < 30: print(f"WARNING: {total:.1f} s of speech: under the 30 s minimum, merge it with another story line")

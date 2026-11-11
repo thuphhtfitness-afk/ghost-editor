@@ -40,7 +40,7 @@ import { loadManifest as emojiManifest, installEmoji, emojiPopHtml, emojiPopJs, 
 import { makePlacer, PLATFORMS } from "./lib/safezone.mjs";
 import { TEMPLATE_NAMES, buildTemplateCaptions } from "./lib/caption-templates.mjs";
 import { aiTag } from "./lib/ai-tag.mjs";
-import { anatomySvg } from "./lib/anatomy.mjs";
+import { anatomySvg, splitSquatSvg } from "./lib/anatomy.mjs";
 import { findTaste, loadTaste, applyTaste, checkTaste, bannedSfx } from "./lib/taste.mjs";
 import { STAN_CSS, isStanBeat, stanPrepare, stanBeat, stanPipTweens, buildChestCaptions, stanMatteWindows } from "./lib/stan.mjs";
 
@@ -649,12 +649,14 @@ for (const b of beatsList) {
     case "anatomy": {
       // full-screen anatomy scene (self-drawn SVG, scripts/lib/anatomy.mjs): black stage, red floor glow, the named
       // muscle group glowing with a yellow halo; yellow Montserrat labels and red arrows land on their words
-      const title = b.title ? `<div id="${id}-t" style="position:absolute;left:0;right:0;top:${b.titleY ?? 210}px;text-align:center;font-family:Montserrat,sans-serif;font-weight:900;font-size:${b.titleSize ?? 92}px;color:#FFD21E;text-shadow:0 0 18px rgba(255,170,0,.55),0 4px 0 #6B3A00">${esc(b.title)}</div>` : "";
+      const title = b.title ? `<div id="${id}-t" style="position:absolute;left:0;right:0;top:${b.titleY ?? 210}px;text-align:center;font-family:Montserrat,sans-serif;font-weight:900;font-size:${b.titleSize ?? 92}px;color:${b.titleColor || "#FFD21E"};text-shadow:0 0 18px rgba(255,170,0,.45),0 4px 0 rgba(0,0,0,.6)">${esc(b.title)}</div>` : "";
       const labs = (b.labels || []).map((l, k) => `<div id="${id}-l${k}" style="position:absolute;left:${l.x ?? 540}px;top:${l.y ?? 400}px;transform:translateX(-50%);white-space:nowrap;font-family:Montserrat,sans-serif;font-weight:900;font-size:${l.size ?? 62}px;color:${l.color || "#FFD21E"};text-shadow:0 0 14px rgba(255,170,0,.5),0 3px 0 #5A2E00">${esc(l.text)}</div>`).join("");
       const arrows = (b.arrows || []).map((a, k) => { const ang = Math.atan2(a.y2 - a.y1, a.x2 - a.x1), L = 30;
         return `<g id="${id}-a${k}"><line x1="${a.x1}" y1="${a.y1}" x2="${a.x2}" y2="${a.y2}" stroke="#FF3B2F" stroke-width="10" stroke-linecap="round"/><path d="M${a.x2} ${a.y2} L${r3(a.x2 - L * Math.cos(ang - 0.5))} ${r3(a.y2 - L * Math.sin(ang - 0.5))} L${r3(a.x2 - L * Math.cos(ang + 0.5))} ${r3(a.y2 - L * Math.sin(ang + 0.5))} Z" fill="#FF3B2F"/></g>`; }).join("");
       inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 96%, rgba(200,34,22,.62) 0%, rgba(60,10,8,.35) 32%, rgba(0,0,0,0) 62%), #000">
-        <div id="${id}-fig" style="position:absolute;left:${540 - 330}px;top:${b.figY ?? 420}px;width:660px;height:1100px">${anatomySvg({ highlight: b.highlight || ["glute"], side: b.side || "both", id: `${id}-s`, w: 660, h: 1100 })}</div>
+        ${b.view === "splitsquat"
+          ? `<div id="${id}-fig" style="position:absolute;left:${540 - 480}px;top:${b.figY ?? 480}px;width:960px;height:1200px">${splitSquatSvg({ pose: b.pose || "bottom", highlight: b.highlight || ["glute", "quad"], marks: b.marks || [], id: `${id}-s`, w: 960, h: 1200 })}</div>`
+          : `<div id="${id}-fig" style="position:absolute;left:${540 - 330}px;top:${b.figY ?? 420}px;width:660px;height:1100px">${anatomySvg({ highlight: b.highlight || ["glute"], side: b.side || "both", id: `${id}-s`, w: 660, h: 1100 })}</div>`}
         <svg width="1080" height="1920" style="position:absolute;left:0;top:0">${arrows}</svg>${title}${labs}</div>`;
       tl.push(`ft("#${id}-in", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.18 }, ${t0});`);
       tl.push(`ft("#${id}-fig", { scale: 0.9, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.45, ease: "power3.out" }, ${t0});`);
@@ -663,6 +665,14 @@ for (const b of beatsList) {
       (b.arrows || []).forEach((a, k) => tl.push(`ft("#${id}-a${k}", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, ${E(a.at ?? b.at, "anatomy arrow")});`));
       if (b.captions !== true) hiddenCaps.push([t0, t1]);
       beatSfx(b, t0, "whoosh", "anatomy");
+      break;
+    }
+    case "glow": {
+      // highlight the body part ON the footage: a soft pulsing glow (red = the muscle working, yellow = a point to watch)
+      const C = b.color === "yellow" ? "255,210,30" : b.color === "green" ? "53,224,107" : "255,52,36";
+      inner = `<div id="${id}-in" class="ov" style="left:${b.cx - b.rx}px;top:${b.cy - b.ry}px;width:${2 * b.rx}px;height:${2 * b.ry}px;border-radius:50%;transform:rotate(${b.rot ?? 0}deg);background:radial-gradient(closest-side, rgba(${C},.55), rgba(${C},.32) 60%, rgba(${C},0) 100%);outline:none;box-shadow:inset 0 0 0 5px rgba(${C},.0)"><svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;overflow:visible"><ellipse cx="50" cy="50" rx="49" ry="49" fill="none" stroke="rgb(${C})" stroke-width="1.6" stroke-dasharray="5 4" vector-effect="non-scaling-stroke" style="stroke-width:6px"/></svg></div>`;
+      tl.push(`ft("#${id}-in", { autoAlpha: 0, scale: 0.7 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "power2.out" }, ${t0});`);
+      tl.push(`tl.fromTo("#${id}-in", { opacity: 1 }, { opacity: 0.6, duration: 0.45, repeat: ${Math.max(0, Math.floor((t1 - t0 - 0.3) / 0.45) - 1)}, yoyo: true, immediateRender: false }, ${r3(t0 + 0.3)});`);
       break;
     }
     case "note": {

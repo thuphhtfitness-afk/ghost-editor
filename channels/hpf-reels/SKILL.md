@@ -36,6 +36,25 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
   (glowing dot or red ring + a leader line to the words): "Ngón út chạm sàn" on the toe, "Trọng tâm" on the front foot.
 - Measure body points on a gridded frame of the base before placing guides / notes (handheld footage moves).
 
+## Show every cue, never just say it (the user's rule; fourth reference, a bent-over-row fix)
+- **Every coaching cue gets a picture.** A viewer cannot imagine "dồn trọng tâm vào chân trước" from words: draw it,
+  highlight it or show it in the anatomy of the movement. Pick, in this order:
+  1. **Anatomy IN the movement** (`anatomy` with `view: "splitsquat"`, `pose: bottom|top`): the exercise's own pose with
+     the working muscle group glowing (glute, quad, hamstring, core, back, back_quad) and a mark for the cue:
+     `weight` (yellow arrow onto the front foot), `kneeDown` (back knee straight down), `lean` (torso line vs vertical),
+     `drive` (green arrow up), `leanBackBad` (red arrow, the fault). Titles: yellow = cue, red = fault, green = correct.
+     Other exercises need their own pose drawing in scripts/lib/anatomy.mjs before editing them.
+  2. **On-body highlight** (`glow`): a pulsing red (muscle) / yellow (point) / green zone with a dashed rim, placed on the
+     body part in the footage (shoulders for "hạ vai", hips for "hông song song", the front foot for "đạp cả bàn chân").
+  3. **Drawn guides / notes** (`guide`, `note`): arrows along a leg, a ring on the toe with its words.
+  4. A close-up from another take (B-roll) when the detail is small (the heel turn).
+- From the reference: red translucent glow painted on the muscle in the footage ("LƯNG DƯỚI"), a small yellow-framed
+  anatomy inset, full-screen glowing anatomy for "gồng lên cực kỳ nhiều", yellow lines along the spine / between the
+  shoulder blades, an angle marker ("30-45°"), red titles for a fault ("Dốc quá cao"), green for fine ("Không vấn đề gì!").
+- **No text on text.** One zone each: titles at the top, cue labels near the middle, notes beside their point, captions
+  at the bottom. `hpf_reel.py` (text_layout) moves a note under a label, a label under a title, keeps notes above the
+  captions and hides labels during an anatomy scene. Look at a snapshot sheet before rendering anyway.
+
 ## Status
 Builder: `hpf_reel.py spec.json` (same spec as founder-reels/make_reel.py) with the beats `label`, `guide`, `note`, `fault`,
 `punch`, `anatomy`, `title` (references/reel-json.md). Done: HPF 1 and HPF 2 (split squat, from DJI 0373 / 0374 / 0375).

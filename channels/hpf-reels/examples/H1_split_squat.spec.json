@@ -109,6 +109,20 @@
    "text": "1. Bước dài 1 chân ra sau"
   },
   {
+   "type": "guide",
+   "at": 9.5,
+   "to": 11.2,
+   "shapes": [
+    {
+     "type": "arrow",
+     "x1": 380,
+     "y1": 1150,
+     "x2": 180,
+     "y2": 1790
+    }
+   ]
+  },
+  {
    "type": "label",
    "at": 81.3,
    "to": 83.7,
@@ -156,23 +170,36 @@
    "color": "red",
    "text": "Ngón út chạm sàn",
    "tx": 560,
-   "ty": 860
+   "ty": 900
   },
   {
    "type": "label",
    "at": 24.4,
-   "to": 30.0,
+   "to": 27.6,
    "text": "4. Dồn trọng tâm vào chân trước"
   },
   {
-   "type": "note",
-   "at": 29.0,
-   "to": 30.0,
-   "px": 680,
-   "py": 1620,
-   "text": "Trọng tâm",
-   "tx": 700,
-   "ty": 1250
+   "type": "anatomy",
+   "view": "splitsquat",
+   "at": 27.7,
+   "to": 30.1,
+   "pose": "bottom",
+   "highlight": [
+    "quad",
+    "glute"
+   ],
+   "marks": [
+    "weight"
+   ],
+   "title": "TRỌNG TÂM",
+   "labels": [
+    {
+     "text": "Chân trước",
+     "at": 28.6,
+     "x": 774,
+     "y": 1640
+    }
+   ]
   },
   {
    "type": "label",
@@ -181,24 +208,50 @@
    "text": "Hạ vai, giữ tạ không lắc"
   },
   {
+   "type": "glow",
+   "at": 72.6,
+   "to": 76.6,
+   "cx": 220,
+   "cy": 600,
+   "rx": 130,
+   "ry": 80,
+   "color": "yellow"
+  },
+  {
    "type": "label",
    "at": 34.2,
-   "to": 44.5,
+   "to": 35.3,
    "text": "5. Gập gối chân sau, ngồi xuống"
   },
   {
-   "type": "guide",
+   "type": "anatomy",
+   "view": "splitsquat",
    "at": 35.4,
    "to": 38.9,
-   "shapes": [
+   "pose": "bottom",
+   "highlight": [
+    "glute",
+    "quad"
+   ],
+   "marks": [
+    "kneeDown"
+   ],
+   "title": "GẬP GỐI SAU",
+   "labels": [
     {
-     "type": "arrow",
-     "x1": 300,
-     "y1": 1380,
-     "x2": 300,
-     "y2": 1700
+     "text": "Gối sau hạ thẳng xuống",
+     "at": 36.2,
+     "x": 540,
+     "y": 1660,
+     "size": 54
     }
    ]
+  },
+  {
+   "type": "label",
+   "at": 39.1,
+   "to": 44.5,
+   "text": "Ngồi xuống, giữ góc chân cao"
   },
   {
    "type": "label",
@@ -207,10 +260,30 @@
    "text": "Hông song song, hướng về trước"
   },
   {
+   "type": "glow",
+   "at": 95.6,
+   "to": 97.8,
+   "cx": 420,
+   "cy": 1000,
+   "rx": 160,
+   "ry": 110,
+   "color": "red"
+  },
+  {
    "type": "label",
    "at": 53.6,
    "to": 56.8,
    "text": "Đạp bằng cả bàn chân trước"
+  },
+  {
+   "type": "glow",
+   "at": 54.0,
+   "to": 56.8,
+   "cx": 680,
+   "cy": 1530,
+   "rx": 160,
+   "ry": 60,
+   "color": "yellow"
   },
   {
    "type": "broll",
@@ -227,21 +300,55 @@
   {
    "type": "label",
    "at": 111.8,
-   "to": 115.5,
+   "to": 113.3,
    "text": "Đứng dậy bị ngửa người ra sau",
    "kind": "bad"
   },
   {
    "type": "fault",
    "at": 111.8,
-   "to": 115.5,
+   "to": 113.3,
    "y": 820
   },
   {
-   "type": "label",
+   "type": "anatomy",
+   "view": "splitsquat",
+   "at": 113.4,
+   "to": 115.5,
+   "pose": "top",
+   "highlight": [
+    "back"
+   ],
+   "marks": [
+    "leanBackBad"
+   ],
+   "title": "NGỬA RA SAU",
+   "titleColor": "#FF3B2F",
+   "labels": [
+    {
+     "text": "Mất trọng tâm chân trước",
+     "at": 114.0,
+     "x": 540,
+     "y": 1660,
+     "size": 50,
+     "color": "#FF3B2F"
+    }
+   ]
+  },
+  {
+   "type": "anatomy",
+   "view": "splitsquat",
    "at": 122.2,
    "to": 124.2,
-   "text": "Hơi xoay người về chân trụ"
+   "pose": "top",
+   "highlight": [
+    "core"
+   ],
+   "marks": [
+    "lean"
+   ],
+   "title": "XOAY NHẸ VỀ CHÂN TRỤ",
+   "titleSize": 66
   },
   {
    "type": "guide",
@@ -259,34 +366,24 @@
   },
   {
    "type": "anatomy",
+   "view": "splitsquat",
    "at": 130.1,
    "to": 133.2,
+   "pose": "top",
    "highlight": [
     "glute"
+   ],
+   "marks": [
+    "drive"
    ],
    "title": "CƠ MÔNG",
    "labels": [
     {
      "text": "Kéo căng",
      "at": 131.5,
-     "x": 540,
-     "y": 1560
-    }
-   ],
-   "arrows": [
-    {
-     "x1": 150,
-     "y1": 640,
-     "x2": 360,
-     "y2": 740,
-     "at": 131.5
-    },
-    {
-     "x1": 930,
-     "y1": 640,
-     "x2": 720,
-     "y2": 740,
-     "at": 131.5
+     "x": 420,
+     "y": 1660,
+     "color": "#35E06B"
     }
    ]
   },
@@ -297,11 +394,14 @@
    "text": "Giữ thẳng người, đạp mạnh lên"
   },
   {
-   "type": "label",
-   "at": 144.0,
+   "type": "glow",
+   "at": 143.0,
    "to": 144.5,
-   "text": "Mông được kéo căng",
-   "kind": "ok"
+   "cx": 560,
+   "cy": 1120,
+   "rx": 170,
+   "ry": 130,
+   "color": "red"
   },
   {
    "type": "label",

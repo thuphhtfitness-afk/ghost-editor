@@ -48,3 +48,60 @@ export function anatomySvg({ highlight = ["glute"], side = "both", id = "anat", 
   ${["L", "R"].map((s) => order.map((n) => muscle(n, s)).join("")).join("")}
 </svg>`;
 }
+
+// ---- the exercise in motion: a side-view split squat (the client faces right, front leg on the right) -------------
+// Joints per pose in a 800x1000 box; muscles are drawn along the limbs; `highlight` names the working groups
+// (glute, quad, hamstring, calf, core, back_quad) of the FRONT leg unless prefixed back_. Marks show what the coach
+// says: weight onto the front foot, the back knee going down, the torso leaning slightly forward, the drive up.
+export const SPLIT_POSES = {
+  bottom: { head: [492, 250], neck: [478, 312], sh: [470, 340], hip: [420, 640], fk: [598, 700], fa: [566, 896], ft: [650, 930], fh: [540, 932],
+            bk: [336, 884], ba: [178, 892], bt: [126, 930], hand: [486, 640] },
+  top:    { head: [470, 150], neck: [462, 212], sh: [458, 240], hip: [430, 540], fk: [560, 700], fa: [566, 896], ft: [650, 930], fh: [540, 932],
+            bk: [318, 720], ba: [190, 880], bt: [130, 930], hand: [470, 540] },
+};
+const P = (a) => `${a[0].toFixed(1)},${a[1].toFixed(1)}`;
+const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+const norm = (a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1; return [-dy / L, dx / L]; };
+// a muscle belly along a->b on one side (s = +1 / -1), thickest in the middle
+function belly(a, b, s, thick, t0 = 0.08, t1 = 0.92) {
+  const n = norm(a, b), pts = [];
+  for (let i = 0; i <= 10; i++) { const t = t0 + (t1 - t0) * (i / 10), p = lerp(a, b, t), k = Math.sin(Math.PI * (i / 10)); pts.push([p[0] + n[0] * s * thick * k, p[1] + n[1] * s * thick * k]); }
+  const base = []; for (let i = 10; i >= 0; i--) { const t = t0 + (t1 - t0) * (i / 10), p = lerp(a, b, t); base.push([p[0] + n[0] * s * 6, p[1] + n[1] * s * 6]); }
+  return "M" + [...pts, ...base].map(P).join(" L") + " Z";
+}
+export function splitSquatSvg({ pose = "bottom", highlight = ["glute", "quad"], marks = [], id = "ss", w = 800, h = 1000 } = {}) {
+  const J = SPLIT_POSES[pose] || SPLIT_POSES.bottom, hot = new Set(highlight);
+  const limb = (a, b, wd) => `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#5C3E36" stroke-width="${wd}" stroke-linecap="round"/>`;
+  const bone = (a, b) => `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#EADFC4" stroke-width="9" stroke-linecap="round" opacity=".9"/>`;
+  const M = (name, d) => { const on = hot.has(name);
+    return `<path d="${d}" fill="${on ? `url(#${id}-hot)` : "#6A2A22"}" stroke="${on ? "#FFE15A" : "#2A120E"}" stroke-width="${on ? 4 : 1.5}"${on ? ` filter="url(#${id}-glow)"` : ""} opacity="${on ? 1 : .9}"/>`; };
+  // the leg shapes: silhouette first, then bones, then muscles (front leg in front of the back leg)
+  const sil = [limb(J.hip, J.bk, 104), limb(J.bk, J.ba, 66), limb(J.ba, J.bt, 40), limb(J.sh, J.hip, 168), limb(J.hip, J.fk, 120), limb(J.fk, J.fa, 72), limb(J.fh, J.ft, 40), limb(J.sh, J.hand, 46), limb(J.neck, J.head, 56)].join("");
+  const bones = [bone(J.hip, J.bk), bone(J.bk, J.ba), bone(J.hip, J.fk), bone(J.fk, J.fa), bone(J.sh, J.hip)].join("");
+  const s = Math.sign((J.fk[0] - J.hip[0]) || 1);
+  const muscles = [
+    M("back_quad", belly(J.hip, J.bk, -1, 48)), M("back_hamstring", belly(J.hip, J.bk, 1, 36)),
+    M("core", belly(J.sh, J.hip, -s, 54, 0.3, 0.95)), M("back", belly(J.sh, J.hip, s, 52, 0.05, 0.85)),
+    M("glute", `M${P([J.hip[0] - 80, J.hip[1] - 60])} C${P([J.hip[0] - 140, J.hip[1] + 4])} ${P([J.hip[0] - 96, J.hip[1] + 116])} ${P([J.hip[0] - 4, J.hip[1] + 84])} C${P([J.hip[0] + 26, J.hip[1] + 40])} ${P([J.hip[0] + 6, J.hip[1] - 44])} ${P([J.hip[0] - 80, J.hip[1] - 60])} Z`),
+    M("hamstring", belly(J.hip, J.fk, s, 48, 0.18, 0.92)), M("quad", belly(J.hip, J.fk, -s, 62, 0.08, 0.95)),
+    M("calf", belly(J.fk, J.fa, s, 40, 0.1, 0.7)),
+  ].join("");
+  const MARK = {
+    weight: (m) => { const f = lerp(J.fh, J.ft, 0.35); return `<g><line x1="${f[0]}" y1="${f[1] - 330}" x2="${f[0]}" y2="${f[1] - 40}" stroke="#FFD21E" stroke-width="12" stroke-linecap="round"/><path d="M${f[0] - 30} ${f[1] - 70} L${f[0]} ${f[1] - 20} L${f[0] + 30} ${f[1] - 70} Z" fill="#FFD21E"/><ellipse cx="${f[0]}" cy="${f[1] + 6}" rx="70" ry="14" fill="#FFD21E" opacity=".55"/></g>`; },
+    kneeDown: () => `<g><line x1="${J.bk[0]}" y1="${J.bk[1] - 200}" x2="${J.bk[0]}" y2="${J.bk[1] - 40}" stroke="#FFD21E" stroke-width="12" stroke-dasharray="26 14" stroke-linecap="round"/><path d="M${J.bk[0] - 28} ${J.bk[1] - 66} L${J.bk[0]} ${J.bk[1] - 20} L${J.bk[0] + 28} ${J.bk[1] - 66} Z" fill="#FFD21E"/></g>`,
+    lean: () => { const top = [J.hip[0] + (J.sh[0] - J.hip[0]) * 1.25, J.hip[1] + (J.sh[1] - J.hip[1]) * 1.25]; return `<line x1="${J.hip[0]}" y1="${J.hip[1]}" x2="${top[0]}" y2="${top[1]}" stroke="#FFD21E" stroke-width="8" stroke-dasharray="22 14"/><line x1="${J.hip[0]}" y1="${J.hip[1]}" x2="${J.hip[0]}" y2="${J.hip[1] - 400}" stroke="#FFFFFF" stroke-width="5" stroke-dasharray="14 12" opacity=".7"/>`; },
+    drive: () => `<g><line x1="${J.fa[0] + 120}" y1="${J.fa[1] - 20}" x2="${J.fa[0] + 120}" y2="${J.fa[1] - 330}" stroke="#35E06B" stroke-width="12" stroke-linecap="round"/><path d="M${J.fa[0] + 92} ${J.fa[1] - 296} L${J.fa[0] + 120} ${J.fa[1] - 344} L${J.fa[0] + 148} ${J.fa[1] - 296} Z" fill="#35E06B"/></g>`,
+    leanBackBad: () => `<g><path d="M${J.sh[0]} ${J.sh[1]} Q ${J.sh[0] - 160} ${J.sh[1] - 40} ${J.sh[0] - 210} ${J.sh[1] + 70}" stroke="#FF3B2F" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M${J.sh[0] - 236} ${J.sh[1] + 40} L${J.sh[0] - 210} ${J.sh[1] + 90} L${J.sh[0] - 176} ${J.sh[1] + 52} Z" fill="#FF3B2F"/></g>`,
+  };
+  const markSvg = marks.map((m, k) => `<g id="${id}-m${k}">${(MARK[m.kind || m] || (() => ""))(m)}</g>`).join("");
+  return `<svg width="${w}" height="${h}" viewBox="0 0 800 1000">
+  <defs>
+    <linearGradient id="${id}-hot" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF5A3C"/><stop offset="1" stop-color="#C2261A"/></linearGradient>
+    <filter id="${id}-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur in="SourceAlpha" stdDeviation="9" result="b"/><feFlood flood-color="#FFD21E" flood-opacity=".95"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <ellipse cx="400" cy="935" rx="360" ry="16" fill="#000" opacity=".5"/>
+  ${sil}${bones}${muscles}
+  <circle cx="${J.head[0]}" cy="${J.head[1]}" r="62" fill="#5C3E36"/>
+  ${markSvg}
+</svg>`;
+}
