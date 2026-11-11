@@ -641,38 +641,53 @@ for (const b of beatsList) {
       const icon = b.kind === "bad" ? `<svg width="44" height="44" viewBox="0 0 44 44" style="margin-left:12px;flex:none"><circle cx="22" cy="22" r="20" fill="#E5322D"/><path d="M14 14L30 30M30 14L14 30" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>`
                  : b.kind === "ok" ? `<svg width="44" height="44" viewBox="0 0 44 44" style="margin-left:12px;flex:none"><rect x="2" y="2" width="40" height="40" rx="9" fill="#2EB85C"/><path d="M12 23L19 30L32 15" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>` : "";
       const lx = b.x ?? 70, ly = b.y ?? 600;
-      inner = `<div id="${id}-in" class="ov" style="left:${lx}px;top:${ly}px;display:flex;align-items:center"><div style="background:${b.bg || "#F07A1A"};color:${b.color || "#fff"};font-family:Montserrat,sans-serif;font-weight:800;font-size:${b.size ?? 42}px;line-height:1.15;padding:10px 20px;border-radius:12px;max-width:${b.w ?? 820}px">${esc(b.text)}</div>${icon}</div>`;
+      inner = `<div id="${id}-in" class="ov" style="left:${lx}px;top:${ly}px;display:flex;align-items:center"><div style="background:${b.bg || "#7A1424"};color:${b.color || "#fff"};font-family:Montserrat,sans-serif;font-weight:800;font-size:${b.size ?? 42}px;line-height:1.15;padding:10px 20px;border-radius:12px;max-width:${b.w ?? 820}px">${esc(b.text)}</div>${icon}</div>`;
       tl.push(`ft("#${id}-in", { autoAlpha: 0, y: -12, scale: 0.92 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.22, ease: "back.out(2)" }, ${t0});`);
       beatSfx(b, t0, "ui", "label");
       break;
     }
     case "anatomy": {
-      // full-screen anatomy scene (self-drawn SVG, scripts/lib/anatomy.mjs): black stage, red floor glow, the named
-      // muscle group glowing with a yellow halo; yellow Montserrat labels and red arrows land on their words
-      const title = b.title ? `<div id="${id}-t" style="position:absolute;left:0;right:0;top:${b.titleY ?? 210}px;text-align:center;font-family:Montserrat,sans-serif;font-weight:900;font-size:${b.titleSize ?? 92}px;color:${b.titleColor || "#FFD21E"};text-shadow:0 0 18px rgba(255,170,0,.45),0 4px 0 rgba(0,0,0,.6)">${esc(b.title)}</div>` : "";
-      const labs = (b.labels || []).map((l, k) => `<div id="${id}-l${k}" style="position:absolute;left:${l.x ?? 540}px;top:${l.y ?? 400}px;transform:translateX(-50%);white-space:nowrap;font-family:Montserrat,sans-serif;font-weight:900;font-size:${l.size ?? 62}px;color:${l.color || "#FFD21E"};text-shadow:0 0 14px rgba(255,170,0,.5),0 3px 0 #5A2E00">${esc(l.text)}</div>`).join("");
-      const arrows = (b.arrows || []).map((a, k) => { const ang = Math.atan2(a.y2 - a.y1, a.x2 - a.x1), L = 30;
-        return `<g id="${id}-a${k}"><line x1="${a.x1}" y1="${a.y1}" x2="${a.x2}" y2="${a.y2}" stroke="#FF3B2F" stroke-width="10" stroke-linecap="round"/><path d="M${a.x2} ${a.y2} L${r3(a.x2 - L * Math.cos(ang - 0.5))} ${r3(a.y2 - L * Math.sin(ang - 0.5))} L${r3(a.x2 - L * Math.cos(ang + 0.5))} ${r3(a.y2 - L * Math.sin(ang + 0.5))} Z" fill="#FF3B2F"/></g>`; }).join("");
-      inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 96%, rgba(200,34,22,.62) 0%, rgba(60,10,8,.35) 32%, rgba(0,0,0,0) 62%), #000">
-        ${b.view === "splitsquat"
-          ? `<div id="${id}-fig" style="position:absolute;left:${540 - 480}px;top:${b.figY ?? 480}px;width:960px;height:1200px">${splitSquatSvg({ pose: b.pose || "bottom", highlight: b.highlight || ["glute", "quad"], marks: b.marks || [], id: `${id}-s`, w: 960, h: 1200 })}</div>`
-          : `<div id="${id}-fig" style="position:absolute;left:${540 - 330}px;top:${b.figY ?? 420}px;width:660px;height:1100px">${anatomySvg({ highlight: b.highlight || ["glute"], side: b.side || "both", id: `${id}-s`, w: 660, h: 1100 })}</div>`}
-        <svg width="1080" height="1920" style="position:absolute;left:0;top:0">${arrows}</svg>${title}${labs}</div>`;
-      tl.push(`ft("#${id}-in", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.18 }, ${t0});`);
-      tl.push(`ft("#${id}-fig", { scale: 0.9, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.45, ease: "power3.out" }, ${t0});`);
-      if (b.title) tl.push(`ft("#${id}-t", { autoAlpha: 0, y: -20 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: "back.out(2)" }, ${r3(t0 + 0.1)});`);
-      (b.labels || []).forEach((l, k) => tl.push(`ft("#${id}-l${k}", { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.28, ease: "back.out(2.2)" }, ${E(l.at ?? b.at, "anatomy label")});`));
-      (b.arrows || []).forEach((a, k) => tl.push(`ft("#${id}-a${k}", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, ${E(a.at ?? b.at, "anatomy arrow")});`));
-      if (b.captions !== true) hiddenCaps.push([t0, t1]);
+      // anatomy of the cue. Default "inset": a small card in a free corner (corner tl/tr/bl/br) over the footage, the
+      // frame behind softly blurred and dimmed so the card pops; mode "full" = the black stage. Text: white on a
+      // wine-red box (client: red / black / white only, no orange, no yellow text)
+      const WINE = b.box || "#7A1424";
+      const tag = (txt, size, extra = "") => `<span style="display:inline-block;background:${WINE};color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:${size}px;line-height:1.1;padding:8px 18px;border-radius:10px;${extra}">${esc(txt)}</span>`;
+      const full = b.mode === "full";
+      const CW = b.w ?? 520, CH = b.h ?? (b.view === "splitsquat" ? 700 : 760);
+      const FH = CH - 70 - (b.labels?.length ? 56 * b.labels.length : 0) - 24; // the figure fits between the title and the labels
+      const corner = b.corner || "tr", M = 40;
+      const cx = corner.includes("l") ? M : 1080 - M - CW, cy = corner.includes("t") ? (b.top ?? 230) : (b.bottom ?? 1440) - CH;
+      const fig = b.view === "splitsquat"
+        ? splitSquatSvg({ pose: b.pose || "bottom", highlight: b.highlight || ["glute", "quad"], marks: b.marks || [], id: `${id}-s`, w: full ? 960 : Math.min(CW - 20, FH * 0.8), h: full ? 1200 : Math.min(FH, (CW - 20) * 1.25) })
+        : anatomySvg({ highlight: b.highlight || ["glute"], side: b.side || "both", id: `${id}-s`, w: full ? 660 : FH * 0.6, h: full ? 1100 : FH });
+      const labs = (b.labels || []).map((l, k) => `<div id="${id}-l${k}" style="${full ? `position:absolute;left:${l.x ?? 540}px;top:${l.y ?? 400}px;transform:translateX(-50%)` : "margin-top:8px"};white-space:nowrap">${tag(l.text, full ? (l.size ?? 56) : Math.min(34, Math.floor((CW - 70) / (l.text.length * 0.62))))}</div>`).join("");
+      if (full) {
+        inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 96%, rgba(140,20,30,.55) 0%, rgba(40,6,10,.3) 32%, rgba(0,0,0,0) 62%), #000">
+          <div id="${id}-fig" style="position:absolute;left:${b.view === "splitsquat" ? 60 : 210}px;top:${b.figY ?? 480}px">${fig}</div>
+          ${b.title ? `<div id="${id}-t" style="position:absolute;left:0;right:0;top:${b.titleY ?? 220}px;text-align:center">${tag(b.title, b.titleSize ?? 80)}</div>` : ""}${labs}</div>`;
+      } else {
+        inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px">
+          <div style="position:absolute;inset:0;backdrop-filter:blur(${b.blur ?? 7}px) brightness(.72);-webkit-backdrop-filter:blur(${b.blur ?? 7}px) brightness(.72)"></div>
+          <div id="${id}-fig" style="position:absolute;left:${cx}px;top:${cy}px;width:${CW}px;height:${CH}px;border-radius:26px;background:radial-gradient(ellipse at 50% 100%, rgba(140,20,30,.5), rgba(0,0,0,.82) 70%);box-shadow:0 18px 50px rgba(0,0,0,.55);border:2px solid rgba(255,255,255,.18);display:flex;flex-direction:column;align-items:center;padding-top:16px;box-sizing:border-box;overflow:hidden">
+            ${b.title ? `<div id="${id}-t" style="white-space:nowrap">${tag(b.title, Math.min(b.titleSize ? Math.min(b.titleSize, 44) : 40, Math.floor((CW - 70) / (b.title.length * 0.68))))}</div>` : ""}
+            <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center">${fig}</div>
+            <div style="padding-bottom:16px;display:flex;flex-direction:column;align-items:center">${labs}</div></div></div>`;
+      }
+      tl.push(`ft("#${id}-in", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, ${t0});`);
+      tl.push(`ft("#${id}-fig", { scale: 0.86, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.35, ease: "back.out(1.6)" }, ${t0});`);
+      (b.labels || []).forEach((l, k) => tl.push(`ft("#${id}-l${k}", { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.25, ease: "power2.out" }, ${E(l.at ?? b.at, "anatomy label")});`));
+      if (full && b.captions !== true) hiddenCaps.push([t0, t1]);
       beatSfx(b, t0, "whoosh", "anatomy");
       break;
     }
     case "glow": {
-      // highlight the body part ON the footage: a soft pulsing glow (red = the muscle working, yellow = a point to watch)
-      const C = b.color === "yellow" ? "255,210,30" : b.color === "green" ? "53,224,107" : "255,52,36";
-      inner = `<div id="${id}-in" class="ov" style="left:${b.cx - b.rx}px;top:${b.cy - b.ry}px;width:${2 * b.rx}px;height:${2 * b.ry}px;border-radius:50%;transform:rotate(${b.rot ?? 0}deg);background:radial-gradient(closest-side, rgba(${C},.55), rgba(${C},.32) 60%, rgba(${C},0) 100%);outline:none;box-shadow:inset 0 0 0 5px rgba(${C},.0)"><svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;overflow:visible"><ellipse cx="50" cy="50" rx="49" ry="49" fill="none" stroke="rgb(${C})" stroke-width="1.6" stroke-dasharray="5 4" vector-effect="non-scaling-stroke" style="stroke-width:6px"/></svg></div>`;
+      // highlight the body part ON the footage: a soft pulsing glow with a dashed rim (red = the muscle working,
+      // white / yellow = a point to watch, green = correct)
+      const C = b.color === "yellow" ? "255,210,30" : b.color === "green" ? "53,224,107" : b.color === "white" ? "255,255,255" : "255,52,36";
+      inner = `<div id="${id}-in" class="ov" style="left:${b.cx - b.rx}px;top:${b.cy - b.ry}px;width:${2 * b.rx}px;height:${2 * b.ry}px;border-radius:50%;transform:rotate(${b.rot ?? 0}deg);background:radial-gradient(closest-side, rgba(${C},.55), rgba(${C},.32) 60%, rgba(${C},0) 100%)"><svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;overflow:visible"><ellipse cx="50" cy="50" rx="49" ry="49" fill="none" stroke="rgb(${C})" stroke-dasharray="5 4" vector-effect="non-scaling-stroke" style="stroke-width:6px"/></svg></div>`;
       tl.push(`ft("#${id}-in", { autoAlpha: 0, scale: 0.7 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "power2.out" }, ${t0});`);
-      tl.push(`tl.fromTo("#${id}-in", { opacity: 1 }, { opacity: 0.6, duration: 0.45, repeat: ${Math.max(0, Math.floor((t1 - t0 - 0.3) / 0.45) - 1)}, yoyo: true, immediateRender: false }, ${r3(t0 + 0.3)});`);
+      const pulses = Math.max(0, Math.floor((t1 - t0 - 0.3) / 0.45) - 1);
+      tl.push(`tl.fromTo("#${id}-in", { opacity: 1 }, { opacity: 0.6, duration: 0.45, repeat: ${pulses}, yoyo: true, immediateRender: false }, ${r3(t0 + 0.3)});`);
       break;
     }
     case "note": {
@@ -683,7 +698,7 @@ for (const b of beatsList) {
       const mark = b.ring ? `<circle cx="${px}" cy="${py}" r="${b.r ?? 70}" fill="none" stroke="${C}" stroke-width="8"/>`
                           : `<circle cx="${px}" cy="${py}" r="16" fill="${C}"/><circle cx="${px}" cy="${py}" r="34" fill="none" stroke="${C}" stroke-width="4" opacity=".6"/>`;
       inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px"><svg width="1080" height="1920" style="position:absolute;left:0;top:0;filter:drop-shadow(0 0 8px ${C})">${b.line === false ? "" : `<line x1="${px}" y1="${py}" x2="${tx}" y2="${ty + 40}" stroke="${C}" stroke-width="4" opacity=".9"/>`}${mark}</svg>
-        <div style="position:absolute;left:${tx}px;top:${ty}px;transform:translate(-50%,-100%);white-space:nowrap;font-family:Montserrat,sans-serif;font-weight:900;font-size:${b.size ?? 64}px;color:${C};text-shadow:0 3px 0 rgba(0,0,0,.65),0 0 16px rgba(0,0,0,.5)">${esc(b.text)}</div></div>`;
+        <div style="position:absolute;left:${tx}px;top:${ty}px;transform:translate(-50%,-100%);white-space:nowrap;font-family:Montserrat,sans-serif;font-weight:900;font-size:${b.size ?? 60}px;color:#fff;background:${b.color === "red" ? "#7A1424" : "rgba(0,0,0,.55)"};padding:6px 16px;border-radius:10px;text-shadow:0 3px 0 rgba(0,0,0,.65),0 0 16px rgba(0,0,0,.5)">${esc(b.text)}</div></div>`;
       tl.push(`ft("#${id}-in", { autoAlpha: 0, scale: 0.85, transformOrigin: "${px}px ${py}px" }, { autoAlpha: 1, scale: 1, duration: 0.25, ease: "back.out(2)" }, ${t0});`);
       beatSfx(b, t0, "ui", "note");
       break;
@@ -875,7 +890,9 @@ for (const b of beatsList) {
           : `ft("#${id}-w${i}", { autoAlpha: 0, scale: 0.82, filter: "blur(14px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.24, ease: "power3.out" }, ${at});`);
         return `<span id="${id}-w${i}" style="display:inline-block;margin:0 0.14em">${esc(w.text)}</span>`;
       }).join(" ");
-      inner = `<div id="${id}-in" class="ov title" style="left:${b.x ?? 60}px;right:${b.x ?? 60}px;top:${b.y ?? 190}px;z-index:4;text-align:${b.align ?? "center"};font-family:'${b.font ?? brand.font ?? "Inter"}', Inter, sans-serif;font-size:${b.size ?? 120}px;font-weight:${b.weight ?? 900};line-height:0.98;letter-spacing:${b.tracking ?? "-2px"};text-transform:uppercase;color:${b.color ?? "#fff"};text-shadow:${b.glow ? `0 0 28px ${b.glow}, ` : ""}0 6px 24px rgba(0,0,0,.45)">${spans}</div>`;
+      // bg: the words sit in a box (HPF: white words on a wine-red box)
+      const body = b.bg ? `<span style="display:inline-block;background:${b.bg};padding:.1em .32em .14em;border-radius:.14em;line-height:1.05">${spans}</span>` : spans;
+      inner = `<div id="${id}-in" class="ov title" style="left:${b.x ?? 60}px;right:${b.x ?? 60}px;top:${b.y ?? 190}px;z-index:4;text-align:${b.align ?? "center"};font-family:'${b.font ?? brand.font ?? "Inter"}', Inter, sans-serif;font-size:${b.size ?? 120}px;font-weight:${b.weight ?? 900};line-height:0.98;letter-spacing:${b.tracking ?? "-2px"};text-transform:uppercase;color:${b.color ?? "#fff"};text-shadow:${b.glow ? `0 0 28px ${b.glow}, ` : ""}0 6px 24px rgba(0,0,0,.45)">${body}</div>`;
       if (b.sfx) beatSfx(b, t0, null, "title");
       break;
     }

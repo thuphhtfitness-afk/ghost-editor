@@ -55,6 +55,14 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
   at the bottom. `hpf_reel.py` (text_layout) moves a note under a label, a label under a title, keeps notes above the
   captions and hides labels during an anatomy scene. Look at a snapshot sheet before rendering anyway.
 
+## Colours and the anatomy card (the user's latest rules; they override anything above)
+- **Text colours: red, black and white only. No orange, no yellow, no green text.** Titles and cue labels are white
+  Montserrat on a wine-red box (#7A1424); notes are white on a dark box (wine-red for a fault). Icons (red X, check)
+  and on-body glows may keep their colours; anatomy marks are white (red for the fault).
+- **The anatomy is a small card in a free corner** (`anatomy` default mode, `corner: tl|tr|bl|br`, pick the empty
+  side of the frame), with the footage behind it softly blurred and dimmed so the card pops. Its title and labels are
+  white on wine red inside the card. `mode: "full"` (the black full-screen stage) only when the user asks for it.
+
 ## Status
 Builder: `hpf_reel.py spec.json` (same spec as founder-reels/make_reel.py) with the beats `label`, `guide`, `note`, `fault`,
 `punch`, `anatomy`, `title` (references/reel-json.md). Done: HPF 1 and HPF 2 (split squat, from DJI 0373 / 0374 / 0375).

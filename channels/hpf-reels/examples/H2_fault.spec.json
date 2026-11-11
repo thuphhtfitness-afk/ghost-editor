@@ -53,10 +53,10 @@
    "text": "LỖI HAY GẶP",
    "font": "Montserrat",
    "weight": 900,
-   "color": "#FF3B2F",
-   "size": 104,
+   "color": "#FFFFFF",
+   "size": 96,
    "y": 210,
-   "glow": true
+   "bg": "#7A1424"
   },
   {
    "type": "title",
@@ -67,7 +67,8 @@
    "weight": 900,
    "color": "#FFFFFF",
    "size": 64,
-   "y": 340
+   "y": 330,
+   "bg": "#7A1424"
   },
   {
    "type": "fault",
@@ -136,11 +137,10 @@
    "labels": [
     {
      "text": "Chân trước",
-     "at": 16.6,
-     "x": 774,
-     "y": 1640
+     "at": 16.6
     }
-   ]
+   ],
+   "corner": "tr"
   },
   {
    "type": "anatomy",
@@ -155,7 +155,8 @@
     "lean"
    ],
    "title": "XOAY NHẸ VỀ CHÂN TRỤ",
-   "titleSize": 66
+   "titleSize": 66,
+   "corner": "tr"
   },
   {
    "type": "anatomy",
@@ -174,12 +175,10 @@
    "labels": [
     {
      "text": "Gối sau hạ thẳng xuống",
-     "at": 24.7,
-     "x": 540,
-     "y": 1660,
-     "size": 54
+     "at": 24.7
     }
-   ]
+   ],
+   "corner": "tr"
   },
   {
    "type": "label",
@@ -200,8 +199,8 @@
     "leanBackBad"
    ],
    "title": "ĐỪNG NGẢ RA SAU",
-   "titleColor": "#FF3B2F",
-   "titleSize": 72
+   "titleSize": 72,
+   "corner": "tr"
   },
   {
    "type": "label",
@@ -236,17 +235,13 @@
     "drive"
    ],
    "title": "ĐẠP THẲNG LÊN",
-   "titleColor": "#35E06B",
    "labels": [
     {
      "text": "Không ngả ra sau",
-     "at": 63.0,
-     "x": 540,
-     "y": 1660,
-     "color": "#35E06B",
-     "size": 54
+     "at": 63.0
     }
-   ]
+   ],
+   "corner": "tr"
   }
  ]
 }

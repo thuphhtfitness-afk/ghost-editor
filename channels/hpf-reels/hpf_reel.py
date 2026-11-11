@@ -181,6 +181,8 @@ def text_layout(beats):
         if b["type"] == "note":
             sz = b.get("size", 64); w = len(b["text"]) * sz * 0.6; tx = b.get("tx", 540); ty = b.get("ty", 760)
             return (tx - w / 2, ty - sz * 1.25, tx + w / 2, ty)
+        if b["type"] == "glow":  # an on-body highlight is not text, but words must not hide it
+            return (b["cx"] - b["rx"], b["cy"] - b["ry"], b["cx"] + b["rx"], b["cy"] + b["ry"])
         if b["type"] == "title":
             sz = b.get("size", 96); y = b.get("y", 190)
             return (60, y, 1020, y + sz * 1.25)
@@ -204,6 +206,10 @@ def text_layout(beats):
                     p["ty"] = round(bq[3] + p.get("size", 64) * 1.25 + 30)
                 elif p["type"] == "label" and q["type"] == "title":
                     p["y"] = round(bq[3] + 30)
+                elif p["type"] in ("label", "note") and q["type"] == "glow":  # move the words off the highlighted part
+                    key = "y" if p["type"] == "label" else "ty"
+                    above = bq[1] - (bp[3] - bp[1]) - 30
+                    p[key] = round(above if above > 260 else bq[3] + 30 + (bp[3] - bp[1] if p["type"] == "note" else 0))
         for p in beats:
             if p["type"] == "note" and p.get("ty", 760) > 1480: p["ty"] = 1480  # keep clear of the captions
     return beats

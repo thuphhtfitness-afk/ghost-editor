@@ -86,10 +86,10 @@
    "text": "SPLIT SQUAT",
    "font": "Montserrat",
    "weight": 900,
-   "color": "#FFD21E",
-   "size": 112,
+   "color": "#FFFFFF",
+   "size": 96,
    "y": 210,
-   "glow": true
+   "bg": "#7A1424"
   },
   {
    "type": "title",
@@ -99,8 +99,9 @@
    "font": "Montserrat",
    "weight": 900,
    "color": "#FFFFFF",
-   "size": 80,
-   "y": 350
+   "size": 64,
+   "y": 330,
+   "bg": "#7A1424"
   },
   {
    "type": "label",
@@ -195,11 +196,10 @@
    "labels": [
     {
      "text": "Chân trước",
-     "at": 28.6,
-     "x": 774,
-     "y": 1640
+     "at": 28.6
     }
-   ]
+   ],
+   "corner": "tr"
   },
   {
    "type": "label",
@@ -240,12 +240,10 @@
    "labels": [
     {
      "text": "Gối sau hạ thẳng xuống",
-     "at": 36.2,
-     "x": 540,
-     "y": 1660,
-     "size": 54
+     "at": 36.2
     }
-   ]
+   ],
+   "corner": "tr"
   },
   {
    "type": "label",
@@ -323,17 +321,13 @@
     "leanBackBad"
    ],
    "title": "NGỬA RA SAU",
-   "titleColor": "#FF3B2F",
    "labels": [
     {
      "text": "Mất trọng tâm chân trước",
-     "at": 114.0,
-     "x": 540,
-     "y": 1660,
-     "size": 50,
-     "color": "#FF3B2F"
+     "at": 114.0
     }
-   ]
+   ],
+   "corner": "tr"
   },
   {
    "type": "anatomy",
@@ -348,7 +342,8 @@
     "lean"
    ],
    "title": "XOAY NHẸ VỀ CHÂN TRỤ",
-   "titleSize": 66
+   "titleSize": 66,
+   "corner": "tr"
   },
   {
    "type": "guide",
@@ -380,12 +375,10 @@
    "labels": [
     {
      "text": "Kéo căng",
-     "at": 131.5,
-     "x": 420,
-     "y": 1660,
-     "color": "#35E06B"
+     "at": 131.5
     }
-   ]
+   ],
+   "corner": "tr"
   },
   {
    "type": "label",

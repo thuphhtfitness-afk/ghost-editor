@@ -79,6 +79,45 @@
    "last": "2026-11-11",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "anatomy-nh-h-n-t",
+   "say": "anatomy nhỏ hơn, đặt ở góc còn trống, làm mờ background xung quanh cho nổi ảnh",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-11",
+   "last": "2026-11-11",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "title-khung-r-u-tr",
+   "say": "title: khung đỏ rượu / đỏ trầm, chữ trắng",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-11",
+   "last": "2026-11-11",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "ch-d-ng-en-tr",
+   "say": "chỉ dùng đỏ, đen, trắng cho text, không dùng màu cam",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-11",
+   "last": "2026-11-11",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],
