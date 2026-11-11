@@ -579,7 +579,7 @@ for (const b of beatsList) {
   }
   let inner = "", css = "";
   // cards and the reaction slot avoid the face too (unless the spec pins them)
-  const CARD_H = { big: b.sub ? 230 : 180, chips: 200, strike: 190, quote: 90 + (b.lines || []).length * 70, list: 60 + (b.lines || []).length * 64 };
+  const CARD_H = { big: b.sub ? 230 : 180, chips: 200, strike: 190, quote: 90 + (b.lines || []).length * 70, list: 60 + (b.lines || []).length * 64, compare: 150 + Math.max(1, ...(b.cols || []).map((c) => (c.lines || []).length)) * 78 };
   let cy = CARD.y;
   if (CARD_H[b.type] && spec.layout?.cardY === undefined && face) {
     const pc = placer.card(t0, t1, CARD_H[b.type] * (spec.layout?.compact ? 0.8 : 1));
@@ -632,6 +632,27 @@ for (const b of beatsList) {
       tl.push(`ft("#${id}-line", { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: "power2.out" }, ${st});`);
       tl.push(`ft("#${id}-x", { autoAlpha: 0, scale: 2.2 }, { autoAlpha: 1, scale: 1, duration: 0.25, ease: "back.out(2)" }, ${r3(st + 0.15)});`);
       beatSfx(b, st, "whoosh", "strike");
+      break;
+    }
+    case "compare": {
+      // side-by-side columns (2-4) compared on the spoken words: the frame opens with every column dim, a column
+      // lights up (tone border) when it is first spoken, its lines land on their words, and the column spoken before
+      // it stays but steps back, so the viewer ends on the whole comparison
+      const cols = b.cols || [];
+      const W = b.w ?? 980, x0 = Math.round((1080 - W) / 2);
+      const colHtml = cols.map((c, i) => `<div id="${id}-c${i}" class="cmp-col" style="--tone:${c.tone || "#FFD166"}"><div class="cmp-title">${esc(c.title)}</div>${(c.lines || []).map((l, j) => `<div id="${id}-c${i}-l${j}" class="cmp-line">${esc(l.text)}</div>`).join("")}</div>`).join("");
+      inner = box(`${b.header ? `<div class="q-head">${esc(b.header)}</div>` : ""}<div class="cmp-row">${colHtml}</div>`, x0, cy, W);
+      tl.push(enter(`#${id}-in`, t0, "slide"));
+      const order = cols.map((c, i) => ({ i, at: E(c.at ?? (c.lines?.[0]?.at ?? b.at), "compare column") })).sort((p, q) => p.at - q.at);
+      order.forEach(({ i, at }, k) => {
+        const tone = cols[i].tone || "#FFD166";
+        tl.push(`ft("#${id}-c${i}", { opacity: 0.35, borderColor: "rgba(255,255,255,0.12)" }, { opacity: 1, borderColor: "${tone}", duration: 0.25, ease: "power2.out" }, ${at});`);
+        if (k > 0) { const p = order[k - 1].i; tl.push(`tl.fromTo("#${id}-c${p}", { opacity: 1, borderColor: "${cols[p].tone || "#FFD166"}" }, { opacity: 0.7, borderColor: "rgba(255,255,255,0.12)", duration: 0.25, immediateRender: false }, ${at});`); }
+        (cols[i].lines || []).forEach((l, j) => {
+          tl.push(`ft("#${id}-c${i}-l${j}", { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.28, ease: "power3.out" }, ${E(l.at ?? at, "compare line")});`);
+          if (l.sfx && l.sfx !== "none") beatSfx(l, E(l.at ?? at, "compare line"), "ui", "compare line");
+        });
+      });
       break;
     }
     case "quote": {
@@ -838,8 +859,10 @@ for (const b of beatsList) {
   const runs = [];
   for (const [a, b, sh] of [...splitWins].sort((x, y) => x[0] - y[0])) { if (runs.length && a <= runs.at(-1)[1] + 0.6) runs.at(-1)[1] = Math.max(runs.at(-1)[1], b); else runs.push([a, b, sh]); }
   for (const [a, b, sh] of runs) {
-    tl.push(`tl.to("#pip", { y: ${sh}, duration: 0.28, ease: "power3.inOut" }, ${r3(Math.max(0, a - 0.05))});`);
-    tl.push(`tl.to("#pip", { y: 0, duration: 0.28, ease: "power3.inOut" }, ${r3(b - 0.2)});`);
+    // fromTo with explicit ends + immediateRender:false: a renderer that seeks to any frame (snapshots, parallel
+    // render workers) then gets the same plate position as a straight play-through
+    tl.push(`tl.fromTo("#pip", { y: 0 }, { y: ${sh}, duration: 0.28, ease: "power3.inOut", immediateRender: false }, ${r3(Math.max(0, a - 0.05))});`);
+    tl.push(`tl.fromTo("#pip", { y: ${sh} }, { y: 0, duration: 0.28, ease: "power3.inOut", immediateRender: false }, ${r3(b - 0.2)});`);
   }
   spec._splitRuns = runs;
 }
@@ -966,13 +989,18 @@ const fxSpecs = [].concat(look.shader || []).map((o) => (typeof o === "string" ?
 const fxHtml = fxSpecs.map((o, i) => shaderLayerHtml({ id: `look-fx${i}`, z: o.over === "all" ? 7 : 2, ...o })).join("\n  ");
 const shaderScript = fxSpecs.length || motionCtx.usesShaders ? installShaderRuntime(proj) : "";
 
+// GSAP from the skill (templates/vendor/gsap.min.js, same 3.14.2) when present: a render worker that cannot reach the
+// CDN (offline, a proxy hiccup) otherwise fails the whole render on its last frame
+const gsapSrc = fs.existsSync(path.join(SKILL, "templates", "vendor", "gsap.min.js"))
+  ? (fs.mkdirSync(path.join(A, "vendor"), { recursive: true }), fs.copyFileSync(path.join(SKILL, "templates", "vendor", "gsap.min.js"), path.join(A, "vendor", "gsap.min.js")), "assets/vendor/gsap.min.js")
+  : "https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js";
 const html = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=${W}, height=${H}" />
 <title>${esc(spec.title || "reel")}</title>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script src="${gsapSrc}"></script>
 <style>
   @font-face { font-family: Geist; src: url(assets/fonts/geist-latin.woff2) format("woff2"); font-weight: 100 900; }
   @font-face { font-family: GeistMono; src: url(assets/fonts/geist-mono-latin.woff2) format("woff2"); }
@@ -980,6 +1008,10 @@ const html = `<!doctype html>
   @font-face { font-family: Inter; src: url(assets/fonts/inter-latin.woff2) format("woff2"); font-weight: 100 900; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
   @font-face { font-family: Montserrat; src: url(assets/fonts/montserrat-cyrillic.woff2) format("woff2"); font-weight: 100 900; unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
   @font-face { font-family: Montserrat; src: url(assets/fonts/montserrat-latin.woff2) format("woff2"); font-weight: 100 900; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: Inter; src: url(assets/fonts/inter-latin-ext.woff2) format("woff2"); font-weight: 100 900; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: Inter; src: url(assets/fonts/inter-vietnamese.woff2) format("woff2"); font-weight: 100 900; unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
+  @font-face { font-family: Montserrat; src: url(assets/fonts/montserrat-latin-ext.woff2) format("woff2"); font-weight: 100 900; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: Montserrat; src: url(assets/fonts/montserrat-vietnamese.woff2) format("woff2"); font-weight: 100 900; unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; }
   ${fontFaces}
   body { margin: 0; background: #000; }
   #root { position: relative; width: ${W}px; height: ${H}px; overflow: hidden; background: #000; font-family: ${UI_FONT}, system-ui, sans-serif; }
@@ -1007,6 +1039,10 @@ const html = `<!doctype html>
   .strike-wrap { position: relative; display: inline-block; }
   .strike-line { position: absolute; left: -8px; right: -8px; top: 52%; height: 12px; background: #FF453A; border-radius: 6px; transform-origin: 0 50%; }
   .strike-x { position: absolute; right: 36px; top: 18px; font-size: 110px; color: #FF453A; font-weight: 900; }
+  .cmp-row { display: flex; gap: 14px; }
+  .cmp-col { flex: 1; min-width: 0; border: 3px solid rgba(255,255,255,.12); border-radius: 20px; padding: 16px 16px 12px; opacity: .35; }
+  .cmp-title { font-size: 36px; font-weight: 800; line-height: 1.1; color: var(--tone); margin-bottom: 10px; }
+  .cmp-line { font-size: 31px; font-weight: 600; line-height: 1.22; margin: 0 0 10px; }
   .q-head { font-size: 28px; text-transform: uppercase; letter-spacing: 3px; color: #aaa; margin-bottom: 12px; }
   .q-line { font-size: 46px; font-weight: 600; line-height: 1.2; margin: 6px 0; }
   .q-big { font-size: 60px; font-weight: 800; line-height: 1.1; color: #FFD166; margin-top: 12px; }

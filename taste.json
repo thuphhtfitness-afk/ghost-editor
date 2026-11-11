@@ -1,6 +1,38 @@
 {
  "version": 1,
  "about": "Your corrections across reels, recorded with scripts/taste.py add (from: user, quoted as 'you said') next to rules the skill learned (from: skill). A prior, not evidence: reel.json always wins.",
- "rules": [],
- "reels": []
+ "rules": [
+  {
+   "id": "b-c-nh-nh-n",
+   "say": "bỏ cảnh nhân viên bình thường trám ảnh coach đi, cảnh đó ko hợp lắm",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "/tmp/claude-0/-home-user/930efd13-33ee-5335-ac52-4e221b36c4c1/scratchpad/reel1111"
+   ],
+   "first": "2026-11-11",
+   "last": "2026-11-11",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "v-d-g-ng-v",
+   "say": "ví dụ gương vỡ thì cho b roll gương vỡ + sound effect gương vỡ",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "/tmp/claude-0/-home-user/930efd13-33ee-5335-ac52-4e221b36c4c1/scratchpad/reel1111"
+   ],
+   "first": "2026-11-11",
+   "last": "2026-11-11",
+   "times": 1,
+   "active": true
+  }
+ ],
+ "reels": [],
+ "updated": "2026-11-11"
 }

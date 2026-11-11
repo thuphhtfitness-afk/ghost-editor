@@ -513,13 +513,16 @@ export function buildTemplateCaptions(words, cap, ctx, hidden = []) {
 }
 
 // ---------- standalone page helpers ----------
-const RANGES = { latin: "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD", cyrillic: "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116" };
+const RANGES = { latin: "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD", cyrillic: "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116", "latin-ext": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF", vietnamese: "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB" };
+// families that also ship latin-ext + vietnamese subsets (templates/fonts/<stem>-vietnamese.woff2)
+const VI_FAMS = new Set(["Inter", "Montserrat"]);
+const subsets = (f) => (VI_FAMS.has(f) ? ["latin", "cyrillic", "latin-ext", "vietnamese"] : ["latin", "cyrillic"]);
 const FILE_STEM = { Inter: "inter", Montserrat: "montserrat", Unbounded: "unbounded", Oswald: "oswald", "JetBrains Mono": "jetbrains-mono", Geist: "geist" };
 // @font-face rules for the families a caption uses, from <fontsUrl>/<stem>-{latin,cyrillic}.woff2
 export function fontFaceCss(families, fontsUrl = "assets/fonts") {
-  return [...new Set(families)].flatMap((f) => ["latin", "cyrillic"].map((r) => `@font-face { font-family: "${f}"; src: url(${fontsUrl}/${FILE_STEM[f]}-${r}.woff2) format("woff2"); font-weight: 100 900; unicode-range: ${RANGES[r]}; }`)).join("\n  ");
+  return [...new Set(families)].flatMap((f) => subsets(f).map((r) => `@font-face { font-family: "${f}"; src: url(${fontsUrl}/${FILE_STEM[f]}-${r}.woff2) format("woff2"); font-weight: 100 900; unicode-range: ${RANGES[r]}; }`)).join("\n  ");
 }
-export const fontFiles = (families) => [...new Set(families)].flatMap((f) => [`${FILE_STEM[f]}-latin.woff2`, `${FILE_STEM[f]}-cyrillic.woff2`]).filter((f) => !f.startsWith("geist-cyr"));
+export const fontFiles = (families) => [...new Set(families)].flatMap((f) => subsets(f).map((r) => `${FILE_STEM[f]}-${r}.woff2`)).filter((f) => !f.startsWith("geist-cyr"));
 
 // the seek-safe helper every GSAP line above assumes. Same contract as build.mjs's ft(), but the initial
 // state is applied with gsap.set at load (a tl.set at 0 does not render while the playhead sits at 0,
