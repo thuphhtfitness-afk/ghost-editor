@@ -634,6 +634,50 @@ for (const b of beatsList) {
       beatSfx(b, st, "whoosh", "strike");
       break;
     }
+    case "quotestack": {
+      // Refined-Ambition-style quote: the spoken words stack up on their own times, filler words small in a serif,
+      // key words big heavy italic sans (every other one in an accent); a sentence end starts a new page. The
+      // stack replaces the captions for its window; bg "black" puts the line on a black screen (the punch line).
+      const keys = new Set((b.keywords || []).map((k) => k.toLowerCase()));
+      const pal = b.palette || ["#FFFFFF", "#E8A33A", "#FFFFFF", "#7FB7C0", "#FFFFFF", "#D8566B", "#F2E35A"];
+      const FS = b.fillerSize ?? 52, KS = b.keySize ?? 124, X = b.x ?? 100, BOTTOM = b.y ?? 1330;
+      const ws = words.filter((w) => w.start >= t0 - 0.05 && w.start < t1);
+      const pages = []; let page = [], line = null, nKey = 0;
+      const flush = () => { if (line) page.push(line); line = null; };
+      for (const w of ws) {
+        const raw = w.word.trim(), isKey = keys.has(core(raw).toLowerCase());
+        const lastK = page.at(-1);
+        if (isKey && !line && lastK?.key && lastK.words.length < 2) lastK.words.push(w); // "thất bại": a compound stays on one line
+        else if (isKey) { flush(); page.push({ key: true, words: [w], color: b.colors?.[core(raw).toLowerCase()] || pal[nKey++ % pal.length] }); }
+        if (!isKey) { if (!line || line.words.length >= 3) { flush(); line = { key: false, words: [] }; } line.words.push(w); }
+        if (/[.?!]$/.test(raw) || page.length + (line ? 1 : 0) >= (b.maxLines ?? 6)) { flush(); if (page.length) pages.push(page); page = []; }
+      }
+      flush(); if (page.length) pages.push(page);
+      const lh = (l) => (l.key ? KS * 0.95 : FS * 1.18);
+      const indents = b.indents || [0, 36, 8, 64, 20, 48];
+      // a soft shade under the stack keeps white type readable on bright footage (off with shade: false)
+      let html = b.bg === "black" ? `<div id="${id}-bg" style="position:absolute;inset:0;background:#000"></div>`
+        : b.shade === false ? "" : `<div style="position:absolute;left:0;right:0;top:${BOTTOM - 640}px;height:820px;background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,.55) 45%,rgba(0,0,0,.55) 75%,rgba(0,0,0,0) 100%)"></div>`;
+      pages.forEach((pg, pi) => {
+        const H = pg.reduce((h, l) => h + lh(l), 0); let y = BOTTOM - H;
+        const pStart = pg[0].words[0].start, pEnd = pi + 1 < pages.length ? pages[pi + 1][0].words[0].start : t1;
+        html += `<div id="${id}-p${pi}" style="position:absolute;inset:0">`;
+        pg.forEach((l, li) => {
+          const st = l.key ? `font-family:'Inter Tight Italic','Inter Tight',sans-serif;font-style:italic;font-weight:800;font-size:${KS}px;letter-spacing:-3px;color:${l.color};line-height:1`
+                           : `font-family:'Playfair Display',serif;font-weight:500;font-size:${FS}px;color:#fff;line-height:1.1`;
+          html += `<div style="position:absolute;left:${X + indents[li % indents.length]}px;top:${Math.round(y)}px;white-space:nowrap;${st};text-shadow:0 2px 14px rgba(0,0,0,.45)">` +
+            l.words.map((w, wi) => `<span id="${id}-p${pi}-l${li}-w${wi}">${esc(w.word.trim())}</span>`).join(" ") + `</div>`;
+          l.words.forEach((w, wi) => tl.push(`ft("#${id}-p${pi}-l${li}-w${wi}", { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.16, ease: "power2.out" }, ${r3(w.start)});`));
+          y += lh(l);
+        });
+        html += `</div>`;
+        if (pi + 1 < pages.length) tl.push(`tl.fromTo("#${id}-p${pi}", { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.12, immediateRender: false }, ${r3(pEnd - 0.06)});`);
+      });
+      inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px">${html}</div>`;
+      tl.push(`ft("#${id}-in", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.08 }, ${t0});`);
+      hiddenCaps.push([t0, t1]);
+      break;
+    }
     case "compare": {
       // side-by-side columns (2-4) compared on the spoken words: the frame opens with every column dim, a column
       // lights up (tone border) when it is first spoken, its lines land on their words, and the column spoken before
@@ -717,11 +761,14 @@ for (const b of beatsList) {
       const [z0, z1] = b.zoom ?? [1.0, 1.08];
       const bh = b.mode === "split" ? (b.h ?? 960) : 1920;
       if (b.mode === "split") splitWins.push([t0, t1, b.shift ?? 560]);
-      inner = `<div id="${id}-in" class="ov broll" style="left:0;top:0;width:${W}px;height:${bh}px;overflow:hidden;background:#000">
-        <video id="${id}-v" src="${src}" data-start="${t0}" data-duration="${dur}" data-media-start="${b.in ?? 0}" muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;${b.grade ? `filter:${b.grade};` : ""}"></video></div>`;
-      tl.push(`ft("#${id}-in", { autoAlpha: 0, filter: "blur(22px)", scale: 1.06 }, { autoAlpha: 1, filter: "blur(0px)", scale: 1, duration: 0.2, ease: "power2.out" }, ${t0});`);
+      inner = `<div id="${id}-in" class="ov broll" style="left:0;top:0;width:${W}px;height:${bh}px;overflow:hidden">
+        <video id="${id}-v" src="${src}" data-start="${t0}" data-duration="${b.cutOut ? r3(dur + 2 / FPS) : dur}" data-media-start="${b.in ?? 0}" muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;${b.grade ? `filter:${b.grade};` : ""}"></video></div>`;
+      // cutIn / cutOut: a hard cut (B-roll straight to B-roll, no blur-in and no fade back to the speaker between them)
+      if (b.cutIn) tl.push(`ft("#${id}-in", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.001 }, ${t0});`);
+      else tl.push(`ft("#${id}-in", { autoAlpha: 0, filter: "blur(22px)", scale: 1.06 }, { autoAlpha: 1, filter: "blur(0px)", scale: 1, duration: 0.2, ease: "power2.out" }, ${t0});`);
       tl.push(`ft("#${id}-v", { scale: ${z0} }, { scale: ${z1}, duration: ${dur}, ease: "none" }, ${t0});`);
-      tl.push(`tl.to("#${id}-in", { autoAlpha: 0, duration: 0.1 }, ${r3(t1 - 0.1)});`);
+      tl.push(b.cutOut ? `tl.fromTo("#${id}-in", { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.001, immediateRender: false }, ${r3(t1 + 2 / FPS)});`
+                       : `tl.to("#${id}-in", { autoAlpha: 0, duration: 0.1 }, ${r3(t1 - 0.1)});`);
       if (b.sfx) beatSfx(b, t0, null, "broll in");
       break;
     }
@@ -971,9 +1018,9 @@ if (spec.music) {
 
 // ---------- write ----------
 const FONT_NAMES = { "playfair-display": "Playfair Display", "jetbrains-mono": "JetBrains Mono", "geist-mono": "GeistMono" };
-const RANGES = { latin: "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD", cyrillic: "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116" };
-const fontFaces = fs.readdirSync(path.join(A, "fonts")).filter((f) => /-(latin|cyrillic)(-italic)?\.woff2$/.test(f)).map((f) => {
-  const m = /^(.*)-(latin|cyrillic)(-italic)?\.woff2$/.exec(f);
+const RANGES = { latin: "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD", cyrillic: "U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116", "latin-ext": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF", vietnamese: "U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB" };
+const fontFaces = fs.readdirSync(path.join(A, "fonts")).filter((f) => /-(latin-ext|vietnamese|latin|cyrillic)(-italic)?\.woff2$/.test(f)).map((f) => {
+  const m = /^(.*?)-(latin-ext|vietnamese|latin|cyrillic)(-italic)?\.woff2$/.exec(f);
   const fam = FONT_NAMES[m[1]] || m[1].split("-").map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
   if (["Geist", "Inter", "Montserrat"].includes(fam)) return "";
   return `@font-face { font-family: "${fam}"; src: url(assets/fonts/${f}) format("woff2"); font-weight: 100 900;${m[3] ? " font-style: italic;" : ""} unicode-range: ${RANGES[m[2]]}; }`;
