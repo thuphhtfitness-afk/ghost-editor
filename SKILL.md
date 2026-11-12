@@ -207,6 +207,10 @@ Seven presets: `clean`, `editorial`, `meme`, `cinematic`, `launch`, `kinetic`, `
 - `recipes/hologram-hud/`, **Hologram HUD**: the thing the speaker talks about is scanned into a glowing wireframe,
   target boxes lock onto its parts and values roll in, cut against the face as shot, never over it; ported from
   lemo-opuscar (MIT). Call: "Hologram HUD", "hologram scan". Read its SYSTEM.md first.
+- `recipes/vlog-talking-head/`, **Vlog talking head**: teaching reels from footage shot without a mic: speaker zoomed and
+  centred, pauses cut, a hook line in big type + white flash, a 1-2-3 list in big lowercase titles, yellow keyword
+  captions near the middle, notes + drawn arrows on the user's own B-roll, no SFX, firm warm voice, outro. Call:
+  "talking head like the reference", "teaching reel". Read its README first.
 The visual inventory of every style (playing loops, soundboard, rules) is docs/PLAYBOOK.md.
 **Check the style's prerequisite before planning** (references/broll.md section 6): stan style needs real screen
 recordings, cinematic needs one consistent world of footage. If it is missing, say what is missing and propose another
