@@ -74,6 +74,24 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
 - Several clips of one lesson: `ghost-editor` base per clip, then `combine.py` (scratch helper) joins them into one base so
   a reel can cut between main footage and close-up clips (the close-up with its own voice is also a main segment).
 
+## Titles, captions, rings and before/after (the user's corrections after HPF 3 / HPF 4)
+- **Hook title = the reference card** (`title` beat with `style: "card"`, fields `tag` / `big` / `sub`): a cream card, a small
+  wine-red tag line with the question ("Tập mãi không thấy mông?"), a giant heavy red lowercase word ("romanian"), a black
+  line under it ("deadlift"). ONE title block at the start, never two stacked titles; no title / label / note may sit on
+  another one or on an anatomy scene (text_layout trims them).
+- **Captions sit at y 1380** (just below the middle of the lower half), not at the very bottom.
+- **A fault replay shows only the faulty rep**: cut the set-up / posing that leads into it. Highlight the muscle that
+  takes over (a red `glow` on the thigh) and ring the joint that drifts (a red `guide` circle on the knee).
+- **Every time a knee is named, ring the knee** (`guide` circle, red; green for the fix). Measure the knee on a snapshot
+  of the BUILT reel (the plate is zoomed per take), never on the raw frame. Do not ring a part that is not in shot.
+- **Anatomy B-roll for a mechanism** ("xoay ngoài kém"): `hiprot` beat (hip seen from above: the knee swings out / collapses
+  in, the glute fan lights up then dims), black stage like the user's reference. Title words never overflow (auto-fit).
+- **Before / after at the end** (`compare2` beat + `stills` in the spec): the frame pauses and splits top / bottom, the
+  fault frame in black and white on top (label "Trước khi sửa" / the fault, red X), the fix in colour below (green tick);
+  each half carries drawn lines measured on the stills: a dashed plumb line through the ankle, the leg axis (hip-knee-ankle
+  or knee-ankle) in red / green and a ring on the knee, so the difference can be seen. Use the coach's own "compare" line
+  or the closing line of the lesson for it, 4-6 s. Do this for every reel that has a before and an after.
+
 ## Status
 Builder: `hpf_reel.py spec.json` (same spec as founder-reels/make_reel.py) with the beats `label`, `guide`, `note`, `fault`,
 `punch`, `anatomy`, `title` (references/reel-json.md). Done: HPF 1 and HPF 2 (split squat, from DJI 0373 / 0374 / 0375), HPF 3 (split squat, knee opening) and HPF 4 (Romanian deadlift).

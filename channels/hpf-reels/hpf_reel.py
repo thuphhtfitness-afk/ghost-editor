@@ -183,6 +183,8 @@ def text_layout(beats):
             return (tx - w / 2, ty - sz * 1.25, tx + w / 2, ty)
         if b["type"] == "glow":  # an on-body highlight is not text, but words must not hide it
             return (b["cx"] - b["rx"], b["cy"] - b["ry"], b["cx"] + b["rx"], b["cy"] + b["ry"])
+        if b["type"] == "title" and b.get("style") == "card":
+            y = b.get("y", 130); return (40, y, 1040, y + 560)
         if b["type"] == "title":
             sz = b.get("size", 96); y = b.get("y", 190)
             return (60, y, 1020, y + sz * 1.25)
@@ -190,8 +192,8 @@ def text_layout(beats):
     def overlap_t(a, b):
         ta, tb = (a["at"], a["to"]), (b["at"], b["to"])
         return isinstance(ta[1], (int, float)) and isinstance(tb[1], (int, float)) and ta[0] < tb[1] and tb[0] < ta[1]
-    anat = [b for b in beats if b["type"] == "anatomy"]
-    for l in [b for b in beats if b["type"] == "label"]:
+    anat = [b for b in beats if b["type"] in ("anatomy", "hiprot", "compare2")]
+    for l in [b for b in beats if b["type"] in ("label", "title", "note")]:  # words never sit on an anatomy scene / comparison
         for a in anat:
             if overlap_t(l, a):
                 if l["at"] < a["at"]: l["to"] = round(a["at"] - 0.02, 3)
@@ -311,6 +313,11 @@ def main():
     else:
         if os.path.lexists(fj): os.remove(fj)
         os.symlink(os.path.join(base, "build", "face.json"), fj)
+    for nm, st in spec.get("stills", {}).items():  # a frozen frame of the base, cropped to 1080x960 (compare2 halves)
+        dp = os.path.join(P, "assets", "stills", nm); os.makedirs(os.path.dirname(dp), exist_ok=True)
+        x, y, w, h = st.get("crop", [0, 480, 1080, 960])
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(st["t"]), "-i", os.path.join(base, "assets", "talk.mp4"), "-frames:v", "1",
+                        "-vf", f"crop={w}:{h}:{x}:{y},scale=1080:960:flags=lanczos", dp], check=True)
     for dst, src_ in spec.get("assets", {}).items():  # B-roll the client sent: {"broll/mats.mp4": "/abs/path.mp4"}
         dp = os.path.join(P, "assets", dst); os.makedirs(os.path.dirname(dp), exist_ok=True); shutil.copy2(src_, dp)
     words = words_of(base)
@@ -322,7 +329,7 @@ def main():
         "title": spec.get("title", name), "source": "assets/talk.mp4", "words": "build/words.whisper.json", "fps": 30,
         "outro": 0.5, "platform": "all", "style": "clean", "sfxProfile": "restrained",
         "takes": [{"a": a, "b": b} for a, b in takes],
-        "captions": {"style": "mini", "group": spec.get("captionGroup", 2), "size": 48, "weight": 700, "stroke": 3, "y": spec.get("captionY", 1560), "splitY": 985, "phrases": spec.get("phrases", {}),
+        "captions": {"style": "mini", "group": spec.get("captionGroup", 2), "size": 48, "weight": 700, "stroke": 3, "y": spec.get("captionY", 1380), "splitY": 985, "phrases": spec.get("phrases", {}),
                      "fixes": spec.get("fixes", {}), **({"keywords": spec["keywords"]} if spec.get("keywords") else {})},
         "zoom": {"origin": spec.get("origin", "45% 31%"), "snaps": snaps,
                  "pushes": [{"at": takes[0][0] + 0.05, "z": 1.06, "up": max(1.0, takes[0][1] - takes[0][0] - 0.4), "until": takes[0][1] - 0.1, "down": 0.1}]},

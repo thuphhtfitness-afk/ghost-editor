@@ -42,6 +42,7 @@ import { TEMPLATE_NAMES, buildTemplateCaptions } from "./lib/caption-templates.m
 import { aiTag } from "./lib/ai-tag.mjs";
 import { anatomySvg, splitSquatSvg, hingeSvg } from "./lib/anatomy.mjs";
 import { muscleSvg } from "./lib/muscle_art.mjs";
+import { hipRotSvg, HIP, kneeFor } from "./lib/hiprot.mjs";
 import { findTaste, loadTaste, applyTaste, checkTaste, bannedSfx } from "./lib/taste.mjs";
 import { STAN_CSS, isStanBeat, stanPrepare, stanBeat, stanPipTweens, buildChestCaptions, stanMatteWindows } from "./lib/stan.mjs";
 
@@ -902,8 +903,79 @@ for (const b of beatsList) {
       if (b.sfx) beatSfx(b, t0, null, "broll in");
       break;
     }
+    case "hiprot": {
+      // anatomy B-roll: the hip seen from above, the knee swinging out (external rotation, the glute works) then collapsing in
+      // (internal rotation, the glute rests). Own artwork in the spirit of a muscle-and-motion reference; black stage.
+      const WINE = "#7A1424", D = t1 - t0, half = D / 2;
+      const tg = (txt, size) => `<span style="display:inline-block;background:${WINE};color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:${size}px;line-height:1.1;padding:10px 26px;border-radius:12px;white-space:nowrap">${esc(txt)}</span>`;
+      const ta = b.a?.title ?? "XOAY NGOÀI HÔNG", tb = b.b?.title ?? "XOAY TRONG: GỐI CHỤM VÀO";
+      const la = b.a?.label ?? "Mông nhỡ làm việc", lb = b.b?.label ?? "Mông nhỡ nghỉ";
+      const thA = b.a?.theta ?? 26, thB = b.b?.theta ?? -24, kA = kneeFor(thA), kB = kneeFor(thB);
+      const hx = HIP.H[0], hy = HIP.H[1], ax = HIP.A[0], ay = HIP.A[1], SX = 0.9, SY = 0.9;
+      inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 92%, rgba(150,26,34,.6) 0%, rgba(40,6,10,.35) 38%, rgba(0,0,0,0) 66%), #000">
+        <div id="${id}-ta" style="position:absolute;left:0;right:0;top:210px;text-align:center">${tg(ta, Math.min(78, Math.floor(980 / (ta.length * 0.74))))}</div>
+        <div id="${id}-tb" style="position:absolute;left:0;right:0;top:210px;text-align:center;opacity:0">${tg(tb, Math.min(70, Math.floor(980 / (tb.length * 0.74))))}</div>
+        <div style="position:absolute;left:0;top:470px;width:1080px;height:1000px;transform:scale(1.15);transform-origin:50% 20%">${hipRotSvg({ id: `${id}-s`, w: 1080, h: 900 })}</div>
+        <div id="${id}-la" style="position:absolute;left:0;right:0;top:1330px;text-align:center">${tg("✓  " + la, 56)}</div>
+        <div id="${id}-lb" style="position:absolute;left:0;right:0;top:1330px;text-align:center;opacity:0">${tg("✗  " + lb, 56)}</div></div>`;
+      const ho = `${hx} ${hy}`, ao = `${ax} ${ay}`, S = `#${id}-s`;
+      tl.push(`ft("#${id}-in", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, ${t0});`);
+      tl.push(`tl.fromTo("#${id}-s-thigh", { rotation: 0, svgOrigin: "${ho}" }, { rotation: ${thA}, svgOrigin: "${ho}", duration: ${r3(half * 0.62)}, ease: "power2.inOut" }, ${r3(t0 + 0.25)});`);
+      tl.push(`tl.fromTo("#${id}-s-shank", { rotation: 0, scaleY: 1, svgOrigin: "${ao}" }, { rotation: ${r3(kA.shankRot)}, scaleY: ${r3(kA.shankScale)}, svgOrigin: "${ao}", duration: ${r3(half * 0.62)}, ease: "power2.inOut" }, ${r3(t0 + 0.25)});`);
+      tl.push(`tl.fromTo("#${id}-s-fan", { opacity: 1 }, { opacity: 0.72, duration: 0.4, repeat: ${Math.max(1, Math.floor(half / 0.4) - 1)}, yoyo: true, immediateRender: false }, ${r3(t0 + 0.3)});`);
+      const s2 = r3(t0 + half);
+      tl.push(`tl.to("#${id}-ta", { opacity: 0, duration: 0.2 }, ${s2}); tl.to("#${id}-la", { opacity: 0, duration: 0.2 }, ${s2}); tl.to("#${id}-tb", { opacity: 1, duration: 0.2 }, ${r3(t0 + half + 0.1)}); tl.to("#${id}-lb", { opacity: 1, duration: 0.2 }, ${r3(t0 + half + 0.1)});`);
+      tl.push(`tl.fromTo("#${id}-s-thigh", { rotation: ${thA}, svgOrigin: "${ho}" }, { rotation: ${thB}, svgOrigin: "${ho}", duration: ${r3(half * 0.62)}, ease: "power2.inOut", immediateRender: false }, ${r3(t0 + half + 0.1)});`);
+      tl.push(`tl.fromTo("#${id}-s-shank", { rotation: ${r3(kA.shankRot)}, scaleY: ${r3(kA.shankScale)}, svgOrigin: "${ao}" }, { rotation: ${r3(kB.shankRot)}, scaleY: ${r3(kB.shankScale)}, svgOrigin: "${ao}", duration: ${r3(half * 0.62)}, ease: "power2.inOut", immediateRender: false }, ${r3(t0 + half + 0.1)});`);
+      tl.push(`tl.to("#${id}-s-fan", { opacity: 0.22, duration: 0.4 }, ${r3(t0 + half + 0.3)});`);
+      hiddenCaps.push([t0, t1]);
+      beatSfx(b, t0, "whoosh", "anatomy");
+      break;
+    }
+    case "compare2": {
+      // frozen before / after: two stills stacked (top = the fault, bottom = the fix), each with its label and drawn lines
+      // (dashed reference lines, rings) that draw themselves. Frame coordinates are per half (1080 x 960).
+      const WINE = "#7A1424", HH = 960;
+      const halfHtml = (side, k) => {
+        const lines = (side.lines || []).map((l, i) => {
+          const col = l.color === "white" ? "#fff" : l.color === "green" ? "#35E06B" : l.color === "yellow" ? "#FFD21E" : "#FF3B2F";
+          if (l.type === "circle") return `<circle id="${id}-${k}c${i}" cx="${l.cx}" cy="${l.cy}" r="${l.r}" fill="none" stroke="${col}" stroke-width="${l.width ?? 8}"/>`;
+          return `<line id="${id}-${k}l${i}" x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}" stroke="${col}" stroke-width="${l.width ?? 8}" stroke-linecap="round"${l.dashed ? ' stroke-dasharray="26 16"' : ""}/>`;
+        }).join("");
+        const icon = side.kind === "ok" ? `<svg width="46" height="46" viewBox="0 0 44 44" style="margin-left:14px;flex:none"><rect x="2" y="2" width="40" height="40" rx="9" fill="#2EB85C"/><path d="M12 23L19 30L32 15" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+          : `<svg width="46" height="46" viewBox="0 0 44 44" style="margin-left:14px;flex:none"><circle cx="22" cy="22" r="20" fill="#E5322D"/><path d="M14 14L30 30M30 14L14 30" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>`;
+        return `<div id="${id}-${k}" style="position:absolute;left:0;top:${k === "t" ? 0 : HH}px;width:1080px;height:${HH}px;overflow:hidden">
+          <img src="${side.img}" style="position:absolute;left:0;top:0;width:1080px;height:${HH}px;object-fit:cover${side.kind === "bad" && side.gray !== false ? ";filter:grayscale(1) contrast(1.05)" : ""}">
+          <svg width="1080" height="${HH}" style="position:absolute;left:0;top:0;filter:drop-shadow(0 0 6px rgba(0,0,0,.6))">${lines}</svg>
+          <div style="position:absolute;left:36px;top:30px;display:flex;align-items:center;background:${WINE};color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:${side.size ?? 46}px;padding:10px 24px;border-radius:12px">${esc(side.label || "")}${icon}</div></div>`;
+      };
+      inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px;background:#000">${halfHtml(b.top, "t")}${halfHtml(b.bottom, "b")}
+        <div style="position:absolute;left:0;top:${HH - 4}px;width:1080px;height:8px;background:#fff"></div></div>`;
+      tl.push(`ft("#${id}-t", { y: -80, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.3, ease: "power3.out" }, ${t0});`);
+      tl.push(`ft("#${id}-b", { y: 80, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.3, ease: "power3.out" }, ${r3(t0 + 0.12)});`);
+      [["t", b.top], ["b", b.bottom]].forEach(([k, side], si) => (side.lines || []).forEach((l, i) => {
+        const sel = `#${id}-${k}${l.type === "circle" ? "c" : "l"}${i}`, at = r3(t0 + 0.5 + si * 0.5 + i * 0.35);
+        if (l.type === "circle") tl.push(`tl.fromTo("${sel}", { opacity: 0, scale: 0.6, transformOrigin: "${l.cx}px ${l.cy}px" }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, ${at});`);
+        else tl.push(`tl.fromTo("${sel}", { opacity: 0 }, { opacity: 1, duration: 0.25 }, ${at});`);
+      }));
+      hiddenCaps.push([t0, t1]);
+      beatSfx(b, t0, "whoosh", "compare");
+      break;
+    }
     case "title": {
       // giant display words that pop in one by one on their spoken times (`words: [{text, at}]`), or a whole `text` at once
+      if (b.style === "card") {
+        // reference look: a cream card with a small tag line (wine box, white text), a giant heavy red word, a black line under it
+        const RED = b.red || "#B5301F", WINE = b.box || "#7A1424", fit = (s, base, k, maxw) => Math.min(base, Math.floor(maxw / (s.length * k)));
+        const bigS = b.bigSize ?? fit(b.big, 230, 0.6, 900), subS = b.subSize ?? fit(b.sub || "x", 118, 0.62, 900);
+        inner = `<div id="${id}-in" class="ov" style="left:${b.x ?? 40}px;right:${b.x ?? 40}px;top:${b.y ?? 130}px;z-index:4;text-align:center;background:#F4EFE6;border-radius:30px;padding:28px 24px 26px;box-shadow:0 22px 60px rgba(0,0,0,.45);font-family:Montserrat,sans-serif">
+          <div id="${id}-tag" style="display:inline-block;background:${WINE};color:#fff;font-weight:800;font-size:${b.tagSize ?? fit(b.tag, 44, 0.6, 880)}px;line-height:1.15;padding:8px 22px;border-radius:10px">${esc(b.tag)}</div>
+          <div id="${id}-big" style="color:${RED};font-weight:900;font-size:${bigS}px;line-height:.95;letter-spacing:-6px;margin-top:8px;white-space:nowrap">${esc(b.big)}</div>
+          ${b.sub ? `<div id="${id}-sub" style="color:#111;font-weight:900;font-size:${subS}px;line-height:1;letter-spacing:-3px;margin-top:2px;white-space:nowrap">${esc(b.sub)}</div>` : ""}</div>`;
+        tl.push(`ft("#${id}-in", { autoAlpha: 0, y: -40, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.3, ease: "power3.out" }, ${t0});`);
+        tl.push(`ft("#${id}-big", { scale: 0.85, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.3, ease: "back.out(2)" }, ${r3(t0 + 0.12)});`);
+        break;
+      }
       const ws = b.words ?? [{ text: b.text, at: b.at }];
       const pop = (b.anim ?? "pop") === "pop";
       const spans = ws.map((w, i) => {
