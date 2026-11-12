@@ -92,6 +92,14 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
   or knee-ankle) in red / green and a ring on the knee, so the difference can be seen. Use the coach's own "compare" line
   or the closing line of the lesson for it, 4-6 s. Do this for every reel that has a before and an after.
 
+## Small fixes without a full re-edit (Reel Fixer)
+- Every finished HPF reel can get a **Reel Fixer page** (artifact): `ed/gen.py`-style data (beats with output times, a
+  thumbnail per beat, caption lines) + a page where the user edits text, shifts / lengthens / removes a beat, moves a ring
+  or glow by clicking the thumbnail, and rewrites wrong captions. It downloads `hpf_<reel>_patch.json`.
+- `patch_apply.py <spec.json> <patch.json> [--render]` applies that patch to the spec (plain JSON, no LLM) and re-renders.
+  Same rules: caption fixes go into `phrases`. A new reel needs its own data file (re-run the generator on its spec + mp4).
+- CapCut cannot open this engine's output as an editable project (HTML/GSAP scenes, closed project format).
+
 ## Status
 Builder: `hpf_reel.py spec.json` (same spec as founder-reels/make_reel.py) with the beats `label`, `guide`, `note`, `fault`,
 `punch`, `anatomy`, `title` (references/reel-json.md). Done: HPF 1 and HPF 2 (split squat, from DJI 0373 / 0374 / 0375), HPF 3 (split squat, knee opening) and HPF 4 (Romanian deadlift).
