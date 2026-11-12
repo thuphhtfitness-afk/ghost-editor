@@ -98,6 +98,10 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
   or glow by clicking the thumbnail, and rewrites wrong captions. It downloads `hpf_<reel>_patch.json`.
 - `patch_apply.py <spec.json> <patch.json> [--render]` applies that patch to the spec (plain JSON, no LLM) and re-renders.
   Same rules: caption fixes go into `phrases`. A new reel needs its own data file (re-run the generator on its spec + mp4).
+- The page plays a **clean low-res proxy** of the reel (same takes, zoom snaps, voice; no overlays) and redraws every beat
+  live in HTML on top, with a draggable timeline and draggable rings. Build it with `fixer/prox.py` (proxy), `fixer/gen.py`
+  (data + thumbnails), `fixer/page.html` (replace `__DATA__`), publish with the two proxies as `files`. The overlay look is an
+  approximation (anatomy / hiprot / compare2 show a placeholder); the real look needs the re-render.
 - CapCut cannot open this engine's output as an editable project (HTML/GSAP scenes, closed project format).
 
 ## Status

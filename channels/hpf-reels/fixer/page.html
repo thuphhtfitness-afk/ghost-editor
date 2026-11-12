@@ -49,7 +49,7 @@ input[type="text"], input[type="number"], textarea { font: 500 15px var(--font-b
 .cap.changed { border-color: var(--wine); }
 .cap .time { text-align: right; }
 .note { background: var(--soft); border-radius: 10px; padding: 10px 12px; color: var(--mute); font-size: 13px; max-width: 70ch; }
-.bar { position: fixed; left: 0; right: 0; bottom: 0; background: var(--panel); border-top: 1px solid var(--line); z-index: 20;
+.bar-save { position: fixed; left: 0; right: 0; bottom: 0; background: var(--panel); border-top: 1px solid var(--line); z-index: 20;
   padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .bar-in { max-width: 880px; margin: 0 auto; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 .primary { font: 800 15px var(--font-display); background: var(--wine); color: var(--wine-ink); border: 0; border-radius: 10px; padding: 12px 18px; cursor: pointer; }
@@ -59,14 +59,60 @@ input[type="text"], input[type="number"], textarea { font: 500 15px var(--font-b
 pre { margin: 0; white-space: pre-wrap; word-break: break-all; font-size: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px; max-height: 160px; overflow: auto; }
 @media (max-width: 520px) { .card { grid-template-columns: 84px minmax(0, 1fr); gap: 10px; } .thumb { width: 84px; } h1 { font-size: 22px; } }
 @media (prefers-reduced-motion: no-preference) { .card { transition: border-color .15s; } }
+
+.bench { display: grid; grid-template-columns: 292px minmax(0, 1fr); gap: 16px; align-items: start; }
+.stagewrap { display: flex; flex-direction: column; gap: 8px; position: sticky; top: 8px; }
+.stage { position: relative; width: 100%; aspect-ratio: 9/16; background: #000; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
+.s1080 { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; font-family: "Montserrat", "Inter", sans-serif; }
+.s1080 video { position: absolute; inset: 0; width: 1080px; height: 1920px; object-fit: cover; }
+.s1080 .ov > * { position: absolute; }
+.wb { background: #7A1424; color: #fff; font-weight: 800; border-radius: 14px; line-height: 1.12; }
+.ctrl { display: flex; align-items: center; gap: 8px; }
+.ctrl .ghost { min-width: 44px; }
+.ctrl .time { flex: 1; text-align: right; }
+.tl { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.tl-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 13px; color: var(--mute); }
+.tl-head input[type="range"] { width: 120px; accent-color: var(--wine); }
+.tl-scroll { overflow-x: auto; position: relative; padding-bottom: 6px; }
+.tl-in { position: relative; user-select: none; touch-action: pan-x; }
+.ruler { height: 18px; position: relative; border-bottom: 1px solid var(--line); font-size: 10px; color: var(--mute); font-variant-numeric: tabular-nums; }
+.ruler span { position: absolute; top: 2px; transform: translateX(2px); }
+.ruler i { position: absolute; bottom: 0; width: 1px; height: 6px; background: var(--line); }
+.lane { position: relative; height: 34px; border-bottom: 1px dashed var(--line); }
+.lane > em { position: absolute; left: 4px; top: 1px; font: 700 9px var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--mute); opacity: .8; pointer-events: none; z-index: 1; }
+.bar { position: absolute; top: 12px; height: 20px; border-radius: 6px; font: 600 11px var(--font-body); line-height: 20px; padding: 0 6px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: grab; color: #fff; }
+.bar.l0 { background: var(--wine); } .bar.l1 { background: #3F6D8F; } .bar.l2 { background: #5E4A9A; }
+.bar.sel { outline: 2px solid var(--ink); outline-offset: 1px; z-index: 3; }
+.bar.del { opacity: .35; background-image: repeating-linear-gradient(45deg, transparent 0 4px, rgba(255,255,255,.35) 4px 6px); }
+.bar .h { position: absolute; right: 0; top: 0; width: 8px; height: 100%; cursor: ew-resize; background: rgba(255,255,255,.35); }
+.tick { position: absolute; top: 16px; width: 4px; height: 14px; border-radius: 2px; background: var(--mute); opacity: .5; cursor: pointer; }
+.tick.ch { background: var(--wine); opacity: 1; }
+.playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--ink); pointer-events: none; z-index: 5; }
+.card.sel { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink) inset; }
+.go { font: 700 12px var(--font-body); background: var(--soft); color: var(--wine); border: 0; border-radius: 8px; padding: 5px 10px; cursor: pointer; }
+.time-in { display: flex; gap: 6px; align-items: end; flex-wrap: wrap; }
+.time-in label { width: 86px; }
+.hint { font-size: 12px; color: var(--mute); }
+@media (max-width: 760px) { .bench { grid-template-columns: minmax(0, 1fr); } .stagewrap { position: static; max-width: 300px; } }
 </style>
 
 <div class="wrap">
   <header>
     <h1>HPF Reel Fixer</h1>
-    <p class="lede">Sửa chữ, thời gian, vị trí vòng tròn và phụ đề của 2 bài HPF mà không cần dựng lại từ đầu. Tải file sửa về, gửi cho tôi một dòng, hoặc chạy lệnh trên máy bạn.</p>
+    <p class="lede">Sửa là thấy ngay trên khung xem trước. Kéo thanh trên timeline để dời hoặc kéo dài từng chữ và đồ hoạ, kéo vòng tròn trên hình để đổi vị trí, rồi tải file sửa về.</p>
   </header>
   <div class="seg" id="reels" role="group" aria-label="Chọn bài"></div>
+  <div class="bench">
+    <div class="stagewrap">
+      <div class="stage" id="stage"><div class="s1080" id="s1080"><video id="vid" playsinline preload="auto"></video><div class="ov" id="ov"></div></div></div>
+      <div class="ctrl"><button class="ghost" id="play" type="button" aria-label="Phát hoặc dừng">▶</button><button class="ghost" id="back" type="button" aria-label="Lùi 1 giây">−1s</button><button class="ghost" id="fwd" type="button" aria-label="Tiến 1 giây">+1s</button><span class="time" id="clock">0:00.0</span></div>
+      <div class="hint" id="vhint">Đây là bản xem nhanh (độ phân giải thấp, chữ vẽ gần giống). Ảnh anatomy chỉ hiện khung và tiêu đề.</div>
+    </div>
+    <div class="tl">
+      <div class="tl-head"><span>Timeline · kéo thanh để dời, kéo mép phải để kéo dài</span><label style="flex-direction:row;align-items:center;gap:8px">Phóng to <input type="range" id="zoom" min="1" max="5" step="0.5" value="1"></label></div>
+      <div class="tl-scroll" id="tls"><div class="tl-in" id="tl"></div></div>
+    </div>
+  </div>
   <div class="seg small" id="modes" role="group" aria-label="Chọn phần sửa">
     <button type="button" data-m="beats" aria-pressed="true">Chữ và đồ hoạ</button>
     <button type="button" data-m="caps" aria-pressed="false">Phụ đề</button>
@@ -74,7 +120,7 @@ pre { margin: 0; white-space: pre-wrap; word-break: break-all; font-size: 12px; 
   <div id="list" style="display:flex;flex-direction:column;gap:12px"></div>
 </div>
 
-<div class="bar"><div class="bar-in">
+<div class="bar-save"><div class="bar-in">
   <div><div id="count">Chưa có thay đổi</div><div id="msg"></div></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <button class="ghost" id="copy" type="button">Sao chép nội dung</button>
@@ -86,15 +132,24 @@ pre { margin: 0; white-space: pre-wrap; word-break: break-all; font-size: 12px; 
 const DATA = __DATA__;
 const KEYS = Object.keys(DATA);
 const LABEL = { label: "Nhãn", title: "Tiêu đề", note: "Ghi chú", guide: "Vòng tròn", glow: "Vùng sáng", anatomy: "Anatomy", hiprot: "Xoay hông", fault: "Dấu lỗi", compare2: "So sánh", broll: "B-roll", punch: "Zoom" };
-let reel = KEYS[0], mode = "beats";
-const S = { }; KEYS.forEach(k => S[k] = { beats: {}, caps: {} });
+const LANE = { title: 0, label: 0, note: 0, guide: 1, glow: 1, fault: 1, punch: 1, broll: 1, anatomy: 2, hiprot: 2, compare2: 2 };
+const LANES = ["Chữ", "Đánh dấu", "Cảnh"];
+let reel = KEYS[0], mode = "beats", sel = null, pps = 10, playing = false, vclock = null;
+const S = {}; KEYS.forEach(k => S[k] = { beats: {}, caps: {} });
 try { const j = JSON.parse(localStorage.getItem("hpf-fixer") || "null"); if (j) KEYS.forEach(k => { if (j[k]) S[k] = j[k]; }); } catch (e) {}
 const persist = () => { try { localStorage.setItem("hpf-fixer", JSON.stringify(S)); } catch (e) {} };
 const $ = (s) => document.querySelector(s);
-const mmss = (t) => Math.floor(t / 60) + ":" + (t % 60).toFixed(1).padStart(4, "0");
-const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const mmss = (t) => Math.floor(t / 60) + ":" + (Math.max(0, t) % 60).toFixed(1).padStart(4, "0");
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const R1 = (x) => Math.round(x * 10) / 10;
+const vid = $("#vid");
+const beatOf = (i) => DATA[reel].beats.find(b => b.i === +i);
+const chg = (i) => S[reel].beats[i] || {};
+function eff(b) { const c = chg(b.i); const sh = c.shift || 0; return { a: Math.max(0, b.t0 + sh), z: b.t1 + sh + (c.dur || 0), del: !!c.delete }; }
+const val = (b, k) => (chg(b.i)[k] != null ? chg(b.i)[k] : b.f[k]);
 
-function changesOf(k) { // the patch for one reel
+/* ---------- patch ---------- */
+function changesOf(k) {
   const b = {}, p = {};
   for (const [i, c] of Object.entries(S[k].beats)) { if (Object.keys(c).length) b[i] = c; }
   for (const [t, v] of Object.entries(S[k].caps)) { const o = DATA[k].caps.find(x => String(x.t) === t); if (o && v.trim() && v.trim() !== o.text) p[o.text] = v.trim(); }
@@ -102,94 +157,156 @@ function changesOf(k) { // the patch for one reel
 }
 const nChanges = (k) => { const c = changesOf(k); return Object.keys(c.beats).length + Object.keys(c.phrases).length; };
 
-function drawReels() {
-  $("#reels").innerHTML = KEYS.map(k => `<button type="button" data-k="${k}" aria-pressed="${k === reel}">${esc(DATA[k].title)}${nChanges(k) ? " · " + nChanges(k) : ""}</button>`).join("");
+/* ---------- stage ---------- */
+function fitStage() { const w = $("#stage").clientWidth; $("#s1080").style.transform = `scale(${w / 1080})`; }
+new ResizeObserver(fitStage).observe($("#stage"));
+const wine = (txt, size, extra = "") => `<div class="wb" style="font-size:${size}px;padding:${Math.round(size * .22)}px ${Math.round(size * .5)}px;${extra}">${txt}</div>`;
+const iconBad = '<span style="display:inline-block;width:.9em;height:.9em;border-radius:50%;background:#E5322D;vertical-align:-.1em;margin-left:.45em"></span>';
+const iconOk = '<span style="display:inline-block;width:.9em;height:.9em;border-radius:22%;background:#2EB85C;vertical-align:-.1em;margin-left:.45em"></span>';
+function drawBeat(b, t) {
+  const s = b.s || {}, f = (k) => val(b, k), sl = selMark(b);
+  switch (b.type) {
+    case "label": { const y = s.y ?? 600, x = s.x ?? 70; return `<div class="wb" style="left:${x}px;top:${y}px;font-size:${s.size ?? 42}px;padding:.3em .6em;max-width:${1080 - x * 2}px">${esc(f("text"))}${s.kind === "bad" ? iconBad : s.kind === "ok" ? iconOk : ""}</div>`; }
+    case "title": {
+      if (s.style === "card") return `<div style="left:40px;right:40px;top:${s.y ?? 130}px;background:#F4EFE6;border-radius:30px;padding:28px 24px;text-align:center;box-shadow:0 22px 60px rgba(0,0,0,.45)"><div class="wb" style="display:inline-block;font-size:40px;padding:8px 22px;border-radius:10px">${esc(f("tag"))}</div><div style="color:#B5301F;font-weight:900;font-size:190px;line-height:.95;letter-spacing:-6px;white-space:nowrap;overflow:hidden">${esc(f("big"))}</div><div style="color:#111;font-weight:900;font-size:96px;line-height:1;letter-spacing:-3px;white-space:nowrap;overflow:hidden">${esc(f("sub"))}</div></div>`;
+      return `<div style="left:60px;right:60px;top:${s.y ?? 190}px;text-align:center"><span class="wb" style="display:inline-block;font-size:${s.size ?? 96}px;padding:.1em .32em;text-transform:uppercase;font-weight:900">${esc(f("text"))}</span></div>`; }
+    case "guide": { const c = (s.shapes || []).find(x => x.type === "circle"); if (!c) return ""; const cx = f("cx") ?? c.cx, cy = f("cy") ?? c.cy, r = f("r") ?? c.r, col = c.color === "green" ? "#35E06B" : "#FF3B2F";
+      return `<svg width="1080" height="1920" style="left:0;top:0;pointer-events:none"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${col}" stroke-width="12"/>${sl ? `<circle class="drag" data-i="${b.i}" cx="${cx}" cy="${cy}" r="${r}" fill="rgba(255,255,255,.05)" stroke="none" style="pointer-events:all;cursor:move"/>` : ""}</svg>`; }
+    case "glow": { const cx = f("cx"), cy = f("cy"), rx = f("rx"), ry = f("ry"), col = s.color === "yellow" ? "255,210,30" : s.color === "green" ? "53,224,107" : "255,52,36";
+      return `<svg width="1080" height="1920" style="left:0;top:0;pointer-events:none"><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="rgba(${col},.32)" stroke="rgb(${col})" stroke-width="8" stroke-dasharray="22 16"/>${sl ? `<ellipse class="drag" data-i="${b.i}" cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="transparent" style="pointer-events:all;cursor:move"/>` : ""}</svg>`; }
+    case "fault": return `<div style="left:80px;top:${f("y") ?? 760}px;width:130px;height:130px;border-radius:50%;background:#E5322D;border:6px solid #fff;color:#fff;font:900 96px/118px Montserrat;text-align:center">×</div>`;
+    case "anatomy": { const band = s.mode === "band", nm = (s.panels || []).length || 1;
+      if (band) return `<div style="inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px)"></div><div style="left:0;right:0;top:158px;text-align:center"><span class="wb" style="display:inline-block;font-size:48px;padding:8px 22px">${esc(f("title"))}</span></div><div style="left:${nm > 1 ? 40 : 220}px;top:250px;display:flex;gap:24px">${(s.panels || [{}]).map(pn => `<div style="width:${nm > 1 ? 470 : 640}px;height:560px;border-radius:24px;background:radial-gradient(ellipse at 50% 100%,rgba(150,30,36,.55),rgba(0,0,0,.85) 72%);border:2px solid rgba(255,170,140,.45);color:#fff;font:800 30px Montserrat;text-align:center;padding-top:230px">${esc(pn.caption || "")}<div style="font:500 20px Inter;opacity:.7;margin-top:8px">(hình anatomy)</div></div>`).join("")}</div>`;
+      return `<div style="inset:0;background:rgba(0,0,0,.4)"></div><div style="right:40px;top:230px;width:520px;height:700px;border-radius:26px;background:radial-gradient(ellipse at 50% 100%,rgba(140,20,30,.5),rgba(0,0,0,.82) 70%);border:2px solid rgba(255,255,255,.2);text-align:center;padding-top:16px"><span class="wb" style="display:inline-block;font-size:34px;padding:8px 18px">${esc(f("title"))}</span><div style="color:#fff;font:500 22px Inter;opacity:.7;margin-top:250px">(hình anatomy)</div></div>`; }
+    case "hiprot": { const mid = (b.t1 + (chg(b.i).shift || 0) + b.t0 + (chg(b.i).shift || 0)) / 2, second = t > mid;
+      return `<div style="inset:0;background:#000"></div><div style="left:0;right:0;top:210px;text-align:center"><span class="wb" style="display:inline-block;font-size:60px;padding:10px 26px">${esc(second ? f("b_title") : f("a_title"))}</span></div><div style="left:0;right:0;top:700px;text-align:center;color:#fff;font:500 28px Inter;opacity:.6">(hoạt ảnh xoay hông)</div>`; }
+    case "compare2": return `<div style="inset:0;background:#000"></div><div style="left:0;right:0;top:0;height:956px;background:#222;filter:grayscale(1)"></div><div style="left:0;right:0;top:964px;height:956px;background:#2c2c2c"></div><div class="wb" style="left:36px;top:30px;font-size:46px;padding:10px 24px">${esc(f("top_label"))}</div><div class="wb" style="left:36px;top:994px;font-size:46px;padding:10px 24px">${esc(f("bottom_label"))}</div><div style="left:0;right:0;top:700px;text-align:center;color:#fff;font:500 28px Inter;opacity:.6">(khung hình dừng + đường kẻ)</div>`;
+    default: return "";
+  }
 }
-function overlay(b, c) {
-  const f = Object.assign({}, b.f, c); let s = "";
-  if (b.type === "guide" && f.cx != null) s = `<circle cx="${f.cx}" cy="${f.cy}" r="${f.r}" fill="none" stroke="#FF3B2F" stroke-width="14"/>`;
-  if (b.type === "glow" && f.cx != null) s = `<ellipse cx="${f.cx}" cy="${f.cy}" rx="${f.rx}" ry="${f.ry}" fill="rgba(255,60,40,.3)" stroke="#FF5A3C" stroke-width="10" stroke-dasharray="26 18"/>`;
-  return s ? `<svg viewBox="0 0 1080 1920" aria-hidden="true">${s}</svg>` : "";
+const selMark = (b) => sel === b.i;
+function capAt(t) { const cs = DATA[reel].caps; let c = null; for (const x of cs) { if (x.t <= t) c = x; else break; } return c; }
+function drawStage() {
+  const t = vid.currentTime || 0, bs = DATA[reel].beats; let html = "", gray = false, hideCap = false;
+  for (const b of bs) { const e = eff(b); if (e.del || t < e.a || t > e.z) continue; if (b.type === "fault") gray = true; if (b.type === "hiprot" || b.type === "compare2") hideCap = true; html += drawBeat(b, t); }
+  if (sel != null) { const b = beatOf(sel), e = b && eff(b); if (b && (t < e.a || t > e.z) && (b.type === "guide" || b.type === "glow")) html += `<div style="left:20px;bottom:230px;color:#fff;font:600 26px Inter;background:rgba(0,0,0,.6);padding:6px 12px;border-radius:8px">Cảnh đang chọn chưa tới giờ</div>`; }
+  const c = hideCap ? null : capAt(t);
+  if (c) { const v = S[reel].caps[c.t]; html += `<div style="left:40px;right:40px;top:1380px;text-align:center;color:#fff;font:700 50px Montserrat;-webkit-text-stroke:3px rgba(0,0,0,.8);paint-order:stroke fill;text-shadow:0 4px 14px rgba(0,0,0,.6)">${esc(v != null && v.trim() ? v : c.text)}</div>`; }
+  $("#ov").innerHTML = html;
+  vid.style.filter = gray ? "grayscale(1) contrast(1.05)" : "none";
+  $("#clock").textContent = mmss(t) + " / " + mmss(DATA[reel].dur);
+  const ph = $("#ph"); if (ph) ph.style.left = (t * pps) + "px";
+  $("#play").textContent = playing ? "❚❚" : "▶";
 }
+function tick() { if (!playing) return; if (vclock) { vid.__t = vclock.t0 + (performance.now() - vclock.n0) / 1000; if (vid.__t >= DATA[reel].dur) { playing = false; vid.__t = DATA[reel].dur; } } drawStage(); autoScroll(); requestAnimationFrame(tick); }
+function curT() { return vid.__virtual ? vid.__t : vid.currentTime; }
+function seek(t) { t = Math.min(Math.max(0, t), DATA[reel].dur - 0.05); if (vid.__virtual) { vid.__t = t; if (vclock) vclock = { t0: t, n0: performance.now() }; } else { try { vid.currentTime = t; } catch (e) {} } drawStage(); }
+function play(on) { playing = on; if (on) { if (vid.__virtual) vclock = { t0: vid.__t || 0, n0: performance.now() }; else vid.play().catch(() => { playing = false; }); requestAnimationFrame(tick); } else { if (!vid.__virtual) vid.pause(); vclock = null; } drawStage(); }
+function autoScroll() { const sc = $("#tls"), x = vid.currentTime * pps; if (x > sc.scrollLeft + sc.clientWidth - 30 || x < sc.scrollLeft) sc.scrollLeft = Math.max(0, x - 60); }
+function loadReel() {
+  play(false); vid.__virtual = false; vid.src = DATA[reel].video; vid.load();
+  vid.onerror = () => { vid.__virtual = true; vid.__t = 0; $("#vhint").textContent = "Không tải được video xem trước. Timeline và đồ hoạ vẫn chạy trên nền đen."; vid.removeAttribute("src"); drawStage(); };
+}
+Object.defineProperty(vid, "currentTime_", { get() { return this.currentTime; } });
+vid.addEventListener("seeked", drawStage); vid.addEventListener("loadeddata", drawStage); vid.addEventListener("ended", () => play(false));
+vid.addEventListener("timeupdate", () => { if (!playing) drawStage(); });
+
+/* ---------- timeline ---------- */
+function drawTL() {
+  const d = DATA[reel], W = Math.ceil(d.dur * pps) + 20, step = pps >= 20 ? 1 : pps >= 10 ? 5 : 10;
+  let ticks = ""; for (let s = 0; s <= d.dur; s += step) ticks += `<i style="left:${s * pps}px"></i><span style="left:${s * pps}px">${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}</span>`;
+  const lanes = LANES.map((n, li) => `<div class="lane" data-l="${li}"><em>${n}</em>${d.beats.filter(b => (LANE[b.type] ?? 1) === li).map(b => { const e = eff(b), lab = esc(val(b, "text") || val(b, "title") || val(b, "big") || val(b, "a_title") || val(b, "top_label") || LABEL[b.type]); return `<div class="bar l${li}${sel === b.i ? " sel" : ""}${e.del ? " del" : ""}" data-b="${b.i}" style="left:${e.a * pps}px;width:${Math.max(8, (e.z - e.a) * pps)}px" title="${esc(LABEL[b.type])} · ${mmss(e.a)}–${mmss(e.z)}">${lab}<span class="h" data-h="${b.i}"></span></div>`; }).join("")}</div>`).join("");
+  const caps = `<div class="lane" data-l="c"><em>Phụ đề</em>${d.caps.map(c => { const v = S[reel].caps[c.t], ch = v != null && v.trim() && v.trim() !== c.text; return `<div class="tick${ch ? " ch" : ""}" data-c="${c.t}" style="left:${c.t * pps}px" title="${esc(c.text)}"></div>`; }).join("")}</div>`;
+  $("#tl").style.width = W + "px"; $("#tl").innerHTML = `<div class="ruler">${ticks}</div>${lanes}${caps}<div class="playhead" id="ph"></div>`;
+  drawStage();
+}
+const fitPps = () => Math.max(6, ($("#tls").clientWidth - 24) / DATA[reel].dur);
+let drag = null;
+$("#tl").addEventListener("pointerdown", (e) => {
+  const bar = e.target.closest(".bar");
+  if (bar) { const i = +bar.dataset.b, c = chg(i); drag = { i, x: e.clientX, shift: c.shift || 0, dur: c.dur || 0, mode: e.target.dataset.h ? "dur" : "shift", moved: false }; bar.setPointerCapture(e.pointerId); select(i, false); e.preventDefault(); return; }
+  const tk = e.target.closest(".tick"); if (tk) { seek(+tk.dataset.c); return; }
+  const r = $("#tl").getBoundingClientRect(); seek((e.clientX - r.left) / pps);
+});
+$("#tl").addEventListener("pointermove", (e) => {
+  if (!drag) return; const dt = R1((e.clientX - drag.x) / pps); if (!dt && !drag.moved) return; drag.moved = true;
+  setBeat(drag.i, c => { if (drag.mode === "shift") { c.shift = R1(drag.shift + dt); if (!c.shift) delete c.shift; } else { c.dur = R1(drag.dur + dt); if (!c.dur) delete c.dur; } });
+  const b = beatOf(drag.i), e2 = eff(b), el = document.querySelector(`.bar[data-b="${drag.i}"]`); el.style.left = e2.a * pps + "px"; el.style.width = Math.max(8, (e2.z - e2.a) * pps) + "px"; drawStage(); updateBar();
+});
+$("#tl").addEventListener("pointerup", () => { if (drag) { const i = drag.i, mv = drag.moved; drag = null; if (mv) { draw(); const b = beatOf(i); seek(eff(b).a + 0.1); } else { const b = beatOf(i); seek(eff(b).a + 0.1); } } });
+$("#zoom").addEventListener("input", (e) => { pps = fitPps() * +e.target.value; drawTL(); });
+
+/* ---------- cards ---------- */
 const FIELD = { text: "Chữ", tag: "Dòng nhỏ", big: "Chữ lớn đỏ", sub: "Dòng đen", title: "Tiêu đề", a_title: "Tiêu đề lúc xoay ngoài", b_title: "Tiêu đề lúc xoay trong", top_label: "Nhãn nửa trên", bottom_label: "Nhãn nửa dưới" };
 function beatCard(b) {
-  const c = S[reel].beats[b.i] || {}, f = Object.assign({}, b.f, c), changed = Object.keys(c).length > 0;
+  const c = chg(b.i), f = Object.assign({}, b.f, c), changed = Object.keys(c).length > 0, e = eff(b);
   const textKeys = Object.keys(b.f).filter(k => k in FIELD);
-  const pos = ("cx" in b.f) ? `<div class="row">${["cx", "cy"].concat(b.type === "glow" ? ["rx", "ry"] : ["r"]).map(k => `<label>${{ cx: "Ngang", cy: "Dọc", r: "Bán kính", rx: "Rộng", ry: "Cao" }[k]}<input type="number" data-i="${b.i}" data-f="${k}" value="${f[k]}" step="10"></label>`).join("")}</div><button type="button" class="ghost" data-pick="${b.i}">Bấm lên hình để đặt tâm</button>` : "";
+  const pos = ("cx" in b.f) ? `<div class="row">${["cx", "cy"].concat(b.type === "glow" ? ["rx", "ry"] : ["r"]).map(k => `<label>${{ cx: "Ngang", cy: "Dọc", r: "Bán kính", rx: "Rộng", ry: "Cao" }[k]}<input type="number" data-i="${b.i}" data-f="${k}" value="${f[k]}" step="10"></label>`).join("")}</div><div class="hint">Kéo vòng trên khung xem trước, hoặc gõ số.</div>` : "";
   const ysel = b.type === "fault" ? `<label>Vị trí dọc dấu X<input type="number" data-i="${b.i}" data-f="y" value="${f.y}" step="20"></label>` : "";
-  const shift = c.shift || 0, dur = c.dur || 0;
-  return `<article class="card${changed ? " changed" : ""}${c.delete ? " gone" : ""}" id="b${b.i}">
-    <div class="thumb" data-t="${b.i}"><img src="${b.img}" alt="Khung hình lúc ${mmss(b.t0)}">${overlay(b, c)}</div>
+  return `<article class="card${changed ? " changed" : ""}${c.delete ? " gone" : ""}${sel === b.i ? " sel" : ""}" id="b${b.i}">
+    <div class="thumb" data-t="${b.i}"><img src="${b.img}" alt="Khung hình đã dựng lúc ${mmss(b.t0)}"></div>
     <div class="fields">
-      <div class="meta"><span class="tag">${LABEL[b.type] || b.type}</span><span class="time">${mmss(b.t0)} → ${mmss(b.t1)}</span></div>
+      <div class="meta"><span class="tag">${LABEL[b.type] || b.type}</span><span class="time">${mmss(e.a)} → ${mmss(e.z)}</span><button type="button" class="go" data-go="${b.i}">Xem đoạn này</button></div>
       ${textKeys.map(k => `<label>${FIELD[k]}<input type="text" data-i="${b.i}" data-f="${k}" value="${esc(f[k])}"></label>`).join("")}${pos}${ysel}
-      <div class="actions">
-        <div class="step" aria-label="Dịch thời điểm">Dời <button type="button" data-s="${b.i}" data-d="-0.2" aria-label="Sớm hơn 0,2 giây">−0,2</button><b>${shift > 0 ? "+" : ""}${shift.toFixed(1)}s</b><button type="button" data-s="${b.i}" data-d="0.2" aria-label="Muộn hơn 0,2 giây">+0,2</button></div>
-        <div class="step">Kéo dài <button type="button" data-u="${b.i}" data-d="-0.3" aria-label="Ngắn hơn 0,3 giây">−0,3</button><b>${dur > 0 ? "+" : ""}${dur.toFixed(1)}s</b><button type="button" data-u="${b.i}" data-d="0.3" aria-label="Dài hơn 0,3 giây">+0,3</button></div>
-        <button type="button" class="ghost danger" data-x="${b.i}" aria-pressed="${!!c.delete}">${c.delete ? "Sẽ bỏ cảnh này" : "Bỏ cảnh này"}</button>
-        ${changed ? `<button type="button" class="ghost" data-r="${b.i}">Hoàn tác</button>` : ""}
-      </div>
+      <div class="time-in"><label>Bắt đầu (s)<input type="number" data-ti="${b.i}" data-w="a" value="${R1(e.a)}" step="0.1" min="0"></label><label>Kết thúc (s)<input type="number" data-ti="${b.i}" data-w="z" value="${R1(e.z)}" step="0.1" min="0"></label>
+        <button type="button" class="ghost danger" data-x="${b.i}" aria-pressed="${!!c.delete}">${c.delete ? "Sẽ bỏ cảnh này" : "Bỏ cảnh này"}</button>${changed ? `<button type="button" class="ghost" data-r="${b.i}">Hoàn tác</button>` : ""}</div>
     </div></article>`;
 }
-function capRow(c) {
-  const v = S[reel].caps[c.t], ch = v != null && v.trim() !== c.text;
-  return `<div class="cap${ch ? " changed" : ""}"><span class="time">${mmss(c.t)}</span><input type="text" data-c="${c.t}" value="${esc(v != null ? v : c.text)}" aria-label="Phụ đề lúc ${mmss(c.t)}"></div>`;
-}
+function capRow(c) { const v = S[reel].caps[c.t], ch = v != null && v.trim() !== c.text; return `<div class="cap${ch ? " changed" : ""}"><button type="button" class="go" data-seek="${c.t}">${mmss(c.t)}</button><input type="text" data-c="${c.t}" value="${esc(v != null ? v : c.text)}" aria-label="Phụ đề lúc ${mmss(c.t)}"></div>`; }
+function drawReels() { $("#reels").innerHTML = KEYS.map(k => `<button type="button" data-k="${k}" aria-pressed="${k === reel}">${esc(DATA[k].title)}${nChanges(k) ? " · " + nChanges(k) : ""}</button>`).join(""); }
 function draw() {
   drawReels();
   document.querySelectorAll("#modes button").forEach(b => b.setAttribute("aria-pressed", b.dataset.m === mode));
-  const d = DATA[reel];
-  $("#list").innerHTML = mode === "beats"
-    ? d.beats.map(beatCard).join("")
-    : `<div class="note">Sửa chữ nào sai thì gõ lại ngay trong ô. Hệ thống lưu thành một quy tắc "chữ sai → chữ đúng" và áp dụng cho mọi chỗ có cụm đó. Chỉ sửa chữ, không đổi thời gian.</div>` + d.caps.map(capRow).join("");
-  const n = nChanges(reel);
-  $("#count").textContent = n ? `${n} thay đổi ở ${DATA[reel].title.split(" · ")[0]}` : "Chưa có thay đổi";
-  $("#save").disabled = !n; $("#save").textContent = "Tải file sửa " + DATA[reel].title.split(" · ")[0];
+  const d = DATA[reel], y = window.scrollY;
+  $("#list").innerHTML = mode === "beats" ? d.beats.map(beatCard).join("") : `<div class="note">Gõ lại chữ sai ngay trong ô, bấm giờ để xem đoạn đó. Hệ thống lưu thành quy tắc "chữ sai → chữ đúng". Chỉ sửa chữ, không đổi thời gian.</div>` + d.caps.map(capRow).join("");
+  window.scrollTo(0, y); updateBar(); drawTL();
 }
+function updateBar() { const n = nChanges(reel), nm = DATA[reel].title.split(" · ")[0]; $("#count").textContent = n ? `${n} thay đổi ở ${nm}` : "Chưa có thay đổi"; $("#save").disabled = !n; $("#save").textContent = "Tải file sửa " + nm; drawReels(); }
 function setBeat(i, fn) { const c = S[reel].beats[i] || (S[reel].beats[i] = {}); fn(c); if (!Object.keys(c).length) delete S[reel].beats[i]; persist(); }
-function keepScroll(fn) { const y = window.scrollY; fn(); window.scrollTo(0, y); }
+function select(i, scroll) { sel = i; document.querySelectorAll(".card.sel").forEach(x => x.classList.remove("sel")); document.querySelectorAll(".bar.sel").forEach(x => x.classList.remove("sel")); const card = $("#b" + i), bar = document.querySelector(`.bar[data-b="${i}"]`); if (card) { card.classList.add("sel"); if (scroll) card.scrollIntoView({ block: "nearest", behavior: "smooth" }); } if (bar) bar.classList.add("sel"); drawStage(); }
 
 document.addEventListener("click", (e) => {
   const t = e.target.closest("button, .thumb"); if (!t) return;
-  if (t.dataset.k) { reel = t.dataset.k; draw(); return; }
+  if (t.id === "play") { play(!playing); return; }
+  if (t.id === "back") { seek(curT() - 1); return; } if (t.id === "fwd") { seek(curT() + 1); return; }
+  if (t.dataset.k) { reel = t.dataset.k; sel = null; pps = fitPps(); $("#zoom").value = 1; loadReel(); draw(); return; }
   if (t.dataset.m) { mode = t.dataset.m; draw(); return; }
-  if (t.dataset.s) { setBeat(t.dataset.s, c => { c.shift = Math.round(((c.shift || 0) + +t.dataset.d) * 10) / 10; if (!c.shift) delete c.shift; }); keepScroll(draw); }
-  else if (t.dataset.u) { setBeat(t.dataset.u, c => { c.dur = Math.round(((c.dur || 0) + +t.dataset.d) * 10) / 10; if (!c.dur) delete c.dur; }); keepScroll(draw); }
-  else if (t.dataset.x) { setBeat(t.dataset.x, c => { if (c.delete) delete c.delete; else c.delete = true; }); keepScroll(draw); }
-  else if (t.dataset.r) { delete S[reel].beats[t.dataset.r]; persist(); keepScroll(draw); }
-  else if (t.dataset.pick) { const th = document.querySelector(`.thumb[data-t="${t.dataset.pick}"]`); document.querySelectorAll(".thumb.pick").forEach(x => x.classList.remove("pick")); th.classList.add("pick"); }
-  else if (t.classList.contains("thumb") && t.classList.contains("pick")) {
-    const r = t.getBoundingClientRect(), i = t.dataset.t, x = Math.round((e.clientX - r.left) / r.width * 1080), y = Math.round((e.clientY - r.top) / r.height * 1920);
-    setBeat(i, c => { c.cx = x; c.cy = y; }); keepScroll(draw);
-  }
+  if (t.dataset.go) { const b = beatOf(t.dataset.go); select(b.i, false); seek(eff(b).a + 0.05); play(true); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+  if (t.dataset.seek) { seek(+t.dataset.seek); play(true); return; }
+  if (t.dataset.x) { setBeat(t.dataset.x, c => { if (c.delete) delete c.delete; else c.delete = true; }); draw(); return; }
+  if (t.dataset.r) { delete S[reel].beats[t.dataset.r]; persist(); draw(); return; }
+  if (t.classList.contains("thumb")) { select(+t.dataset.t, false); const b = beatOf(t.dataset.t); seek(eff(b).a + 0.05); }
 });
 document.addEventListener("input", (e) => {
   const el = e.target;
-  if (el.dataset.c != null) { S[reel].caps[el.dataset.c] = el.value; persist(); el.closest(".cap").classList.toggle("changed", el.value.trim() !== DATA[reel].caps.find(x => String(x.t) === el.dataset.c).text); updateBar(); return; }
+  if (el.dataset.c != null) { S[reel].caps[el.dataset.c] = el.value; persist(); el.closest(".cap").classList.toggle("changed", el.value.trim() !== DATA[reel].caps.find(x => String(x.t) === el.dataset.c).text); updateBar(); drawStage(); return; }
   if (el.dataset.f) {
-    const i = el.dataset.i, k = el.dataset.f, b = DATA[reel].beats.find(x => String(x.i) === i), v = el.type === "number" ? +el.value : el.value;
+    const i = el.dataset.i, k = el.dataset.f, b = beatOf(i), v = el.type === "number" ? +el.value : el.value;
     setBeat(i, c => { if (String(v) === String(b.f[k])) delete c[k]; else c[k] = v; });
-    const card = el.closest(".card"); card.classList.toggle("changed", !!S[reel].beats[i]);
-    const th = card.querySelector(".thumb svg"); if (th) th.remove(); const o = overlay(b, S[reel].beats[i] || {}); if (o) card.querySelector(".thumb").insertAdjacentHTML("beforeend", o);
-    updateBar();
+    el.closest(".card").classList.toggle("changed", !!S[reel].beats[i]); select(+i, false); updateBar(); drawStage(); drawTLBars();
   }
 });
-function updateBar() { const n = nChanges(reel); $("#count").textContent = n ? `${n} thay đổi ở ${DATA[reel].title.split(" · ")[0]}` : "Chưa có thay đổi"; $("#save").disabled = !n; drawReels(); }
+function drawTLBars() { DATA[reel].beats.forEach(b => { const el = document.querySelector(`.bar[data-b="${b.i}"]`); if (!el) return; const e = eff(b); el.style.left = e.a * pps + "px"; el.style.width = Math.max(8, (e.z - e.a) * pps) + "px"; el.firstChild.textContent = val(b, "text") || val(b, "title") || val(b, "big") || val(b, "a_title") || val(b, "top_label") || LABEL[b.type]; }); }
+document.addEventListener("change", (e) => {
+  const el = e.target; if (el.dataset.ti == null) return;
+  const i = el.dataset.ti, b = beatOf(i), e0 = eff(b), c = chg(i); let a = e0.a, z = e0.z; if (el.dataset.w === "a") a = +el.value; else z = +el.value; if (z < a + 0.2) z = a + 0.2;
+  setBeat(i, cc => { cc.shift = R1(a - b.t0); cc.dur = R1((z - a) - (b.t1 - b.t0)); if (!cc.shift) delete cc.shift; if (!cc.dur) delete cc.dur; }); draw(); select(+i, false); seek(a + 0.05);
+});
+/* drag a ring / glow on the stage */
+let sd = null;
+$("#stage").addEventListener("pointerdown", (e) => { const t = e.target.closest(".drag"); if (!t) return; sd = { i: +t.dataset.i }; $("#stage").setPointerCapture(e.pointerId); e.preventDefault(); });
+$("#stage").addEventListener("pointermove", (e) => { if (!sd) return; const r = $("#stage").getBoundingClientRect(); const x = Math.round((e.clientX - r.left) / r.width * 1080), y = Math.round((e.clientY - r.top) / r.height * 1920); setBeat(sd.i, c => { c.cx = x; c.cy = y; }); drawStage(); });
+$("#stage").addEventListener("pointerup", () => { if (sd) { sd = null; draw(); } });
 
 async function payload() { return JSON.stringify(changesOf(reel), null, 1); }
 $("#save").addEventListener("click", async () => {
   const msg = $("#msg"); msg.textContent = "";
-  try {
-    const dl = await claude.use("downloads");
-    if (!dl) { msg.textContent = "Trình xem này không tải được file. Bấm Sao chép nội dung rồi gửi cho tôi."; return; }
-    await dl.save({ filename: `hpf_${reel}_patch.json`, data: await payload() });
-    msg.textContent = `Đã lưu hpf_${reel}_patch.json. Gửi file cho tôi, tôi áp dụng và dựng lại.`;
+  try { const dl = await claude.use("downloads"); if (!dl) { msg.textContent = "Trình xem này không tải được file. Bấm Sao chép nội dung rồi gửi cho tôi."; return; }
+    await dl.save({ filename: `hpf_${reel}_patch.json`, data: await payload() }); msg.textContent = `Đã lưu hpf_${reel}_patch.json. Gửi file cho tôi, tôi áp dụng và dựng lại.`;
   } catch (err) { msg.textContent = err && err.code === "declined" ? "Bạn đã huỷ lưu file." : "Không lưu được file. Dùng nút Sao chép nội dung."; }
 });
-$("#copy").addEventListener("click", async () => {
-  const msg = $("#msg"), text = await payload();
-  try { await navigator.clipboard.writeText(text); msg.textContent = "Đã sao chép. Dán vào chat để gửi cho tôi."; }
-  catch (e) { msg.innerHTML = "Chọn và sao chép đoạn dưới:"; msg.insertAdjacentHTML("beforeend", `<pre>${esc(text)}</pre>`); }
-});
-draw();
+$("#copy").addEventListener("click", async () => { const msg = $("#msg"), text = await payload();
+  try { await navigator.clipboard.writeText(text); msg.textContent = "Đã sao chép. Dán vào chat để gửi cho tôi."; } catch (e) { msg.innerHTML = "Chọn và sao chép đoạn dưới:"; msg.insertAdjacentHTML("beforeend", `<pre>${esc(text)}</pre>`); } });
+pps = fitPps(); loadReel(); draw(); fitStage();
+window.addEventListener("resize", () => { pps = fitPps() * +$("#zoom").value; drawTL(); });
 </script>

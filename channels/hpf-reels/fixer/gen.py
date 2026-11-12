@@ -34,7 +34,12 @@ for name,mp4,title in [("H3","/home/user/hpf_3_split_squat_mo_goi.mp4","BÃ i 1 Â
         if ty=="glow": f.update(cx=sb["cx"],cy=sb["cy"],rx=sb["rx"],ry=sb["ry"])
         if ty=="fault": f.update(y=sb.get("y",760))
         if ty=="compare2": f["top_label"]=sb["top"]["label"]; f["bottom_label"]=sb["bottom"]["label"]
-        beats.append({"i":i,"type":ty,"t0":round(t0,2),"t1":round(t1,2),"f":f,"img":img})
+        raw={k:sb[k] for k in ("kind","size","y","x","view","pose","corner","mode","marks","highlight","shapes","labels","panels","color","rot") if k in sb}
+        if ty=="anatomy": raw["title"]=sb.get("title","")
+        if ty=="hiprot": raw["a"]=sb["a"]; raw["b"]=sb["b"]
+        if ty=="compare2": raw["top"]={"label":sb["top"]["label"],"kind":sb["top"]["kind"]}; raw["bottom"]={"label":sb["bottom"]["label"],"kind":sb["bottom"]["kind"]}
+        if ty=="title": raw.update({k:sb[k] for k in ("style","text","tag","big","sub","bg","weight") if k in sb})
+        beats.append({"i":i,"type":ty,"t0":round(t0,2),"t1":round(t1,2),"f":f,"s":raw,"img":img})
     # caption lines (output time), 6 words per line
     ws=[w for s in json.load(open(f"{D}/specs/reel-{name}/build/words.whisper.json"))["segments"] for w in s.get("words",[])]
     kept=[(w,et(w["start"])) for w in ws if any(a<=w["start"] and w["end"]<=b+0.01 for a,b in tk)]
@@ -43,7 +48,7 @@ for name,mp4,title in [("H3","/home/user/hpf_3_split_squat_mo_goi.mp4","BÃ i 1 Â
         cur.append((w["word"].strip(),t))
         if len(cur)==6: caps.append({"t":round(cur[0][1],1),"text":" ".join(x for x,_ in cur)}); cur=[]
     if cur: caps.append({"t":round(cur[0][1],1),"text":" ".join(x for x,_ in cur)})
-    OUT[name]={"title":title,"file":os.path.basename(mp4),"dur":round(sum(b-a for a,b in tk),1),"beats":beats,"caps":caps,"phrases":spec.get("phrases",{})}
+    OUT[name]={"title":title,"file":os.path.basename(mp4),"dur":round(sum(b-a for a,b in tk),2),"video":name+"_clean.mp4","beats":beats,"caps":caps,"phrases":spec.get("phrases",{})}
     print(name,len(beats),len(caps))
 json.dump(OUT,open(f"{D}/ed/data.json","w"),ensure_ascii=False)
 print(os.path.getsize(f"{D}/ed/data.json")//1024,"KB")
