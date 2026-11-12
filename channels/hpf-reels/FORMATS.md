@@ -101,4 +101,9 @@ Each episode's last line asks the question the next episode answers.
 - **Ending:** a recap card listing the items with ❌, then the next-episode question
   ("Vậy với thể trạng này, 3 buổi/tuần Linh tập gì?"), then "Follow xem #3", and a comment prompt
   ("Bạn đang tập bài nào trong list?").
+- **Episode #3 (programme) opens with the swaps:** each excluded exercise from #2 gets its replacement, shown as a pair
+  ("Gập bụng ❌ → Dead bug ✅"). Then show the weekly plan as a screenshot card, 2 rules, and the re-test promise (#4).
+  The full plan goes in a card and the pinned comment. The video shows one rep per exercise, not every set.
+- Donkey kick (at home, on all fours) and cable / machine kickback (gym) are the same movement with the same fault.
+  Name them together: "Kickback (ở nhà: donkey kick)".
 - **Safety on set:** never load a compensation. Use bodyweight or the lightest weight, 1–2 reps, coach's hand ready.
