@@ -170,6 +170,32 @@
    "last": "2026-11-12",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "series-theo-kh-ch-1",
+   "say": "series theo khách: #1 thẩm định → #2 bài KHÔNG tập → #3 chương trình theo lịch → #4 test lại; cuối mỗi tập đặt câu hỏi cho tập sau",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "video-b-i-kh-ng",
+   "say": "video bài không tập: bài gây bất ngờ nhất lên đầu, quay bù trừ nhẹ tạ + đen trắng + X, lý do nối với kết quả thẩm định, nói 'chưa phải lúc' chứ không 'cấm', giữ bài thay thế cho tập sau",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],

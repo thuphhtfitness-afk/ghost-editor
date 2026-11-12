@@ -67,3 +67,32 @@ POV is HPF's signature for this line: other channels shoot it from a tripod. Kee
 - Open on the body shape or goal, not on the exercise list ("Dáng tam giác ngược muốn cân đối hông?").
 - Show "Combo n bài": each exercise has a number label, sets × reps, and one line on why it fits this body.
 - End with "Lưu ngay combo này" + "Follow để xem combo tiếp".
+
+## Line D: "Bài KHÔNG cho tập" (exclusion), 60–80 s, the bridge episode of a client series
+For one client, the coach lists the exercises they will NOT give this client for now, then hooks into the
+programme episode. It works because it hits what viewers already do ("I do that one!").
+
+**Series chain for one client:**
+1. #1 Thẩm định
+2. #2 Bài KHÔNG tập
+3. #3 Chương trình theo lịch
+4. #4 Test lại sau 4 tuần
+
+Each episode's last line asks the question the next episode answers.
+
+- **Hook:** "n bài t KHÔNG cho [tên] tập, dù bài số 1 ai cũng tập để …". Put the most surprising item first
+  (the one viewers think is good for their goal, e.g. leg raise / crunch for belly fat).
+- **Recap the client in 3–5 s** with shots or numbers from #1, plus the text "Xem #1 thẩm định".
+- **4–6 items.** Each item gets 8–12 s:
+  1. the exercise name (number label)
+  2. the client tries 1–2 reps, light or bodyweight
+  3. the compensation, in grayscale + ❌, with a red mark ON the compensation (arched lower back, flared ribs, chin forward)
+  4. the reason, tied to a finding from #1 ("Vì em đang võng lưng nên …")
+  5. an anatomy card of the muscle that takes over
+- **The alternative is held back for the next episode.** At most one item names its replacement.
+- **Credibility line, once:** "Không phải bài xấu, chỉ là chưa phải lúc. Hết [vấn đề] thì quay lại."
+  Use "tạm hoãn", "chưa", never "cấm", never "bài này gây chấn thương".
+- **Ending:** a recap card listing the items with ❌, then the next-episode question
+  ("Vậy với thể trạng này, 3 buổi/tuần Linh tập gì?"), then "Follow xem #3", and a comment prompt
+  ("Bạn đang tập bài nào trong list?").
+- **Safety on set:** never load a compensation. Use bodyweight or the lightest weight, 1–2 reps, coach's hand ready.

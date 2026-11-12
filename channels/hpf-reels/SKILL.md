@@ -64,7 +64,7 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
   white on wine red inside the card. `mode: "full"` (the black full-screen stage) only when the user asks for it.
 
 ## Content lines and story rules (read FORMATS.md)
-HPF publishes three lines: **A. Thẩm định + Chương trình**, **B. Sửa lỗi (POV only)**, **C. Chương trình / combo**.
+HPF publishes four lines: **A. Thẩm định + Chương trình**, **B. Sửa lỗi (POV only)**, **C. Chương trình / combo**, **D. Bài KHÔNG tập** (the bridge episode of a client series: #1 thẩm định → #2 không tập → #3 chương trình → #4 test lại).
 FORMATS.md has the beat sheet for each. Every reel: the hook is a question / pain / a person with numbers (not just the
 exercise name), keep coach–client dialogue, end on a "Kết luận" verdict + a CTA (lưu / comment / follow).
 
