@@ -7,6 +7,8 @@ Works on any HyperFrames project (reel.json builds and custom index.html generat
     finals.py render   ...      (refuses a reel whose preview is missing or older than its index.html; --force)
     finals.py qa       ...
     finals.py nomusic  ...      (the no-music version of an existing final; render makes it by itself)
+    finals.py outro    ...      (the channel outro appended -> "<name> (outro).mp4"; render does it by itself when
+                                library/outro/outro.json is enabled; scripts/add_outro.py)
     finals.py deliver  ...      [--collection "Trial reels"] [--date 2026-10-14] [--allow "R01 - Seoul list"] [--rounds 2] [--dry]
     finals.py <step> --batch reels.json                       (every reel in the manifest; CLI flags fill missing fields)
 
@@ -228,6 +230,19 @@ def render(r, force=False, no_music=True):
     print(f"{time.strftime('%H:%M:%S')} render {r['name']} in {time.time() - t0:.0f} s ({os.path.getsize(out) / 2**20:.0f} MB) -> {out}")
     if no_music and r.get("no_music", True):
         nomusic(r)
+    outro(r)
+
+
+def outro(r):
+    """the channel outro (library/outro/outro.json) after the final and its no-music version -> "<name> (outro).mp4",
+    the file to post; the final itself keeps the composition's length for QA / no-music / deliver"""
+    import add_outro
+    c = add_outro.config()
+    if not c or not c.get("enabled") or r.get("outro") is False:
+        return
+    for f in (os.path.join(r["out"], f"{r['name']}.mp4"), os.path.join(r["out"], f"{r['name']} (no music).mp4")):
+        if os.path.exists(f):
+            add_outro.append(f)
 
 
 def music_tags(html, ids=None):
@@ -589,7 +604,7 @@ def tracker_rows(reels, done, content, work):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("step", choices=["preview", "render", "nomusic", "qa", "deliver"])
+    ap.add_argument("step", choices=["preview", "render", "nomusic", "outro", "qa", "deliver"])
     ap.add_argument("projects", nargs="*")
     ap.add_argument("--batch", help="reels.json manifest")
     ap.add_argument("--out", help="where previews, finals and QA go (default <project>/finals)")
@@ -611,7 +626,7 @@ def main():
     if a.step == "deliver":
         return deliver(reels, a.allow, a.dry)
     for r in reels:
-        {"preview": preview, "render": lambda r: render(r, a.force, not a.no_nomusic), "nomusic": nomusic, "qa": qa}[a.step](r)
+        {"preview": preview, "render": lambda r: render(r, a.force, not a.no_nomusic), "nomusic": nomusic, "outro": outro, "qa": qa}[a.step](r)
 
 
 if __name__ == "__main__":

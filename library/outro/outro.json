@@ -1,0 +1,6 @@
+{
+ "enabled": true,
+ "file": "ht-fitness-outro.mp4",
+ "gain_db": 0,
+ "note": "HT Fitness ecosystem outro (6.5 s, 1080x1920). finals.py render appends it to every final -> '<name> (outro).mp4'. Set enabled false to stop."
+}

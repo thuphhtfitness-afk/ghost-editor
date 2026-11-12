@@ -60,6 +60,7 @@ components.py plan/check -> new components per reel for a named style (catalog.j
 broll_vision.py picks -> build/broll-picks.jpg: every B-roll shot + stock image, its line, the people check; WAIT for the user's yes
 finals.py preview -> "<name> (preview).mp4": 720x1280 at ~4.5 Mbit/s for the user's phone (+ a frame-0 still); WAIT for their OK
 finals.py render  -> "<name>.mp4": delivery master -> Instagram H.264 (refuses a reel with no current preview)
+                     + "<name> (outro).mp4": the channel outro appended (library/outro/outro.json; THE file to post)
 finals.py qa      -> render_report.py + broll_qa.py per reel, one summary line each; fix and re-render, at most 3 rounds
 qa.py             -> SFX-vs-voice on a stem, A/V lengths, contact sheet
 finals.py deliver -> optional: -14 LUFS into the user's library of finished videos (CONTENT): NOT POSTED, _moves.tsv,
@@ -313,6 +314,12 @@ $F render  $P $R    # delivery master -> "R12 - Clean OS.mp4": Instagram H.264 (
 $F qa      $P $R    # render_report.py + broll_qa.py -> "<name>.qa.json/.html", one summary line per reel
 python3 $S/scripts/qa.py $P build/reel.mp4              # SFX stem levels, A/V lengths, matte, transitions, shader flicker
 ```
+**Outro on every reel.** The channel's outro lives in `library/outro/` (`outro.json`: enabled, file, gain_db). When it is
+enabled, `finals.py render` appends it by itself after the final and its no-music version -> `<name> (outro).mp4` and
+`<name> (no music) (outro).mp4`, hard cut, conformed to the reel, one H.264 pass; that is the file to send or post. The
+final without the outro stays for QA / no-music / deliver (they compare it to the composition). For a reel rendered
+before the outro was set, or by hand: `finals.py outro <project> ...` or `python3 $S/scripts/add_outro.py <final.mp4>`.
+Never add the outro inside the composition (index.html): it would change the reel's length and break those checks.
 The user's changes after the previews go back into the build, then new previews. The HyperFrames version is pinned in
 ONE place, `scripts/HF_VERSION`: every script (finals.py, approval_sheet.py, qa.py, snap.py, build.mjs) and
 `$S/scripts/hf.sh` read it, so every machine renders with the same version. Never call `npx hyperframes` unpinned. To try
