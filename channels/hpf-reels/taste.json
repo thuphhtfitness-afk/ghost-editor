@@ -196,6 +196,45 @@
    "last": "2026-11-12",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "chuy-n-gia-hpf-b",
+   "say": "chuyên gia HPF: bỏ test tường luồn tay vào khe lưng, lọt bàn tay là bình thường (cột sống cong chữ S), không lọt mới là vấn đề",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "list-b-i-kh-ng",
+   "say": "list bài không tập: chọn bài người mới biết/hay tập (gập bụng, plank giữ lâu, đá chân sau, superman, hip thrust, back extension), tránh bài niche",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "case-t-th-nh-linh",
+   "say": "case tư thế (như Linh): hướng giãn cơ + linh hoạt là ok",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],

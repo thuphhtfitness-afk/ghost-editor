@@ -32,7 +32,7 @@ Series name on screen: **"HPF THẨM ĐỊNH #n"** (later "#n – 4 TUẦN SAU" 
 |---|---|---|
 | 0–3 s | Hook: pain or body-shape call-out + promise | title (wine box), client on the HT height wall |
 | 3–8 s | Client card: name, age, job / sitting hours, schedule (days × minutes), goal, 1–2 numbers | `note`-style card, top-left; stays ≤ 4 s |
-| 8–35 s | 3–4 tests. Each test has 4 steps: test name → client does it → finding (❌ / ✅) → why it matters + a viewer-try line | label for the test name; `guide` lines on the body (plumb line, pelvis tilt line, wall gap); grayscale + ❌ on a failed test; anatomy card for the tight / weak muscle |
+| 8–35 s | 3–4 tests. Each test has 4 steps: test name → client does it → finding (❌ / ✅) → why it matters + a viewer-try line | label for the test name; `guide` lines on the body (plumb line, pelvis tilt line); grayscale + ❌ on a failed test; anatomy card for the tight / weak muscle |
 | 35–40 s | Scorecard: 3 lines ❌/✅ | full card, wine red / white, hold 2.5 s |
 | 40–75 s | Programme: **every exercise tied to a finding** ("Vì … nên …"), sets × reps on screen, and **one exercise dropped, with the reason** | label "Vì X → bài Y", anatomy card on the target muscle, 1 clean rep per exercise |
 | 75–90 s | Week-1 card (screenshot-able) + re-test promise + CTA | full card, then coach to camera |
@@ -40,6 +40,9 @@ Series name on screen: **"HPF THẨM ĐỊNH #n"** (later "#n – 4 TUẦN SAU" 
 - Assessment footage: tripod at hip height, square to the wall, front / side / back. Keep the HT height chart in frame.
   Draw the plumb line (ear–shoulder–hip–knee–ankle) with `guide` on the side view.
 - Show the failed rep **and** the passed rep (or the passed side) for the comparison.
+- **Expert rule: no "hand behind the lower back against the wall" test.** The spine is naturally S-shaped, so a hand
+  fitting in the gap is normal; only NO gap would be a problem. Never use it as a sign of an arched back.
+  Show the arch from the side view on the height chart instead. Tests must be ones the HPF coach signs off.
 - Do not diagnose medical conditions on screen. Say "dấu hiệu", "có xu hướng", never "bệnh".
 - Client privacy: name, numbers and body only with consent. Blur the face if the client asks.
 
@@ -81,7 +84,10 @@ programme episode. It works because it hits what viewers already do ("I do that 
 Each episode's last line asks the question the next episode answers.
 
 - **Hook:** "n bài t KHÔNG cho [tên] tập, dù bài số 1 ai cũng tập để …". Put the most surprising item first
-  (the one viewers think is good for their goal, e.g. leg raise / crunch for belly fat).
+  (the one viewers think is good for their goal, e.g. sit-ups for belly fat).
+- **Pick exercises beginners already know or do** (sit-ups, plank held as long as possible, donkey kick / cable kickback,
+  superman, hip thrust, back extension machine). Skip niche gym moves (upright row, behind-the-neck pulldown):
+  viewers must recognise themselves in the list.
 - **Recap the client in 3–5 s** with shots or numbers from #1, plus the text "Xem #1 thẩm định".
 - **4–6 items.** Each item gets 8–12 s:
   1. the exercise name (number label)
