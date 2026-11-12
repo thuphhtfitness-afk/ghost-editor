@@ -86,7 +86,7 @@ def _runs(ws, words):
         idx = {id(w): i for i, w in enumerate(words)}
         def edge(run):  # a - 0.12 / b + 0.25, but never into the neighbouring words that are not in this take
             i0, i1 = idx[id(run[0])], idx[id(run[-1])]
-            a = run[0]["start"] - 0.12; b = run[-1]["end"] + 0.25
+            a = run[0]["start"] - 0.12; b = run[-1]["end"] + 0.4  # whisper word ends come early: a late cut chops the last syllable
             if i0 > 0: a = max(a, words[i0 - 1]["end"] + 0.02)
             if i1 + 1 < len(words): b = min(b, words[i1 + 1]["start"] - 0.02)
             return [a, b]
@@ -240,7 +240,7 @@ def boosted_plate(src, base, ranges, target=-16.0):
         a, b = r[0], r[1]
         g = r[2] if len(r) > 2 else max(0.0, min(20.0, target - lufs(src, a, b)))
         parts.append((a, b, round(g, 1))); print(f"  boost {a:.2f}-{b:.2f}: +{g:.1f} dB")
-    tag = "_".join(f"{a:g}-{b:g}-{g:g}" for a, b, g in parts)
+    tag = os.path.basename(src) + "_" + "_".join(f"{a:g}-{b:g}-{g:g}" for a, b, g in parts)  # the cache key includes the plate it came from
     import hashlib
     dst = os.path.join(base, "assets", f"talk.boost.{hashlib.md5(tag.encode()).hexdigest()[:8]}.mp4")
     if not os.path.exists(dst):
@@ -250,6 +250,26 @@ def boosted_plate(src, base, ranges, target=-16.0):
                         "-af", f"volume='1+{expr}':eval=frame,alimiter=limit=0.89:level=false",
                         "-c:a", "aac", "-b:a", "256k", dst + ".part.mp4"], check=True)
         os.replace(dst + ".part.mp4", dst)
+    return dst
+
+
+def fx_plate(src, base, fxs):
+    """punch + brighten stretches of the plate (a dark mirror shot): each fx {a, b, raw, crop: [x, y, w, h] on the 1080x1920
+    plate (9:16), eq}. The zoom is cut from the RAW recording (sharp), brightened and overlaid on [a, b]; audio is kept."""
+    import hashlib
+    tag = hashlib.md5(json.dumps(fxs, sort_keys=True).encode()).hexdigest()[:8]
+    dst = os.path.join(base, "assets", f"talk.fx.{tag}.mp4")
+    if os.path.exists(dst): return dst
+    cmd = ["ffmpeg", "-v", "error", "-y", "-i", src]; fc = []; last = "[0:v]"
+    for k, f in enumerate(fxs):
+        cmd += ["-i", f["raw"]]
+        rw = int(subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width", "-of", "csv=p=0", f["raw"]], capture_output=True, text=True).stdout.strip().split(",")[0])
+        kx = rw / 1080; x, y, w, h = f["crop"]
+        fc.append(f"[{k + 1}:v]trim=start={f['a']}:end={f['b']},setpts=PTS-STARTPTS+{f['a']}/TB,crop={int(w * kx)}:{int(h * kx)}:{int(x * kx)}:{int(y * kx)},scale=1080:1920:flags=lanczos,"
+                  f"eq={f.get('eq', 'brightness=0.08:gamma=1.35:contrast=1.08')},fps=30[z{k}]")
+        fc.append(f"{last}[z{k}]overlay=enable='between(t,{f['a']},{f['b']})':eof_action=pass[o{k}]"); last = f"[o{k}]"
+    cmd += ["-filter_complex", ";".join(fc), "-map", last, "-map", "0:a", "-c:v", "libx264", "-preset", "fast", "-crf", "14", "-g", "30", "-pix_fmt", "yuv420p", "-threads", "4", "-c:a", "copy", dst + ".part.mp4"]
+    subprocess.run(cmd, check=True); os.replace(dst + ".part.mp4", dst)
     return dst
 
 
@@ -293,6 +313,8 @@ def main():
             subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-vf", f"crop={w}:{h}:{x}:{y},scale=1080:1920:flags=lanczos",
                             "-c:v", "libx264", "-threads", "4", "-preset", "medium", "-crf", "16", "-g", "30", "-c:a", "copy", dst], check=True)
         src = dst
+    if spec.get("plateFx"):
+        src = fx_plate(src, base, spec["plateFx"])
     if spec.get("boost"):  # quiet off-mic voice (the client asking): lift each [a, b] range to the coach's level
         src = boosted_plate(src, base, spec["boost"])
     dp = os.path.join(P, "assets", "talk.mp4")
@@ -303,6 +325,8 @@ def main():
     segs = wj["segments"] if isinstance(wj, dict) else wj
     flat = [w for sg in segs for w in sg.get("words", [])]
     normalize_case(flat, spec.get("proper", []))
+    for w in flat:  # a local accent: whisper hears "này" as "mày"; the captions say "này"
+        if core(w["word"]) == "mày": w["word"] = w["word"].replace("mày", "này").replace("Mày", "Này")
     for w in flat:
         if core(w["word"]) in {n.lower() for n in spec.get("names", [])}: w["word"] = w["word"].replace(w["word"].strip(), "***")
     json.dump(wj, open(os.path.join(P, "build", "words.whisper.json"), "w"), ensure_ascii=False)

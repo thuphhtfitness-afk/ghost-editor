@@ -967,9 +967,9 @@ for (const b of beatsList) {
       if (b.style === "card") {
         // reference look: a cream card with a small tag line (wine box, white text), a giant heavy red word, a black line under it
         const RED = b.red || "#B5301F", WINE = b.box || "#7A1424", fit = (s, base, k, maxw) => Math.min(base, Math.floor(maxw / (s.length * k)));
-        const bigS = b.bigSize ?? fit(b.big, 230, 0.6, 900), subS = b.subSize ?? fit(b.sub || "x", 118, 0.62, 900);
-        inner = `<div id="${id}-in" class="ov" style="left:${b.x ?? 40}px;right:${b.x ?? 40}px;top:${b.y ?? 130}px;z-index:4;text-align:center;background:#F4EFE6;border-radius:30px;padding:28px 24px 26px;box-shadow:0 22px 60px rgba(0,0,0,.45);font-family:Montserrat,sans-serif">
-          <div id="${id}-tag" style="display:inline-block;background:${WINE};color:#fff;font-weight:800;font-size:${b.tagSize ?? fit(b.tag, 44, 0.6, 880)}px;line-height:1.15;padding:8px 22px;border-radius:10px">${esc(b.tag)}</div>
+        const bigS = b.bigSize ?? fit(b.big, 150, 0.6, 700), subS = b.subSize ?? fit(b.sub || "x", 70, 0.62, 700);
+        inner = `<div id="${id}-in" class="ov" style="left:${b.x ?? 110}px;right:${b.x ?? 110}px;top:${b.y ?? 150}px;z-index:4;text-align:center;background:#F4EFE6;border-radius:26px;padding:20px 18px 18px;box-shadow:0 22px 60px rgba(0,0,0,.45);font-family:Montserrat,sans-serif">
+          <div id="${id}-tag" style="display:inline-block;background:${WINE};color:#fff;font-weight:800;font-size:${b.tagSize ?? fit(b.tag, 34, 0.6, 700)}px;line-height:1.15;padding:8px 22px;border-radius:10px">${esc(b.tag)}</div>
           <div id="${id}-big" style="color:${RED};font-weight:900;font-size:${bigS}px;line-height:.95;letter-spacing:-6px;margin-top:8px;white-space:nowrap">${esc(b.big)}</div>
           ${b.sub ? `<div id="${id}-sub" style="color:#111;font-weight:900;font-size:${subS}px;line-height:1;letter-spacing:-3px;margin-top:2px;white-space:nowrap">${esc(b.sub)}</div>` : ""}</div>`;
         tl.push(`ft("#${id}-in", { autoAlpha: 0, y: -40, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.3, ease: "power3.out" }, ${t0});`);

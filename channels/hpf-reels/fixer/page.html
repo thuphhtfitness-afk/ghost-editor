@@ -121,7 +121,7 @@ pre { margin: 0; white-space: pre-wrap; word-break: break-all; font-size: 12px; 
 </div>
 
 <div class="bar-save"><div class="bar-in">
-  <div><div id="count">Chưa có thay đổi</div><div id="msg"></div></div>
+  <div><div id="count">Chưa có thay đổi</div><div id="msg"></div><div id="dbmsg" class="hint"></div></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <button class="ghost" id="copy" type="button">Sao chép nội dung</button>
     <button class="primary" id="save" type="button" disabled>Tải file sửa</button>
@@ -137,7 +137,11 @@ const LANES = ["Chữ", "Đánh dấu", "Cảnh"];
 let reel = KEYS[0], mode = "beats", sel = null, pps = 10, playing = false, vclock = null;
 const S = {}; KEYS.forEach(k => S[k] = { beats: {}, caps: {} });
 try { const j = JSON.parse(localStorage.getItem("hpf-fixer") || "null"); if (j) KEYS.forEach(k => { if (j[k]) S[k] = j[k]; }); } catch (e) {}
-const persist = () => { try { localStorage.setItem("hpf-fixer", JSON.stringify(S)); } catch (e) {} };
+let dbDoc = null, dbTimer = null, dbState = "";
+const persist = () => { try { localStorage.setItem("hpf-fixer", JSON.stringify(S)); } catch (e) {} saveDb(); };
+function saveDb() { if (!dbDoc) return; clearTimeout(dbTimer); dbTimer = setTimeout(() => { dbDoc.set({ json: JSON.stringify(S), at: new Date().toISOString() }).then(() => { dbState = "Đã lưu sửa đổi vào trang"; const m = document.getElementById("dbmsg"); if (m) m.textContent = dbState; }).catch(() => {}); }, 700); }
+(async () => { try { const db = await claude.use("db"); if (!db) return; dbDoc = db.doc("edits/state"); const snap = await dbDoc.get(); const has = KEYS.some(k => Object.keys(S[k].beats).length || Object.keys(S[k].caps).length);
+  if (has) saveDb(); else if (snap.exists) { const j = JSON.parse(snap.data().json); KEYS.forEach(k => { if (j[k]) S[k] = j[k]; }); draw(); } } catch (e) {} })();
 const $ = (s) => document.querySelector(s);
 const mmss = (t) => Math.floor(t / 60) + ":" + (Math.max(0, t) % 60).toFixed(1).padStart(4, "0");
 const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -168,7 +172,7 @@ function drawBeat(b, t) {
   switch (b.type) {
     case "label": { const y = s.y ?? 600, x = s.x ?? 70; return `<div class="wb" style="left:${x}px;top:${y}px;font-size:${s.size ?? 42}px;padding:.3em .6em;max-width:${1080 - x * 2}px">${esc(f("text"))}${s.kind === "bad" ? iconBad : s.kind === "ok" ? iconOk : ""}</div>`; }
     case "title": {
-      if (s.style === "card") return `<div style="left:40px;right:40px;top:${s.y ?? 130}px;background:#F4EFE6;border-radius:30px;padding:28px 24px;text-align:center;box-shadow:0 22px 60px rgba(0,0,0,.45)"><div class="wb" style="display:inline-block;font-size:40px;padding:8px 22px;border-radius:10px">${esc(f("tag"))}</div><div style="color:#B5301F;font-weight:900;font-size:190px;line-height:.95;letter-spacing:-6px;white-space:nowrap;overflow:hidden">${esc(f("big"))}</div><div style="color:#111;font-weight:900;font-size:96px;line-height:1;letter-spacing:-3px;white-space:nowrap;overflow:hidden">${esc(f("sub"))}</div></div>`;
+      if (s.style === "card") { const fit = (t, base, k, mw) => Math.min(base, Math.floor(mw / (Math.max(1, String(t).length) * k))); return `<div style="left:110px;right:110px;top:${s.y ?? 150}px;background:#F4EFE6;border-radius:26px;padding:20px 18px;text-align:center;box-shadow:0 22px 60px rgba(0,0,0,.45)"><div class="wb" style="display:inline-block;font-size:${fit(f("tag"), 34, .6, 700)}px;padding:8px 22px;border-radius:10px">${esc(f("tag"))}</div><div style="color:#B5301F;font-weight:900;font-size:${fit(f("big"), 150, .6, 700)}px;line-height:.95;letter-spacing:-5px;white-space:nowrap">${esc(f("big"))}</div><div style="color:#111;font-weight:900;font-size:${fit(f("sub") || "x", 70, .62, 700)}px;line-height:1;letter-spacing:-2px;white-space:nowrap">${esc(f("sub"))}</div></div>`; }
       return `<div style="left:60px;right:60px;top:${s.y ?? 190}px;text-align:center"><span class="wb" style="display:inline-block;font-size:${s.size ?? 96}px;padding:.1em .32em;text-transform:uppercase;font-weight:900">${esc(f("text"))}</span></div>`; }
     case "guide": { const c = (s.shapes || []).find(x => x.type === "circle"); if (!c) return ""; const cx = f("cx") ?? c.cx, cy = f("cy") ?? c.cy, r = f("r") ?? c.r, col = c.color === "green" ? "#35E06B" : "#FF3B2F";
       return `<svg width="1080" height="1920" style="left:0;top:0;pointer-events:none"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${col}" stroke-width="12"/>${sl ? `<circle class="drag" data-i="${b.i}" cx="${cx}" cy="${cy}" r="${r}" fill="rgba(255,255,255,.05)" stroke="none" style="pointer-events:all;cursor:move"/>` : ""}</svg>`; }

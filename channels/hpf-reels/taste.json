@@ -157,6 +157,19 @@
    "last": "2026-11-12",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "hpf-cut-voice-talking-to",
+   "say": "HPF: cut voice talking to the camera operator (tôi/bác...); never cut mid-word (tails +0.4s); mày->này in captions; zoom into and brighten dark mirror shots; keep the title card small.",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],

@@ -92,6 +92,19 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
   or knee-ankle) in red / green and a ring on the knee, so the difference can be seen. Use the coach's own "compare" line
   or the closing line of the lesson for it, 4-6 s. Do this for every reel that has a before and an after.
 
+## Cuts, accents and dark scenes (the user's corrections after HPF 3 / HPF 4)
+- **Cut the voice that talks to the camera operator** (words like "tôi", "bác", "Thu ơi", "ngửa máy lên", "gần nữa vào"): it only
+  adjusts the scene. Search the kept words for those and drop the whole sentence before building.
+- **Never cut a scene before a word is finished.** Take tails are +0.4 s after the last word (whisper word ends come early);
+  never end a segment on a word that is cut off in the middle.
+- **Local accent:** "mày" in a coaching line means "này": the captions say "này" (done in hpf_reel.py). Fix other accent
+  mis-hearings the same way (spec `phrases`).
+- **A dark or far shot** (the mirror view): spec `plateFx: [{a, b, raw, crop: [x, y, w, h], eq}]` zooms into the subject from the
+  RAW recording (sharp) and brightens it; put such a label high (y 250) so it does not cover the person.
+- **The title card stays small** (about 600 px wide, big word <= 150 px) so it never dominates the frame.
+- The Reel Fixer page saves its edits to the artifact database (`edits/state`): read them with `ArtifactData` and apply them
+  with `patch_apply.py` (do not ask the user to re-send). Each of the user's saved edits is also a rule to learn: record it here.
+
 ## Small fixes without a full re-edit (Reel Fixer)
 - Every finished HPF reel can get a **Reel Fixer page** (artifact): `ed/gen.py`-style data (beats with output times, a
   thumbnail per beat, caption lines) + a page where the user edits text, shifts / lengthens / removes a beat, moves a ring
