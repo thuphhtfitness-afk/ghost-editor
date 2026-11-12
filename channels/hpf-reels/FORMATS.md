@@ -88,6 +88,12 @@ Each episode's last line asks the question the next episode answers.
 - **Pick exercises beginners already know or do** (sit-ups, plank held as long as possible, donkey kick / cable kickback,
   superman, hip thrust, back extension machine). Skip niche gym moves (upright row, behind-the-neck pulldown):
   viewers must recognise themselves in the list.
+- **Character-first hook (the user's choice for client series)** is fine. Two conditions:
+  1. the promise ("5 BÀI KHÔNG CHO TẬP") is on screen from frame 1, while the voice introduces the client;
+  2. the first frame already SHOWS the problem (side view on the HT chart with the curve drawn), not a plain standing shot.
+
+  Use at most 2–3 traits, and only traits the coach confirmed (no "linh hoạt kém" unless a test shows it).
+  Turn one trait into a viewer call-out ("ngồi 9 tiếng/ngày, giống bạn không?"). The promise must land within 6 s.
 - **Recap the client in 3–5 s** with shots or numbers from #1, plus the text "Xem #1 thẩm định".
 - **4–6 items.** Each item gets 8–12 s:
   1. the exercise name (number label)

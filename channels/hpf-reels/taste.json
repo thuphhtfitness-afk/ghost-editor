@@ -235,6 +235,19 @@
    "last": "2026-11-12",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "hook-gi-i-thi-u",
+   "say": "hook giới thiệu khách: chữ hứa hẹn hiện từ frame đầu, frame đầu thấy luôn vấn đề, chỉ nêu đặc điểm coach đã xác nhận",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],
