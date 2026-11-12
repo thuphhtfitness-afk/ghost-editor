@@ -667,23 +667,23 @@ for (const b of beatsList) {
         // a wide band of one or two muscle illustrations side by side (like the user's reference): glowing panels over the
         // dimmed footage, coloured arrows pointing into the muscle heads with their names
         const panels = b.panels || [{ view: b.view, highlight: b.highlight }];
-        const PW = panels.length === 1 ? 640 : 470, PH = b.h ?? 560, gap = 24, top = b.top ?? 250;
-        const left = Math.round((1080 - (PW * panels.length + gap * (panels.length - 1))) / 2);
+        const PW = panels.length === 1 ? 500 : 268, PH = b.h ?? 520, gap = 14, top = b.top ?? 300;
+        const total = PW * panels.length + gap * (panels.length - 1), left = 1080 - 40 - total;
         const cards = panels.map((p, k) => {
           const fig = muscleSvg({ view: p.view === "ant" ? "ant" : "post", highlight: p.highlight || ["glute"], id: `${id}-p${k}`, w: PW - 16, h: PH - 96 });
           const arrows = (p.arrows || []).map((a) => {
             const col = a.color || "#E5322D", right = (a.side || "right") === "right", ay = 24 + (a.y ?? 0.4) * (PH - 130);
             const x0 = right ? PW - 6 : 6, x1 = PW / 2 + (right ? 1 : -1) * (a.reach ?? 40), dir = right ? -1 : 1;
             return `<svg width="${PW}" height="${PH}" style="position:absolute;left:0;top:0;overflow:visible;filter:drop-shadow(0 0 6px ${col})"><line x1="${x0}" y1="${ay}" x2="${x1 - dir * 22}" y2="${ay}" stroke="${col}" stroke-width="8" stroke-linecap="round"/><path d="M${x1} ${ay} L${x1 - dir * 34} ${ay - 18} L${x1 - dir * 34} ${ay + 18} Z" fill="${col}"/></svg>
-              <div style="position:absolute;${right ? "right" : "left"}:10px;top:${ay - 50}px;white-space:nowrap">${tag(a.text, a.size ?? 26)}</div>`;
+              <div style="position:absolute;${right ? "right" : "left"}:10px;top:${ay - 50}px;white-space:nowrap">${tag(a.text, a.size ?? (panels.length > 1 ? 18 : 24))}</div>`;
           }).join("");
           return `<div style="position:relative;width:${PW}px;height:${PH}px;border-radius:24px;background:radial-gradient(ellipse at 50% 100%, rgba(150,30,36,.55), rgba(0,0,0,.84) 72%);border:2px solid rgba(255,170,140,.45);box-shadow:0 0 34px rgba(255,110,70,.4), 0 18px 50px rgba(0,0,0,.55);overflow:hidden">
             <div style="position:absolute;left:8px;top:10px">${fig}</div>${arrows}
-            ${p.caption ? `<div style="position:absolute;left:0;right:0;bottom:14px;text-align:center">${tag(p.caption, Math.min(36, Math.floor((PW - 60) / (p.caption.length * 0.7))))}</div>` : ""}</div>`;
+            ${p.caption ? `<div style="position:absolute;left:0;right:0;bottom:14px;text-align:center">${tag(p.caption, Math.min(28, Math.floor((PW - 40) / (p.caption.length * 0.7))))}</div>` : ""}</div>`;
         }).join("");
         inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px">
-          <div style="position:absolute;inset:0;backdrop-filter:blur(${b.blur ?? 7}px) brightness(.62);-webkit-backdrop-filter:blur(${b.blur ?? 7}px) brightness(.62)"></div>
-          ${b.title ? `<div id="${id}-t" style="position:absolute;left:0;right:0;top:${top - 92}px;text-align:center;white-space:nowrap">${tag(b.title, Math.min(b.titleSize ?? 56, Math.floor(1000 / (b.title.length * 0.68))))}</div>` : ""}
+          <div style="position:absolute;inset:0;backdrop-filter:blur(${b.blur ?? 7}px) brightness(.72);-webkit-backdrop-filter:blur(${b.blur ?? 7}px) brightness(.72)"></div>
+          ${b.title ? `<div id="${id}-t" style="position:absolute;left:${left}px;width:${total}px;top:${top - 64}px;text-align:center;white-space:nowrap">${tag(b.title, Math.min(b.titleSize ?? 40, Math.floor((total - 20) / (b.title.length * 0.7))))}</div>` : ""}
           <div id="${id}-fig" style="position:absolute;left:${left}px;top:${top}px;display:flex;gap:${gap}px">${cards}</div></div>`;
       } else if (full) {
         inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 96%, rgba(140,20,30,.55) 0%, rgba(40,6,10,.3) 32%, rgba(0,0,0,0) 62%), #000">
@@ -904,21 +904,24 @@ for (const b of beatsList) {
       break;
     }
     case "hiprot": {
-      // anatomy B-roll: the hip seen from above, the knee swinging out (external rotation, the glute works) then collapsing in
-      // (internal rotation, the glute rests). Own artwork in the spirit of a muscle-and-motion reference; black stage.
-      const WINE = "#7A1424", D = t1 - t0, half = D / 2;
-      const tg = (txt, size) => `<span style="display:inline-block;background:${WINE};color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:${size}px;line-height:1.1;padding:10px 26px;border-radius:12px;white-space:nowrap">${esc(txt)}</span>`;
+      // anatomy B-roll for a mechanism: the hip seen from above, in a SMALL card in the corner over the blurred footage (the
+      // user's rule: anatomy stays small in one part of the frame). The knee swings out (the glute fan lights up) then collapses in.
+      const WINE = "#7A1424", D = t1 - t0, half = D / 2, CWd = 560, CHt = 640, cxp = 1080 - 40 - CWd, cyp = b.top ?? 230;
+      const tg = (txt, size) => `<span style="display:inline-block;background:${WINE};color:#fff;font-family:Montserrat,sans-serif;font-weight:900;font-size:${size}px;line-height:1.1;padding:8px 18px;border-radius:10px;white-space:nowrap">${esc(txt)}</span>`;
       const ta = b.a?.title ?? "XOAY NGOÀI HÔNG", tb = b.b?.title ?? "XOAY TRONG: GỐI CHỤM VÀO";
       const la = b.a?.label ?? "Mông nhỡ làm việc", lb = b.b?.label ?? "Mông nhỡ nghỉ";
+      const fitT = (s) => Math.min(38, Math.floor((CWd - 50) / (s.length * 0.72)));
       const thA = b.a?.theta ?? 26, thB = b.b?.theta ?? -24, kA = kneeFor(thA), kB = kneeFor(thB);
-      const hx = HIP.H[0], hy = HIP.H[1], ax = HIP.A[0], ay = HIP.A[1], SX = 0.9, SY = 0.9;
-      inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 92%, rgba(150,26,34,.6) 0%, rgba(40,6,10,.35) 38%, rgba(0,0,0,0) 66%), #000">
-        <div id="${id}-ta" style="position:absolute;left:0;right:0;top:210px;text-align:center">${tg(ta, Math.min(78, Math.floor(980 / (ta.length * 0.74))))}</div>
-        <div id="${id}-tb" style="position:absolute;left:0;right:0;top:210px;text-align:center;opacity:0">${tg(tb, Math.min(70, Math.floor(980 / (tb.length * 0.74))))}</div>
-        <div style="position:absolute;left:0;top:470px;width:1080px;height:1000px;transform:scale(1.15);transform-origin:50% 20%">${hipRotSvg({ id: `${id}-s`, w: 1080, h: 900 })}</div>
-        <div id="${id}-la" style="position:absolute;left:0;right:0;top:1330px;text-align:center">${tg("✓  " + la, 56)}</div>
-        <div id="${id}-lb" style="position:absolute;left:0;right:0;top:1330px;text-align:center;opacity:0">${tg("✗  " + lb, 56)}</div></div>`;
-      const ho = `${hx} ${hy}`, ao = `${ax} ${ay}`, S = `#${id}-s`;
+      const hx = HIP.H[0], hy = HIP.H[1], ax = HIP.A[0], ay = HIP.A[1];
+      inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px">
+        <div style="position:absolute;inset:0;backdrop-filter:blur(7px) brightness(.72);-webkit-backdrop-filter:blur(7px) brightness(.72)"></div>
+        <div style="position:absolute;left:${cxp}px;top:${cyp}px;width:${CWd}px;height:${CHt}px;border-radius:26px;background:radial-gradient(ellipse at 50% 100%, rgba(140,20,30,.5), rgba(0,0,0,.82) 70%);border:2px solid rgba(255,255,255,.18);box-shadow:0 18px 50px rgba(0,0,0,.55);overflow:hidden">
+          <div id="${id}-ta" style="position:absolute;left:0;right:0;top:16px;text-align:center">${tg(ta, fitT(ta))}</div>
+          <div id="${id}-tb" style="position:absolute;left:0;right:0;top:16px;text-align:center;opacity:0">${tg(tb, fitT(tb))}</div>
+          <div style="position:absolute;left:10px;top:92px;width:540px;height:450px">${hipRotSvg({ id: `${id}-s`, w: 540, h: 450 })}</div>
+          <div id="${id}-la" style="position:absolute;left:0;right:0;bottom:18px;text-align:center">${tg("✓  " + la, 30)}</div>
+          <div id="${id}-lb" style="position:absolute;left:0;right:0;bottom:18px;text-align:center;opacity:0">${tg("✗  " + lb, 30)}</div></div></div>`;
+      const ho = `${hx} ${hy}`, ao = `${ax} ${ay}`;
       tl.push(`ft("#${id}-in", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, ${t0});`);
       tl.push(`tl.fromTo("#${id}-s-thigh", { rotation: 0, svgOrigin: "${ho}" }, { rotation: ${thA}, svgOrigin: "${ho}", duration: ${r3(half * 0.62)}, ease: "power2.inOut" }, ${r3(t0 + 0.25)});`);
       tl.push(`tl.fromTo("#${id}-s-shank", { rotation: 0, scaleY: 1, svgOrigin: "${ao}" }, { rotation: ${r3(kA.shankRot)}, scaleY: ${r3(kA.shankScale)}, svgOrigin: "${ao}", duration: ${r3(half * 0.62)}, ease: "power2.inOut" }, ${r3(t0 + 0.25)});`);
@@ -928,7 +931,6 @@ for (const b of beatsList) {
       tl.push(`tl.fromTo("#${id}-s-thigh", { rotation: ${thA}, svgOrigin: "${ho}" }, { rotation: ${thB}, svgOrigin: "${ho}", duration: ${r3(half * 0.62)}, ease: "power2.inOut", immediateRender: false }, ${r3(t0 + half + 0.1)});`);
       tl.push(`tl.fromTo("#${id}-s-shank", { rotation: ${r3(kA.shankRot)}, scaleY: ${r3(kA.shankScale)}, svgOrigin: "${ao}" }, { rotation: ${r3(kB.shankRot)}, scaleY: ${r3(kB.shankScale)}, svgOrigin: "${ao}", duration: ${r3(half * 0.62)}, ease: "power2.inOut", immediateRender: false }, ${r3(t0 + half + 0.1)});`);
       tl.push(`tl.to("#${id}-s-fan", { opacity: 0.22, duration: 0.4 }, ${r3(t0 + half + 0.3)});`);
-      hiddenCaps.push([t0, t1]);
       beatSfx(b, t0, "whoosh", "anatomy");
       break;
     }
@@ -957,6 +959,7 @@ for (const b of beatsList) {
         const sel = `#${id}-${k}${l.type === "circle" ? "c" : "l"}${i}`, at = r3(t0 + 0.5 + si * 0.5 + i * 0.35);
         if (l.type === "circle") tl.push(`tl.fromTo("${sel}", { opacity: 0, scale: 0.6, transformOrigin: "${l.cx}px ${l.cy}px" }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, ${at});`);
         else tl.push(`tl.fromTo("${sel}", { opacity: 0 }, { opacity: 1, duration: 0.25 }, ${at});`);
+        beatSfx({}, at, "tick-1", "compare line");
       }));
       hiddenCaps.push([t0, t1]);
       beatSfx(b, t0, "whoosh", "compare");

@@ -253,6 +253,17 @@ def boosted_plate(src, base, ranges, target=-16.0):
     return dst
 
 
+def muted_plate(src, base, ranges):
+    import hashlib
+    tag = hashlib.md5((os.path.basename(src) + json.dumps(ranges)).encode()).hexdigest()[:8]
+    dst = os.path.join(base, "assets", f"talk.mute.{tag}.mp4")
+    if not os.path.exists(dst):
+        en = "+".join(f"between(t,{a},{b})" for a, b in ranges)
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-c:v", "copy", "-af", f"volume=0:enable='{en}'", "-c:a", "aac", "-b:a", "256k", dst + ".part.mp4"], check=True)
+        os.replace(dst + ".part.mp4", dst)
+    return dst
+
+
 def fx_plate(src, base, fxs):
     """punch + brighten stretches of the plate (a dark mirror shot): each fx {a, b, raw, crop: [x, y, w, h] on the 1080x1920
     plate (9:16), eq}. The zoom is cut from the RAW recording (sharp), brightened and overlaid on [a, b]; audio is kept."""
@@ -315,6 +326,8 @@ def main():
         src = dst
     if spec.get("plateFx"):
         src = fx_plate(src, base, spec["plateFx"])
+    if spec.get("mute"):  # the voice is silenced on these source ranges (talk that does not belong over a paused comparison)
+        src = muted_plate(src, base, spec["mute"])
     if spec.get("boost"):  # quiet off-mic voice (the client asking): lift each [a, b] range to the coach's level
         src = boosted_plate(src, base, spec["boost"])
     dp = os.path.join(P, "assets", "talk.mp4")

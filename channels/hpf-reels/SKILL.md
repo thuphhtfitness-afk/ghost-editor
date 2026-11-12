@@ -105,6 +105,19 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
 - The Reel Fixer page saves its edits to the artifact database (`edits/state`): read them with `ArtifactData` and apply them
   with `patch_apply.py` (do not ask the user to re-send). Each of the user's saved edits is also a rule to learn: record it here.
 
+## Anatomy stays small, sound over a paused comparison, floor symbols (the user's corrections after HPF 4)
+- **Anatomy is ALWAYS a small card in one corner** over the blurred, dimmed footage (the split-squat pose card is the model).
+  No black full-screen stage and no wide two-panel band: `hiprot` and `anatomy` (`mode: "band"`) now draw the small corner card
+  (two muscles = two narrow figures side by side inside one small card).
+- **Over the paused before/after comparison the voice is muted** (spec `mute: [[a, b]]` in source seconds; the coach's talk
+  there was about something else, e.g. "no need to compare") and replaced by sound: a whoosh as it opens and a soft tick as each
+  line is drawn.
+- **"Ống đồng vuông góc với mặt đất":** highlight both shins with a yellow `glow` (tall ellipse, `rot` = the shin lean) and
+  draw the right-angle symbol on the FLOOR under the feet: a white floor line, a short dashed plumb line up from each foot and a
+  small square in the corner (`guide` lines, drawn one after another with `delay`). Measure on a snapshot of the built reel
+  (the plate alternates 1.0 / 1.08 zoom per take).
+- **A push or pull gets its arrow:** "đẩy mông ra sau" = a red dashed arrow from the hips pointing backwards.
+
 ## Small fixes without a full re-edit (Reel Fixer)
 - Every finished HPF reel can get a **Reel Fixer page** (artifact): `ed/gen.py`-style data (beats with output times, a
   thumbnail per beat, caption lines) + a page where the user edits text, shifts / lengthens / removes a beat, moves a ring
