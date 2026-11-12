@@ -118,6 +118,20 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
   (the plate alternates 1.0 / 1.08 zoom per take).
 - **A push or pull gets its arrow:** "đẩy mông ra sau" = a red dashed arrow from the hips pointing backwards.
 
+## Endings (the user: "sao vid này cụt thế")
+- **Never end a reel mid-flow.** End on the coach's closing line ("Ok, xong", "ngồi dậy", the last cue) and use up the remaining
+  cues of the recording (repeated cues can go, new ones stay) up to 2 minutes. Check the last 10 s of the source before cutting.
+- Cuts keep +0.4 s after the last word and never split a word.
+
+## Title format (the user's latest, overrides the cream card)
+- **Two `title` beats at the middle of the frame (y ~ 770, eye level), white Montserrat 900 uppercase on wine-red boxes (#7A1424):
+  line 1 = the exercise name, line 2 = a short question / keyword from the video** ("DUMBBELL CHEST PRESS" / "SET UP THẾ NÀO?",
+  "SPLIT SQUAT" / "TẬP TRUNG MÔNG"). Size fits the width (line 1 <= 96, line 2 <= 64). Keep line 2 short and true to the
+  lesson; do not invent a tip the coach does not say. It shows over the hook and the first few seconds (no anatomy card in
+  that window: text never sits on an anatomy scene).
+- **One lesson stays ONE video** (do not split it into parts unless the user asks); the user also does not want shorter
+  re-cuts of a lesson that is already a video (same content twice).
+
 ## Small fixes without a full re-edit (Reel Fixer)
 - Every finished HPF reel can get a **Reel Fixer page** (artifact): `ed/gen.py`-style data (beats with output times, a
   thumbnail per beat, caption lines) + a page where the user edits text, shifts / lengthens / removes a beat, moves a ring

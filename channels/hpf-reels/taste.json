@@ -183,6 +183,32 @@
    "last": "2026-11-12",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "hpf-never-end-abruptly-end",
+   "say": "HPF: never end abruptly; end on the coach's closing line and use the remaining cues (<= 2 min).",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "hpf-title-two-lines-at",
+   "say": "HPF title: two lines at mid-frame on wine boxes (exercise name + short question/keyword from the lesson). One lesson = one video, no splitting or duplicate re-cuts.",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],

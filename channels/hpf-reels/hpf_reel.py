@@ -184,7 +184,7 @@ def text_layout(beats):
         if b["type"] == "glow":  # an on-body highlight is not text, but words must not hide it
             return (b["cx"] - b["rx"], b["cy"] - b["ry"], b["cx"] + b["rx"], b["cy"] + b["ry"])
         if b["type"] == "title" and b.get("style") == "card":
-            y = b.get("y", 130); return (40, y, 1040, y + 560)
+            y = b.get("y", 150); return (110, y, 970, y + 340)
         if b["type"] == "title":
             sz = b.get("size", 96); y = b.get("y", 190)
             return (60, y, 1020, y + sz * 1.25)
