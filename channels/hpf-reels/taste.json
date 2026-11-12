@@ -118,8 +118,34 @@
    "last": "2026-11-11",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "anatomy-images-must-look-like",
+   "say": "Anatomy images must look like real muscle illustrations (grey body, named muscle highlighted orange-red with fibres), like the user's references; the stick-figure/skeleton look is too ugly. Draw them yourself (muscle_art.mjs) when licensed images are not available.",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "when-the-client-s-voice",
+   "say": "When the client's voice is quiet or off-mic, lift it to the coach's level (spec boost ranges).",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],
- "updated": "2026-11-11"
+ "updated": "2026-11-12"
 }

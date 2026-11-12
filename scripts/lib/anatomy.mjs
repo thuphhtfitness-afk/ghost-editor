@@ -59,6 +59,15 @@ export const SPLIT_POSES = {
   top:    { head: [470, 150], neck: [462, 212], sh: [458, 240], hip: [430, 540], fk: [560, 700], fa: [566, 896], ft: [650, 930], fh: [540, 932],
             bk: [318, 720], ba: [190, 880], bt: [130, 930], hand: [470, 540] },
 };
+// a side-view hip hinge (RDL): the client faces right, the far leg a shade behind the near one, the bar in the hands.
+// Marks: hipsBack, chestForward, seesaw (chest forward + hips back about the hip), shoulderDown, kneeSoft (open the
+// knee a little), stretch (hamstring / glute lengthening), pullUp (glutes pull the body up), shinVertical, roundBackBad.
+export const HINGE_POSES = {
+  bottom: { head: [700, 400], neck: [650, 418], sh: [612, 432], hip: [330, 520], fk: [500, 706], fa: [462, 900], ft: [556, 930], fh: [440, 932],
+            bk: [486, 712], ba: [448, 902], bt: [540, 930], hand: [566, 720] },
+  top:    { head: [470, 140], neck: [464, 200], sh: [460, 236], hip: [446, 500], fk: [470, 704], fa: [462, 900], ft: [556, 930], fh: [440, 932],
+            bk: [456, 706], ba: [448, 902], bt: [540, 930], hand: [480, 500] },
+};
 const P = (a) => `${a[0].toFixed(1)},${a[1].toFixed(1)}`;
 const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
 const norm = (a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1; return [-dy / L, dx / L]; };
@@ -69,14 +78,15 @@ function belly(a, b, s, thick, t0 = 0.08, t1 = 0.92) {
   const base = []; for (let i = 10; i >= 0; i--) { const t = t0 + (t1 - t0) * (i / 10), p = lerp(a, b, t); base.push([p[0] + n[0] * s * 6, p[1] + n[1] * s * 6]); }
   return "M" + [...pts, ...base].map(P).join(" L") + " Z";
 }
-export function splitSquatSvg({ pose = "bottom", highlight = ["glute", "quad"], marks = [], id = "ss", w = 800, h = 1000 } = {}) {
-  const J = SPLIT_POSES[pose] || SPLIT_POSES.bottom, hot = new Set(highlight);
+export function hingeSvg(o = {}) { return splitSquatSvg({ ...o, poses: HINGE_POSES, bar: true }); }
+export function splitSquatSvg({ pose = "bottom", highlight = ["glute", "quad"], marks = [], id = "ss", w = 800, h = 1000, poses = SPLIT_POSES, bar = false } = {}) {
+  const J = poses[pose] || poses.bottom, hot = new Set(highlight);
   const limb = (a, b, wd) => `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#5C3E36" stroke-width="${wd}" stroke-linecap="round"/>`;
   const bone = (a, b) => `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#EADFC4" stroke-width="9" stroke-linecap="round" opacity=".9"/>`;
   const M = (name, d) => { const on = hot.has(name);
     return `<path d="${d}" fill="${on ? `url(#${id}-hot)` : "#6A2A22"}" stroke="${on ? "#FFE15A" : "#2A120E"}" stroke-width="${on ? 4 : 1.5}"${on ? ` filter="url(#${id}-glow)"` : ""} opacity="${on ? 1 : .9}"/>`; };
   // the leg shapes: silhouette first, then bones, then muscles (front leg in front of the back leg)
-  const sil = [limb(J.hip, J.bk, 104), limb(J.bk, J.ba, 66), limb(J.ba, J.bt, 40), limb(J.sh, J.hip, 168), limb(J.hip, J.fk, 120), limb(J.fk, J.fa, 72), limb(J.fh, J.ft, 40), limb(J.sh, J.hand, 46), limb(J.neck, J.head, 56)].join("");
+  const sil = [bar ? `<line x1="${J.sh[0]}" y1="${J.sh[1]}" x2="${J.hand[0] - 10}" y2="${J.hand[1]}" stroke="#4A302A" stroke-width="40" stroke-linecap="round"/>` : "", limb(J.hip, J.bk, 104), limb(J.bk, J.ba, 66), limb(J.ba, J.bt, 40), limb(J.sh, J.hip, 168), limb(J.hip, J.fk, 120), limb(J.fk, J.fa, 72), limb(J.fh, J.ft, 40), limb(J.sh, J.hand, 46), limb(J.neck, J.head, 56)].join("");
   const bones = [bone(J.hip, J.bk), bone(J.bk, J.ba), bone(J.hip, J.fk), bone(J.fk, J.fa), bone(J.sh, J.hip)].join("");
   const s = Math.sign((J.fk[0] - J.hip[0]) || 1);
   const muscles = [
@@ -86,11 +96,26 @@ export function splitSquatSvg({ pose = "bottom", highlight = ["glute", "quad"], 
     M("hamstring", belly(J.hip, J.fk, s, 48, 0.18, 0.92)), M("quad", belly(J.hip, J.fk, -s, 62, 0.08, 0.95)),
     M("calf", belly(J.fk, J.fa, s, 40, 0.1, 0.7)),
   ].join("");
+  // a white arrow a -> b (head at b); `head` 0 draws the head only
+  const arrow = (a, b, line = 1) => { const L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, ux = (b[0] - a[0]) / L, uy = (b[1] - a[1]) / L;
+    const h1 = [b[0] - ux * 44 - uy * 26, b[1] - uy * 44 + ux * 26], h2 = [b[0] - ux * 44 + uy * 26, b[1] - uy * 44 - ux * 26];
+    return `<g>${line ? `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0] - ux * 30}" y2="${b[1] - uy * 30}" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/>` : ""}<path d="M${P(h1)} L${P(b)} L${P(h2)} Z" fill="#FFFFFF"/></g>`; };
   const MARK = {
     weight: (m) => { const f = lerp(J.fh, J.ft, 0.35); return `<g><line x1="${f[0]}" y1="${f[1] - 330}" x2="${f[0]}" y2="${f[1] - 40}" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/><path d="M${f[0] - 30} ${f[1] - 70} L${f[0]} ${f[1] - 20} L${f[0] + 30} ${f[1] - 70} Z" fill="#FFFFFF"/><ellipse cx="${f[0]}" cy="${f[1] + 6}" rx="70" ry="14" fill="#FFFFFF" opacity=".55"/></g>`; },
     kneeDown: () => `<g><line x1="${J.bk[0]}" y1="${J.bk[1] - 200}" x2="${J.bk[0]}" y2="${J.bk[1] - 40}" stroke="#FFFFFF" stroke-width="12" stroke-dasharray="26 14" stroke-linecap="round"/><path d="M${J.bk[0] - 28} ${J.bk[1] - 66} L${J.bk[0]} ${J.bk[1] - 20} L${J.bk[0] + 28} ${J.bk[1] - 66} Z" fill="#FFFFFF"/></g>`,
     lean: () => { const top = [J.hip[0] + (J.sh[0] - J.hip[0]) * 1.25, J.hip[1] + (J.sh[1] - J.hip[1]) * 1.25]; return `<line x1="${J.hip[0]}" y1="${J.hip[1]}" x2="${top[0]}" y2="${top[1]}" stroke="#FFFFFF" stroke-width="8" stroke-dasharray="22 14"/><line x1="${J.hip[0]}" y1="${J.hip[1]}" x2="${J.hip[0]}" y2="${J.hip[1] - 400}" stroke="#FFFFFF" stroke-width="5" stroke-dasharray="14 12" opacity=".7"/>`; },
     drive: () => `<g><line x1="${J.fa[0] + 120}" y1="${J.fa[1] - 20}" x2="${J.fa[0] + 120}" y2="${J.fa[1] - 330}" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/><path d="M${J.fa[0] + 92} ${J.fa[1] - 296} L${J.fa[0] + 120} ${J.fa[1] - 344} L${J.fa[0] + 148} ${J.fa[1] - 296} Z" fill="#FFFFFF"/></g>`,
+    hipsBack: () => arrow([J.hip[0] - 60, J.hip[1] - 20], [J.hip[0] - 270, J.hip[1] - 20]),
+    chestForward: () => arrow([J.sh[0] + 20, J.sh[1] - 80], [J.sh[0] + 150, J.sh[1] + 30]),
+    seesaw: () => { const d = [J.sh[0] - J.hip[0], J.sh[1] - J.hip[1]], a = [J.hip[0] - d[0] * 0.45, J.hip[1] - d[1] * 0.45], b = [J.sh[0] + d[0] * 0.25, J.sh[1] + d[1] * 0.25];
+      return `<g><line x1="${a[0]}" y1="${a[1] - 70}" x2="${b[0]}" y2="${b[1] - 70}" stroke="#FFFFFF" stroke-width="8" stroke-dasharray="22 14"/><path d="M${J.hip[0] - 34} ${J.hip[1] - 20} L${J.hip[0]} ${J.hip[1] - 70} L${J.hip[0] + 34} ${J.hip[1] - 20} Z" fill="#FFFFFF"/>${arrow([a[0] + 60, a[1] - 110], [a[0] - 40, a[1] - 150])}${arrow([b[0] - 60, b[1] - 110], [b[0] + 20, b[1] - 20])}</g>`; },
+    shoulderDown: () => arrow([J.sh[0] - 10, J.sh[1] - 150], [J.sh[0] - 10, J.sh[1] - 40]),
+    kneeSoft: () => `<g><path d="M${J.fk[0] - 40} ${J.fk[1] - 80} A 90 90 0 0 1 ${J.fk[0] + 70} ${J.fk[1] + 30}" stroke="#FFFFFF" stroke-width="10" fill="none" stroke-dasharray="20 12"/>${arrow([J.fk[0] + 60, J.fk[1] + 10], [J.fk[0] + 110, J.fk[1] + 60], 0)}</g>`,
+    stretch: () => { const n = norm(J.hip, J.fk), o = 110, a = [J.hip[0] + n[0] * o, J.hip[1] + n[1] * o], b = [J.fk[0] + n[0] * o, J.fk[1] + n[1] * o];
+      return `<g>${arrow(lerp(a, b, 0.5), a)}${arrow(lerp(a, b, 0.5), b)}</g>`; },
+    pullUp: () => arrow([J.hip[0] - 120, J.hip[1] + 40], [J.hip[0] - 120, J.hip[1] - 250]),
+    shinVertical: () => `<g><line x1="${J.fa[0]}" y1="${J.fa[1] + 20}" x2="${J.fa[0]}" y2="${J.fa[1] - 260}" stroke="#FFFFFF" stroke-width="7" stroke-dasharray="18 12"/><path d="M${J.fa[0]} ${J.fa[1] - 20} L${J.fa[0] + 40} ${J.fa[1] - 20} L${J.fa[0] + 40} ${J.fa[1] + 20}" stroke="#FFFFFF" stroke-width="6" fill="none"/></g>`,
+    roundBackBad: () => `<g><path d="M${J.hip[0] - 20} ${J.hip[1] - 120} Q ${(J.hip[0] + J.sh[0]) / 2} ${Math.min(J.hip[1], J.sh[1]) - 260} ${J.sh[0] + 60} ${J.sh[1] - 60}" stroke="#FF3B2F" stroke-width="12" fill="none" stroke-linecap="round"/></g>`,
     leanBackBad: () => `<g><path d="M${J.sh[0]} ${J.sh[1]} Q ${J.sh[0] - 160} ${J.sh[1] - 40} ${J.sh[0] - 210} ${J.sh[1] + 70}" stroke="#FF3B2F" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M${J.sh[0] - 236} ${J.sh[1] + 40} L${J.sh[0] - 210} ${J.sh[1] + 90} L${J.sh[0] - 176} ${J.sh[1] + 52} Z" fill="#FF3B2F"/></g>`,
   };
   const markSvg = marks.map((m, k) => `<g id="${id}-m${k}">${(MARK[m.kind || m] || (() => ""))(m)}</g>`).join("");
@@ -102,6 +127,7 @@ export function splitSquatSvg({ pose = "bottom", highlight = ["glute", "quad"], 
   <ellipse cx="400" cy="935" rx="360" ry="16" fill="#000" opacity=".5"/>
   ${sil}${bones}${muscles}
   <circle cx="${J.head[0]}" cy="${J.head[1]}" r="62" fill="#5C3E36"/>
+  ${bar ? `<circle cx="${J.hand[0]}" cy="${J.hand[1]}" r="30" fill="#BFC4C9" stroke="#55595E" stroke-width="6"/><circle cx="${J.hand[0]}" cy="${J.hand[1]}" r="10" fill="#55595E"/>` : ""}
   ${markSvg}
 </svg>`;
 }

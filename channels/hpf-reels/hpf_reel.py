@@ -223,6 +223,34 @@ def edit_time(t, takes):
     raise SystemExit(f"{t} is not in kept material")
 
 
+def lufs(path, a, b):
+    out = subprocess.run(["ffmpeg", "-v", "info", "-ss", str(a), "-to", str(b), "-i", path, "-vn", "-af", "ebur128=framelog=quiet",
+                          "-f", "null", "-"], capture_output=True, text=True).stderr
+    vals = [l.split()[1] for l in out.splitlines() if l.strip().startswith("I:")]
+    return float(vals[-1]) if vals else -70.0
+
+
+def boosted_plate(src, base, ranges, target=-16.0):
+    """the user's rule: a voice that the mic barely caught (the client asking off-mic) is lifted to the listener's level.
+    ranges: [[a, b]] (auto gain to `target` LUFS, max +20 dB) or [[a, b, dB]]; source seconds. Video is copied."""
+    parts = []
+    for r in ranges:
+        a, b = r[0], r[1]
+        g = r[2] if len(r) > 2 else max(0.0, min(20.0, target - lufs(src, a, b)))
+        parts.append((a, b, round(g, 1))); print(f"  boost {a:.2f}-{b:.2f}: +{g:.1f} dB")
+    tag = "_".join(f"{a:g}-{b:g}-{g:g}" for a, b, g in parts)
+    import hashlib
+    dst = os.path.join(base, "assets", f"talk.boost.{hashlib.md5(tag.encode()).hexdigest()[:8]}.mp4")
+    if not os.path.exists(dst):
+        # 80 ms ramps at each edge so the lift never clicks; a limiter keeps the lifted noise from peaking
+        expr = "+".join(f"(pow(10,{g}/20)-1)*clip(min((t-{a})/0.08,({b}-t)/0.08),0,1)" for a, b, g in parts)
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-c:v", "copy",
+                        "-af", f"volume='1+{expr}':eval=frame,alimiter=limit=0.89:level=false",
+                        "-c:a", "aac", "-b:a", "256k", dst + ".part.mp4"], check=True)
+        os.replace(dst + ".part.mp4", dst)
+    return dst
+
+
 def main():
     spec = json.load(open(sys.argv[1]))
     base, name = spec["base"], spec["name"]
@@ -263,6 +291,8 @@ def main():
             subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-vf", f"crop={w}:{h}:{x}:{y},scale=1080:1920:flags=lanczos",
                             "-c:v", "libx264", "-threads", "4", "-preset", "medium", "-crf", "16", "-g", "30", "-c:a", "copy", dst], check=True)
         src = dst
+    if spec.get("boost"):  # quiet off-mic voice (the client asking): lift each [a, b] range to the coach's level
+        src = boosted_plate(src, base, spec["boost"])
     dp = os.path.join(P, "assets", "talk.mp4")
     if os.path.lexists(dp): os.remove(dp)
     os.symlink(os.path.abspath(src), dp)

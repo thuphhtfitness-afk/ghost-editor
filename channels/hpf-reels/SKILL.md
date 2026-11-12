@@ -63,6 +63,17 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
   side of the frame), with the footage behind it softly blurred and dimmed so the card pops. Its title and labels are
   white on wine red inside the card. `mode: "full"` (the black full-screen stage) only when the user asks for it.
 
+## Anatomy art and quiet voices (the user's latest rules)
+- **Anatomy images must look like a real muscle illustration** (grey body, the named muscle in orange-red with visible
+  fibres), never the stick-figure / skeleton look. `scripts/lib/muscle_art.mjs` draws them (posterior: glute, glute_med,
+  hamstring, calf, erector/back, lat; `view: "ant"`: core, quad, pec); it zooms to the highlighted muscle. The movement
+  views (`view: "splitsquat"` / `"hinge"`) are only for a cue about the motion (lean, shin vertical, seesaw). Never use
+  stock / newspaper images the user sends as references (copyright); suggest licensed images or keep the drawn art.
+- **A quiet voice** (the client asking off-mic): spec `"boost": [[a, b], ...]` lifts each source range to the coach's level
+  (auto gain to -16 LUFS, max +20 dB, 80 ms ramps, limiter). Always list the client's questions there.
+- Several clips of one lesson: `ghost-editor` base per clip, then `combine.py` (scratch helper) joins them into one base so
+  a reel can cut between main footage and close-up clips (the close-up with its own voice is also a main segment).
+
 ## Status
 Builder: `hpf_reel.py spec.json` (same spec as founder-reels/make_reel.py) with the beats `label`, `guide`, `note`, `fault`,
-`punch`, `anatomy`, `title` (references/reel-json.md). Done: HPF 1 and HPF 2 (split squat, from DJI 0373 / 0374 / 0375).
+`punch`, `anatomy`, `title` (references/reel-json.md). Done: HPF 1 and HPF 2 (split squat, from DJI 0373 / 0374 / 0375), HPF 3 (split squat, knee opening) and HPF 4 (Romanian deadlift).

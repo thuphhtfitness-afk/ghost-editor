@@ -40,7 +40,8 @@ import { loadManifest as emojiManifest, installEmoji, emojiPopHtml, emojiPopJs, 
 import { makePlacer, PLATFORMS } from "./lib/safezone.mjs";
 import { TEMPLATE_NAMES, buildTemplateCaptions } from "./lib/caption-templates.mjs";
 import { aiTag } from "./lib/ai-tag.mjs";
-import { anatomySvg, splitSquatSvg } from "./lib/anatomy.mjs";
+import { anatomySvg, splitSquatSvg, hingeSvg } from "./lib/anatomy.mjs";
+import { muscleSvg } from "./lib/muscle_art.mjs";
 import { findTaste, loadTaste, applyTaste, checkTaste, bannedSfx } from "./lib/taste.mjs";
 import { STAN_CSS, isStanBeat, stanPrepare, stanBeat, stanPipTweens, buildChestCaptions, stanMatteWindows } from "./lib/stan.mjs";
 
@@ -657,11 +658,33 @@ for (const b of beatsList) {
       const FH = CH - 70 - (b.labels?.length ? 56 * b.labels.length : 0) - 24; // the figure fits between the title and the labels
       const corner = b.corner || "tr", M = 40;
       const cx = corner.includes("l") ? M : 1080 - M - CW, cy = corner.includes("t") ? (b.top ?? 230) : (b.bottom ?? 1440) - CH;
-      const fig = b.view === "splitsquat"
-        ? splitSquatSvg({ pose: b.pose || "bottom", highlight: b.highlight || ["glute", "quad"], marks: b.marks || [], id: `${id}-s`, w: full ? 960 : Math.min(CW - 20, FH * 0.8), h: full ? 1200 : Math.min(FH, (CW - 20) * 1.25) })
-        : anatomySvg({ highlight: b.highlight || ["glute"], side: b.side || "both", id: `${id}-s`, w: full ? 660 : FH * 0.6, h: full ? 1100 : FH });
+      const fig = b.view === "splitsquat" || b.view === "hinge"
+        ? (b.view === "hinge" ? hingeSvg : splitSquatSvg)({ pose: b.pose || "bottom", highlight: b.highlight || ["glute", "quad"], marks: b.marks || [], id: `${id}-s`, w: full ? 960 : Math.min(CW - 20, FH * 0.8), h: full ? 1200 : Math.min(FH, (CW - 20) * 1.25) })
+        : muscleSvg({ view: b.view === "ant" ? "ant" : "post", highlight: b.highlight || ["glute"], id: `${id}-s`, w: full ? 900 : CW - 30, h: full ? 1200 : FH });
       const labs = (b.labels || []).map((l, k) => `<div id="${id}-l${k}" style="${full ? `position:absolute;left:${l.x ?? 540}px;top:${l.y ?? 400}px;transform:translateX(-50%)` : "margin-top:8px"};white-space:nowrap">${tag(l.text, full ? (l.size ?? 56) : Math.min(34, Math.floor((CW - 70) / (l.text.length * 0.62))))}</div>`).join("");
-      if (full) {
+      if (b.mode === "band") {
+        // a wide band of one or two muscle illustrations side by side (like the user's reference): glowing panels over the
+        // dimmed footage, coloured arrows pointing into the muscle heads with their names
+        const panels = b.panels || [{ view: b.view, highlight: b.highlight }];
+        const PW = panels.length === 1 ? 640 : 470, PH = b.h ?? 560, gap = 24, top = b.top ?? 250;
+        const left = Math.round((1080 - (PW * panels.length + gap * (panels.length - 1))) / 2);
+        const cards = panels.map((p, k) => {
+          const fig = muscleSvg({ view: p.view === "ant" ? "ant" : "post", highlight: p.highlight || ["glute"], id: `${id}-p${k}`, w: PW - 16, h: PH - 96 });
+          const arrows = (p.arrows || []).map((a) => {
+            const col = a.color || "#E5322D", right = (a.side || "right") === "right", ay = 24 + (a.y ?? 0.4) * (PH - 130);
+            const x0 = right ? PW - 6 : 6, x1 = PW / 2 + (right ? 1 : -1) * (a.reach ?? 40), dir = right ? -1 : 1;
+            return `<svg width="${PW}" height="${PH}" style="position:absolute;left:0;top:0;overflow:visible;filter:drop-shadow(0 0 6px ${col})"><line x1="${x0}" y1="${ay}" x2="${x1 - dir * 22}" y2="${ay}" stroke="${col}" stroke-width="8" stroke-linecap="round"/><path d="M${x1} ${ay} L${x1 - dir * 34} ${ay - 18} L${x1 - dir * 34} ${ay + 18} Z" fill="${col}"/></svg>
+              <div style="position:absolute;${right ? "right" : "left"}:10px;top:${ay - 50}px;white-space:nowrap">${tag(a.text, a.size ?? 26)}</div>`;
+          }).join("");
+          return `<div style="position:relative;width:${PW}px;height:${PH}px;border-radius:24px;background:radial-gradient(ellipse at 50% 100%, rgba(150,30,36,.55), rgba(0,0,0,.84) 72%);border:2px solid rgba(255,170,140,.45);box-shadow:0 0 34px rgba(255,110,70,.4), 0 18px 50px rgba(0,0,0,.55);overflow:hidden">
+            <div style="position:absolute;left:8px;top:10px">${fig}</div>${arrows}
+            ${p.caption ? `<div style="position:absolute;left:0;right:0;bottom:14px;text-align:center">${tag(p.caption, Math.min(36, Math.floor((PW - 60) / (p.caption.length * 0.7))))}</div>` : ""}</div>`;
+        }).join("");
+        inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px">
+          <div style="position:absolute;inset:0;backdrop-filter:blur(${b.blur ?? 7}px) brightness(.62);-webkit-backdrop-filter:blur(${b.blur ?? 7}px) brightness(.62)"></div>
+          ${b.title ? `<div id="${id}-t" style="position:absolute;left:0;right:0;top:${top - 92}px;text-align:center;white-space:nowrap">${tag(b.title, Math.min(b.titleSize ?? 56, Math.floor(1000 / (b.title.length * 0.68))))}</div>` : ""}
+          <div id="${id}-fig" style="position:absolute;left:${left}px;top:${top}px;display:flex;gap:${gap}px">${cards}</div></div>`;
+      } else if (full) {
         inner = `<div id="${id}-in" class="ov" style="left:0;top:0;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 96%, rgba(140,20,30,.55) 0%, rgba(40,6,10,.3) 32%, rgba(0,0,0,0) 62%), #000">
           <div id="${id}-fig" style="position:absolute;left:${b.view === "splitsquat" ? 60 : 210}px;top:${b.figY ?? 480}px">${fig}</div>
           ${b.title ? `<div id="${id}-t" style="position:absolute;left:0;right:0;top:${b.titleY ?? 220}px;text-align:center">${tag(b.title, b.titleSize ?? 80)}</div>` : ""}${labs}</div>`;
