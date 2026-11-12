@@ -39,8 +39,11 @@ def build(P, cfg):
         shutil.copy(f"{HERE}/fonts/{f}.woff2", f"{P}/assets/fonts/{f}.woff2")
     if GSAP:
         shutil.copy(GSAP, f"{P}/assets/js/gsap.min.js")
+    # bed_up [(from, to, gain)]: the bed rises (e.g. x6 over a wordless montage), 0.4 s ramps
+    BEDUP = f",volume={cfg.get('bed_base', 1)}" + "".join(f",volume='1+({g}-1)*clip(min((t-{t(a)})/0.4\\,({t(b)}-t)/0.4)\\,0\\,1)':eval=frame"
+                    for a, b, g in cfg.get("bed_up", []))
     os.system(f'ffmpeg -v error -y -i {SKILL}/library/music/{cfg.get("bed", "lo-fi-02")}.mp3 -t {DUR} '
-              f'-af "afade=t=in:d=0.6,afade=t=out:st={DUR - 1.5}:d=1.5" -ar 48000 -ac 2 {P}/assets/bed.wav')
+              f'-af "afade=t=in:d=0.6,afade=t=out:st={DUR - 1.5}:d=1.5{BEDUP}" -ar 48000 -ac 2 {P}/assets/bed.wav')
     H, JS = [], []
     tset = lambda sel, props, at: JS.append(f'tl.set("{sel}", {json.dumps(props)}, {fr(at)});')
     tween = lambda sel, a, b, at: JS.append(f'tl.fromTo("{sel}", {json.dumps(a)}, {json.dumps({**b, "immediateRender": False})}, {fr(at)});')
@@ -66,7 +69,7 @@ def build(P, cfg):
     # titles
     for k, (a, e, lines, sub) in enumerate(cfg.get("titles", [])):
         a = t(a)
-        e = a + e if isinstance(e, (int, float)) else t(int(e[1:]))
+        e = a + e if isinstance(e, (int, float)) else (DUR if e == "wend" else t(int(e[1:])))
         size = min(fit(l) for l in lines)
         body = "".join(f'<div class="tl" style="font-size:{size:.0f}px">{esc(l)}</div>' for l in lines)
         H.append(f'<div id="ti{k}" class="title"><div class="tin">{body}<div class="ts">{esc(sub)}</div></div></div>')
@@ -138,7 +141,7 @@ def build(P, cfg):
     KEY = cfg.get("key", set())
     chunks, cur = [], []
     for i, w in enumerate(W):
-        if i < n_hook:
+        if i < n_hook or i in cfg.get("nocap", ()):
             continue
         if cur and (len(" ".join(W[k]["word"] for k in cur + [i])) > 24 or w["start"] - W[cur[-1]]["end"] > 0.5):
             chunks.append(cur); cur = []

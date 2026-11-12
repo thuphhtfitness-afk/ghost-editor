@@ -29,7 +29,12 @@ def silences(a, b):
 
 
 pieces = []                                # [src a, src b, seg index]
-for si, (a, b, _) in enumerate(R["segs"]):
+SILENT = {si for si, sg in enumerate(R["segs"]) if len(sg) > 3 and sg[3].get("silent")}
+for si, sg in enumerate(R["segs"]):
+    a, b = sg[0], sg[1]
+    if si in SILENT:                       # a montage gap: the plate runs (under B-roll), no voice, no pause cut
+        pieces.append([round(a, 3), round(b, 3), si])
+        continue
     cur = a
     for s, e in silences(a, b):
         if s - a < 0.05 or b - e < 0.05:   # edge silences: trim the segment
@@ -48,7 +53,7 @@ for a, b, si in pieces:
     plan.append({"src": [a, b], "edit": [round(edit, 3), round(edit + b - a, 3)], "seg": si})
     edit += b - a
 DUR = round(edit, 3)
-src_total = sum(b - a for a, b, _ in R["segs"])
+src_total = sum(sg[1] - sg[0] for sg in R["segs"])
 print(f"{len(R['segs'])} segments {src_total:.2f} s -> {len(pieces)} pieces {DUR:.2f} s (cut {src_total - DUR:.2f} s of pauses)")
 
 
@@ -67,7 +72,10 @@ def to_edit(x, si):
 norm = lambda s: unicodedata.normalize("NFC", re.sub(r"[^\w]", "", s.lower()))
 WH = [(w["word"].strip(), w["start"], w["end"]) for s in json.load(open(R["whisper"], encoding="utf-8"))["segments"] for w in s["words"]]
 words = []
-for si, (a, b, text) in enumerate(R["segs"]):
+for si, sg in enumerate(R["segs"]):
+    a, b, text = sg[0], sg[1], sg[2]
+    if not text.strip():
+        continue
     ws = [w for w in WH if a - 0.05 <= w[1] < b]
     toks = text.split()
     syl = [(ti, s) for ti, tk in enumerate(toks) for s in tk.split("_")]
@@ -102,8 +110,11 @@ for i, p in enumerate(plan):
     a, b = p["src"]
     w = f"{P}/build/segs/a{i}.wav"
     fd = min(0.012, (b - a) / 4)
-    sh("ffmpeg", "-v", "error", "-y", "-ss", f"{a:.3f}", "-t", f"{b - a:.3f}", "-i", R["clean"],
-       "-af", f"afade=t=in:d={fd},afade=t=out:st={b - a - fd:.3f}:d={fd}", "-ar", "48000", "-ac", "1", w)
+    if p["seg"] in SILENT:
+        sh("ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "anullsrc=r=48000:cl=mono", "-t", f"{b - a:.3f}", w)
+    else:
+        sh("ffmpeg", "-v", "error", "-y", "-ss", f"{a:.3f}", "-t", f"{b - a:.3f}", "-i", R["clean"],
+           "-af", f"afade=t=in:d={fd},afade=t=out:st={b - a - fd:.3f}:d={fd}", "-ar", "48000", "-ac", "1", w)
     ins += ["-i", w]
 CHAIN = ("highpass=f=70,lowpass=f=11500,afftdn=nr=6:nf=-42:tn=1,"
          "agate=threshold=0.012:ratio=2:range=0.35:attack=6:release=250,"
