@@ -1,0 +1,69 @@
+# HPF content lines (formats)
+
+Learned from 7 viral gym/fitness references the user sent (2026-11-11/12), compared with HPF 1 and HPF 2.
+HPF 1/2 were strong on visuals (anatomy in the movement, grayscale fault, glow) but weak on the story:
+the hook was only the exercise name, the client had no identity, there was no verdict and no call to action.
+These rules fix that. They sit on top of SKILL.md: colours, fonts, anatomy card and no-overlap still apply.
+
+## Rules for every HPF reel
+- **Hook = question, pain or a person, never just the exercise name.** In the first 3 s, use one of these:
+  - a question viewers ask ("Có cần đứng bục khi tập RDL?")
+  - a pain call-out ("Dân văn phòng không béo mà bụng dưới vẫn nhô?")
+  - a client with numbers ("Linh, 1m6x, ngồi 9 tiếng/ngày")
+
+  The exercise name can sit under the hook as the second title line.
+- **A verdict at the end.** Close with a "Kết luận" card that gives one sentence: what to do, and for whom
+  ("chỉ phù hợp với người linh hoạt hông tốt").
+- **A CTA at the end**, one of:
+  - "Lưu lại" (for a programme card)
+  - "Comment lịch tập / vấn đề của bạn"
+  - "Follow để xem tập sau" (for a series)
+- **Coach–client dialogue beats monologue.** Keep the moments where the coach asks the client something
+  ("chân phải hay trái?", "chỗ nào căng?") and the client's answer or reaction.
+- **Checklist that adds up.** When cues build on each other, show them as a growing checklist
+  (1 → 1+2 → 1+2+3) instead of single labels that replace each other.
+- **Viewer-try line.** For any simple test, add a line like "Bạn thử ngay: …", shown as a label.
+- **Numbers on screen.** Show sets x reps, tempo, days per week, and before/after measurements as text cards.
+
+## Line A: Thẩm định + Chương trình (assessment → programme), 60–90 s
+Series name on screen: **"HPF THẨM ĐỊNH #n"** (later "#n – 4 TUẦN SAU" for the re-test).
+
+| Time | Beat | Edit |
+|---|---|---|
+| 0–3 s | Hook: pain or body-shape call-out + promise | title (wine box), client on the HT height wall |
+| 3–8 s | Client card: name, age, job / sitting hours, schedule (days × minutes), goal, 1–2 numbers | `note`-style card, top-left; stays ≤ 4 s |
+| 8–35 s | 3–4 tests. Each test has 4 steps: test name → client does it → finding (❌ / ✅) → why it matters + a viewer-try line | label for the test name; `guide` lines on the body (plumb line, pelvis tilt line, wall gap); grayscale + ❌ on a failed test; anatomy card for the tight / weak muscle |
+| 35–40 s | Scorecard: 3 lines ❌/✅ | full card, wine red / white, hold 2.5 s |
+| 40–75 s | Programme: **every exercise tied to a finding** ("Vì … nên …"), sets × reps on screen, and **one exercise dropped, with the reason** | label "Vì X → bài Y", anatomy card on the target muscle, 1 clean rep per exercise |
+| 75–90 s | Week-1 card (screenshot-able) + re-test promise + CTA | full card, then coach to camera |
+
+- Assessment footage: tripod at hip height, square to the wall, front / side / back. Keep the HT height chart in frame.
+  Draw the plumb line (ear–shoulder–hip–knee–ankle) with `guide` on the side view.
+- Show the failed rep **and** the passed rep (or the passed side) for the comparison.
+- Do not diagnose medical conditions on screen. Say "dấu hiệu", "có xu hướng", never "bệnh".
+- Client privacy: name, numbers and body only with consent. Blur the face if the client asks.
+
+## Line B: Sửa lỗi (form fix), POV only, 30–60 s
+POV is HPF's signature for this line: other channels shoot it from a tripod. Keep it.
+
+- **Camera:** head or chest mount at the coach's eye line, horizon lock on, 4K so we can punch in.
+- **The coach's hand is the pointer:** it touches the hip, knee or back as a hands-on cue. Prefer the hand over drawn arrows.
+  Add a `glow` where the hand touches.
+- **One fault per video.** Structure:
+  1. the wrong rep in real time
+  2. the coach stops it ("dừng")
+  3. the cue, in words and by hand
+  4. the rep again ("đấy")
+  5. before / after
+- **Voice in the second person** (the coach talks to the client, so the viewer is the client).
+  Hook text: "POV: PT bắt bạn dừng ngay rep đầu tiên", "POV: tập [bài] với coach HPF".
+- **Optional side camera** on a tripod, used ONLY for the before/after split screen and behind the anatomy card.
+  The main story stays POV.
+- **Hold the frame:** at each key cue the coach holds the head still for about 2 s, so labels and glows sit on a stable frame.
+- **Mic:** a lav mic on the coach. The action-cam mic only records breathing.
+- **Ending:** a one-line verdict ("Nếu hông bạn cứng thì đừng …"). It can point to Line A.
+
+## Line C: Chương trình tập (programme / combo), 45–75 s
+- Open on the body shape or goal, not on the exercise list ("Dáng tam giác ngược muốn cân đối hông?").
+- Show "Combo n bài": each exercise has a number label, sets × reps, and one line on why it fits this body.
+- End with "Lưu ngay combo này" + "Follow để xem combo tiếp".

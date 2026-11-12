@@ -63,6 +63,11 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
   side of the frame), with the footage behind it softly blurred and dimmed so the card pops. Its title and labels are
   white on wine red inside the card. `mode: "full"` (the black full-screen stage) only when the user asks for it.
 
+## Content lines and story rules (read FORMATS.md)
+HPF publishes three lines: **A. Thẩm định + Chương trình**, **B. Sửa lỗi (POV only)**, **C. Chương trình / combo**.
+FORMATS.md has the beat sheet for each. Every reel: the hook is a question / pain / a person with numbers (not just the
+exercise name), keep coach–client dialogue, end on a "Kết luận" verdict + a CTA (lưu / comment / follow).
+
 ## Status
 Builder: `hpf_reel.py spec.json` (same spec as founder-reels/make_reel.py) with the beats `label`, `guide`, `note`, `fault`,
 `punch`, `anatomy`, `title` (references/reel-json.md). Done: HPF 1 and HPF 2 (split squat, from DJI 0373 / 0374 / 0375).

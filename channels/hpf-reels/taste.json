@@ -118,8 +118,60 @@
    "last": "2026-11-11",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "hook-l-c-u-h",
+   "say": "hook là câu hỏi / nỗi đau / khách có số đo, không chỉ tên bài",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "k-t-video-b-ng",
+   "say": "kết video bằng thẻ Kết luận + CTA (lưu / comment / follow)",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "tuy-n-th-m-nh",
+   "say": "tuyến thẩm định + chương trình: thẩm định trước, mỗi bài tập phải nối với 1 phát hiện, có bài bị loại và lý do",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
+  },
+  {
+   "id": "tuy-n-s-a-l",
+   "say": "tuyến sửa lỗi giữ góc quay POV, tay coach là con trỏ, 1 lỗi mỗi video",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-12",
+   "last": "2026-11-12",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],
- "updated": "2026-11-11"
+ "updated": "2026-11-12"
 }
