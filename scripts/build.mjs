@@ -704,6 +704,20 @@ for (const b of beatsList) {
       beatSfx(b, t0, "whoosh", "anatomy");
       break;
     }
+    case "cloud": {
+      // a cut-out sticker (PNG with alpha) that follows a point: keys = [[dt, cx, cy, widthPx], ...] (dt = seconds from the beat
+      // start, centre in frame pixels, displayed width of the whole PNG). Used to cover a part of the frame (client rule: cloud over exposed skin).
+      const ks = b.keys && b.keys.length ? b.keys : [[0, 540, 900, 520]];
+      const st = (k) => `x: ${r3(k[1] - 384)}, y: ${r3(k[2] - 384)}, scale: ${r3(k[3] / 768)}`;
+      inner = `<img id="${id}-in" class="ov" src="${b.src}" style="left:0;top:0;width:768px;height:768px;transform-origin:50% 50%;opacity:${b.opacity ?? 0.97};pointer-events:none">`;
+      tl.push(`tl.set("#${id}-in", { ${st(ks[0])}, transformOrigin: "50% 50%" }, 0);`);
+      tl.push(`ft("#${id}-in", { autoAlpha: 0 }, { autoAlpha: ${b.opacity ?? 0.97}, duration: 0.12 }, ${t0});`);
+      for (let i = 1; i < ks.length; i++) {
+        const t = r3(t0 + ks[i - 1][0]), d = Math.max(0.02, ks[i][0] - ks[i - 1][0]);
+        tl.push(`tl.fromTo("#${id}-in", { ${st(ks[i - 1])} }, { ${st(ks[i])}, duration: ${r3(d)}, ease: "none", immediateRender: false }, ${t});`);
+      }
+      break;
+    }
     case "glow": {
       // highlight the body part ON the footage: a soft pulsing glow with a dashed rim (red = the muscle working,
       // white / yellow = a point to watch, green = correct)

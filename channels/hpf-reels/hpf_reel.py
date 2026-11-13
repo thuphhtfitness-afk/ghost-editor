@@ -122,6 +122,7 @@ def snap(t, words, key="start", within=0.8):
 
 
 def snap_beat(b, words):
+    if b.get("raw"): return b  # exact source times (stickers that follow a point)
     if isinstance(b.get("at"), (int, float)): b["at"] = snap(b["at"], words)
     if isinstance(b.get("to"), (int, float)): b["to"] = snap(b["to"], words, "end")
     for l in b.get("lines", []):
@@ -159,7 +160,7 @@ def chain_broll(beats, takes):
         for a, e in takes:
             if a <= t <= e: return acc + t - a
             acc += e - a
-    br = sorted([b for b in beats if b["type"] == "broll"], key=lambda b: et(b["at"]) or 0)
+    br = sorted([b for b in beats if b["type"] == "broll" and isinstance(b["at"], (int, float)) and isinstance(b["to"], (int, float))], key=lambda b: et(b["at"]) or 0)
     for p, q in zip(br, br[1:]):
         if et(q["at"]) - et(p["to"]) < 1.5:
             ip, iq = take_of(p["to"]), take_of(q["at"])
@@ -361,11 +362,25 @@ def main():
     takes = takes_for(spec["segments"], words)
     # snap card times only to words the reel keeps: a word just outside a take would fail the build
     kept = [w for w in words if any(a <= w["start"] and w["end"] <= b for a, b in takes)]
+    def idx_of(t):
+        for i, (a, b) in enumerate(takes):
+            if a - 0.05 <= t <= b + 0.05: return i
+        raise SystemExit(f"hold@{t}: not inside a take")
+    for b_ in spec.get("beats", []):  # "hold@36.82+0.2" = 0.2 s into the frozen hold after the take that contains source second 36.82
+        for k_ in ("at", "to"):
+            v_ = b_.get(k_)
+            if isinstance(v_, str) and v_.startswith("hold@"):
+                t_, off_ = v_[5:].split("+"); b_[k_] = f"hold:{idx_of(float(t_))}+{off_}"
+    for sc in spec.get("speedClips", []):  # fast-forward clip of the plate: {"name": "broll/reps.mp4", "a": 36.9, "b": 51.4, "factor": 3.6}
+        dp = os.path.join(P, "assets", sc["name"]); os.makedirs(os.path.dirname(dp), exist_ok=True)
+        if not os.path.exists(dp):
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(sc["a"]), "-t", str(sc["b"] - sc["a"]), "-i", os.path.join(base, "assets", "talk.mp4"), "-an",
+                            "-vf", f"setpts=PTS/{sc['factor']},fps=30", "-c:v", "libx264", "-preset", "fast", "-crf", "18", "-g", "30", "-pix_fmt", "yuv420p", dp], check=True)
     snaps = [[a, 1.08 if i % 2 else 1.0] for i, (a, b) in enumerate(takes) if i]
     reel = {
         "title": spec.get("title", name), "source": "assets/talk.mp4", "words": "build/words.whisper.json", "fps": 30,
-        "outro": 0.5, "platform": "all", "style": "clean", "sfxProfile": "restrained",
-        "takes": [{"a": a, "b": b} for a, b in takes],
+        "outro": spec.get("outro", 0.5), "platform": "all", "style": "clean", "sfxProfile": "restrained",
+        "takes": [{"a": a, "b": b, **({"hold": next(h["sec"] for h in spec["holds"] if idx_of(h["after"]) == i)} if any(idx_of(h["after"]) == i for h in spec.get("holds", [])) else {})} for i, (a, b) in enumerate(takes)],
         "captions": {"style": "mini", "group": spec.get("captionGroup", 2), "size": 48, "weight": 700, "stroke": 3, "y": spec.get("captionY", 1380), "splitY": 985, "phrases": spec.get("phrases", {}),
                      "fixes": spec.get("fixes", {}), **({"keywords": spec["keywords"]} if spec.get("keywords") else {})},
         "zoom": {"origin": spec.get("origin", "45% 31%"), "snaps": snaps,

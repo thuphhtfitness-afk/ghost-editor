@@ -132,6 +132,22 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
 - **One lesson stays ONE video** (do not split it into parts unless the user asks); the user also does not want shorter
   re-cuts of a lesson that is already a video (same content twice).
 
+## Cuts, quiet client, fast-forward and bridges (the user's corrections on the Bulgarian split squat reels)
+- **Always cut on whole sentences; a take ends AFTER the last word's tail.** whisper word ends come early and the take edge is
+  capped by the next word: when a sentence is followed by "Ok," include that word too so the sentence is never clipped.
+  Order the reel as the story goes (question -> answer -> instruction), never jump back into the middle of a sentence.
+- **Keep the whole Q&A** ("đùi sau chân sau hay chân trước?", the client's answers): without those the viewer cannot follow.
+- **The client talks quietly and whisper returns nothing for her**: re-transcribe the stretch with +18 dB gain
+  (`volume=18dB,alimiter,dynaudnorm`), and REPLACE the base words in that stretch with the boosted ones (merge sorted).
+  `AUTO(segs)` in the spec generator lifts every quiet spoken run to -15.5 LUFS (max +16 dB, loud runs untouched).
+- **A repeated exercise the coach asks for ("làm cho em 5 cái") is fast-forwarded**: spec `holds` (frozen last frame after a
+  take, `{"after": <source s>, "sec": s}`), `speedClips` (`{"name","a","b","factor"}` builds a sped-up clip of the plate) and a `broll`
+  beat on `"hold@<source s>+0"` .. `"hold@<source s>+<sec>"` with a label "5 rep · tua nhanh x3".
+- **Ending that leads to the next part**: end on the coach's last "rồi" and use `"outro": 2.6` with two title beats at
+  `"outro+0.1"` / `"outro+0.25"`: "XEM TIẾP 👉" / "<what the next part fixes>". The outro is a frozen still of the last frame.
+- **Cloud stickers over exposed skin were tried and dropped by the user**: do not add them again unless asked (`cloud` beat exists).
+- Titles for the three Bulgarian split squat videos: line 1 always `BULGARIAN SPLIT SQUAT`; line 2 per video (the user picks).
+
 ## Small fixes without a full re-edit (Reel Fixer)
 - Every finished HPF reel can get a **Reel Fixer page** (artifact): `ed/gen.py`-style data (beats with output times, a
   thumbnail per beat, caption lines) + a page where the user edits text, shifts / lengthens / removes a beat, moves a ring

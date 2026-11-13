@@ -209,8 +209,21 @@
    "last": "2026-11-12",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "hpf-cut-on-whole-sentences",
+   "say": "HPF: cut on whole sentences and finish the last word (include a trailing Ok); keep the full Q&A; boost the quiet client's voice; fast-forward repeated reps; end a part on the coach's 'rồi' with a bridge end card; no cloud stickers.",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-13",
+   "last": "2026-11-13",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],
- "updated": "2026-11-12"
+ "updated": "2026-11-13"
 }
