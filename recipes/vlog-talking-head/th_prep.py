@@ -22,7 +22,7 @@ def sh(*a):
 # ---- 1. pauses from the full-strength denoised voice (its floor is silent, so silence = no speech)
 def silences(a, b):
     out = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-ss", f"{a:.3f}", "-t", f"{b - a:.3f}", "-i", R["nr_ref"],
-                          "-af", f"silencedetect=noise=-38dB:d={MINP}", "-f", "null", "-"], capture_output=True, text=True).stderr
+                          "-af", f"silencedetect=noise={R.get('sil_db', -38)}dB:d={MINP}", "-f", "null", "-"], capture_output=True, text=True).stderr
     st = [float(x) for x in re.findall(r"silence_start: ([\d.]+)", out)]
     en = [float(x) for x in re.findall(r"silence_end: ([\d.]+)", out)]
     return [(a + s, a + e) for s, e in zip(st, en)]

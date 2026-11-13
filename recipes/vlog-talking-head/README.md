@@ -55,4 +55,6 @@ bed, bed_vol (0.06)`.
 - Whisper merges and mishears in a noisy room: cross-check two passes (raw + denoised audio), keep only what is clear,
   and list every guessed word for the user to check.
 - Unclear tails are dropped, not captioned with guesses.
+- A quiet speaker (far mic): set `sil_db` (e.g. -50) and use the light-denoise wav as `nr_ref`, or the pause cutter
+  removes soft speech as silence. Check a few cut pieces against the word times before building.
 - jsdelivr may be blocked in a sandbox: set GSAP_JS to a local gsap.min.js (`npm pack gsap@3.14.2`).
