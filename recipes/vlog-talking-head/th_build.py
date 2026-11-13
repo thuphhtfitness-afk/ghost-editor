@@ -67,9 +67,13 @@ def build(P, cfg):
             tset("#cam", {"scale": 1.0 if k % 2 == 0 else 1.07}, t(j))
 
     # titles
+    starts = sorted(t(x[0]) for x in cfg.get("titles", []))
     for k, (a, e, lines, sub) in enumerate(cfg.get("titles", [])):
         a = t(a)
         e = a + e if isinstance(e, (int, float)) else (DUR if e == "wend" else t(int(e[1:])))
+        nxt = [x for x in starts if x > a + 1e-3]
+        if nxt:                                   # a title never overlaps the next one
+            e = min(e, nxt[0] - 0.05)
         size = min(fit(l) for l in lines)
         body = "".join(f'<div class="tl" style="font-size:{size:.0f}px">{esc(l)}</div>' for l in lines)
         H.append(f'<div id="ti{k}" class="title"><div class="tin">{body}<div class="ts">{esc(sub)}</div></div></div>')
