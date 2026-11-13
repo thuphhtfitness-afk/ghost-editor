@@ -122,6 +122,14 @@ CHAIN = ("highpass=f=70,lowpass=f=11500,afftdn=nr=6:nf=-42:tn=1,"
          "equalizer=f=2200:t=q:w=1.0:g=2,equalizer=f=6500:t=q:w=1.6:g=-3.5,"
          "acompressor=threshold=-30dB:ratio=4:attack=5:release=120:knee=4:makeup=6,"
          "alimiter=limit=0.89:attack=3:release=50:level=disabled,loudnorm=I=-15:TP=-1.5:LRA=6")
+# "clear": a quiet speaker in a reverberant room: less low end, mud cut, more presence and air, a firmer denoise
+CLEAR = ("highpass=f=90,lowpass=f=13000,afftdn=nr=10:nf=-45:tn=1,"
+         "agate=threshold=0.012:ratio=2:range=0.3:attack=6:release=220,"
+         "equalizer=f=150:t=q:w=0.9:g=1,equalizer=f=320:t=q:w=1.2:g=-3,equalizer=f=700:t=q:w=1.4:g=-1.5,"
+         "equalizer=f=2800:t=q:w=1.0:g=4,equalizer=f=4500:t=q:w=1.2:g=2,equalizer=f=9000:t=q:w=1.5:g=1.5,"
+         "acompressor=threshold=-30dB:ratio=4:attack=4:release=110:knee=4:makeup=6,"
+         "alimiter=limit=0.89:attack=3:release=50:level=disabled,loudnorm=I=-14.5:TP=-1.5:LRA=6")
+CHAIN = CLEAR if R.get("voice") == "clear" else CHAIN
 sh("ffmpeg", "-v", "error", "-y", *ins, "-filter_complex",
    "".join(f"[{i}:a]" for i in range(len(plan))) + f"concat=n={len(plan)}:v=0:a=1,{CHAIN}[o]",
    "-map", "[o]", "-ar", "48000", "-ac", "2", f"{P}/assets/voice.wav")
