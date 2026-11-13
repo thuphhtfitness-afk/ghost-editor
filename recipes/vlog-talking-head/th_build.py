@@ -180,7 +180,7 @@ video.full {{ object-fit: cover; }}
 #ov {{ z-index: 5; pointer-events: none; }}
 .title {{ position: absolute; left: 0; top: {cfg.get("title_y", 150)}px; width: 1080px; opacity: 0; display: flex; justify-content: center; }}
 .tin {{ display: inline-flex; flex-direction: column; align-items: flex-start; }}
-.tl {{ color: #fff; font-weight: 800; letter-spacing: -0.045em; line-height: 0.98; text-transform: lowercase;
+.tl {{ color: #fff; font-weight: 800; letter-spacing: -0.045em; line-height: 0.98;
        text-shadow: 0 2px 18px rgba(0,0,0,.35); white-space: nowrap; }}
 .ts {{ align-self: flex-end; color: #fff; font-style: italic; font-weight: 400; font-size: 44px; letter-spacing: -0.02em;
        margin-top: 6px; text-shadow: 0 1px 10px rgba(0,0,0,.6); }}
@@ -194,7 +194,7 @@ video.full {{ object-fit: cover; }}
 .kw {{ color: #FFE14A; font-weight: 800; }}
 {STROKE if cfg.get("cap_stroke") else ""}
 .hook {{ position: absolute; left: 0; top: 230px; width: 1080px; opacity: 0; text-align: center; z-index: 6; }}
-.hl {{ color: #fff; font-weight: 800; letter-spacing: -0.045em; line-height: 1.0; text-transform: lowercase; white-space: nowrap;
+.hl {{ color: #fff; font-weight: 800; letter-spacing: -0.045em; line-height: 1.0; white-space: nowrap;
       text-shadow: 0 3px 22px rgba(0,0,0,.45); opacity: 0; }}
 .hkw {{ color: #FFE14A; }}
 .hls {{ color: #fff; font-style: italic; font-weight: 400; font-size: 52px; margin-top: 14px; opacity: 0;

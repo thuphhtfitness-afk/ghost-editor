@@ -7,6 +7,7 @@ import cv2, numpy as np
 src, track, cutf, out = sys.argv[1:5]
 W = int(sys.argv[5]) if len(sys.argv) > 5 else 450
 FY = float(sys.argv[6]) if len(sys.argv) > 6 else 0.40
+TPAD = ",tpad=stop_mode=clone:stop_duration=1.0" if "notpad" not in sys.argv else ""
 H = round(W * 16 / 9)
 tr = [r for r in json.load(open(track)) if r[1] is not None]
 T = np.array([r[0] for r in tr]); X = np.array([r[1] for r in tr], float); Y = np.array([r[2] for r in tr], float)
@@ -22,7 +23,7 @@ segs = json.load(open(cutf))["segs"]
 cap = cv2.VideoCapture(src)
 fps_src = cap.get(cv2.CAP_PROP_FPS)
 enc = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", "1080x1920", "-r", "30",
-                        "-i", "-", "-vf", "unsharp=5:5:0.6,tpad=stop_mode=clone:stop_duration=1.0", "-c:v", "libx264",
+                        "-i", "-", "-vf", "unsharp=5:5:0.6" + TPAD, "-c:v", "libx264",
                         "-preset", "medium", "-crf", "15", "-pix_fmt", "yuv420p", "-g", "30", out], stdin=subprocess.PIPE)
 n = 0
 for s in segs:

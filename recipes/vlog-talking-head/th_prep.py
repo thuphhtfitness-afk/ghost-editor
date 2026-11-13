@@ -19,10 +19,17 @@ def sh(*a):
     subprocess.run(a, check=True)
 
 
+def G(si, key, default=None):
+    """a per-segment override (a compilation takes each segment from its own video) or the reel's value"""
+    sg = R["segs"][si]
+    o = sg[3] if len(sg) > 3 and isinstance(sg[3], dict) else {}
+    return o.get(key, R.get(key, default))
+
+
 # ---- 1. pauses from the full-strength denoised voice (its floor is silent, so silence = no speech)
-def silences(a, b):
-    out = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-ss", f"{a:.3f}", "-t", f"{b - a:.3f}", "-i", R["nr_ref"],
-                          "-af", f"silencedetect=noise={R.get('sil_db', -38)}dB:d={MINP}", "-f", "null", "-"], capture_output=True, text=True).stderr
+def silences(a, b, si):
+    out = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-ss", f"{a:.3f}", "-t", f"{b - a:.3f}", "-i", G(si, "nr_ref"),
+                          "-af", f"silencedetect=noise={G(si, 'sil_db', -38)}dB:d={MINP}", "-f", "null", "-"], capture_output=True, text=True).stderr
     st = [float(x) for x in re.findall(r"silence_start: ([\d.]+)", out)]
     en = [float(x) for x in re.findall(r"silence_end: ([\d.]+)", out)]
     return [(a + s, a + e) for s, e in zip(st, en)]
@@ -36,7 +43,7 @@ for si, sg in enumerate(R["segs"]):
         pieces.append([round(a, 3), round(b, 3), si])
         continue
     cur = a
-    for s, e in silences(a, b):
+    for s, e in silences(a, b, si):
         if s - a < 0.05 or b - e < 0.05:   # edge silences: trim the segment
             if s - a < 0.05:
                 cur = max(cur, e - KEEP)
@@ -70,13 +77,21 @@ def to_edit(x, si):
 
 # ---- 2. caption words: corrected syllables aligned to whisper onsets per segment, then mapped to edit time
 norm = lambda s: unicodedata.normalize("NFC", re.sub(r"[^\w]", "", s.lower()))
-WH = [(w["word"].strip(), w["start"], w["end"]) for s in json.load(open(R["whisper"], encoding="utf-8"))["segments"] for w in s["words"]]
+_wh = {}
+
+
+def WHof(path):
+    if path not in _wh:
+        _wh[path] = [(w["word"].strip(), w["start"], w["end"]) for s in json.load(open(path, encoding="utf-8"))["segments"] for w in s["words"]]
+    return _wh[path]
+
+
 words = []
 for si, sg in enumerate(R["segs"]):
     a, b, text = sg[0], sg[1], sg[2]
     if not text.strip():
         continue
-    ws = [w for w in WH if a - 0.05 <= w[1] < b]
+    ws = [w for w in WHof(G(si, "whisper")) if a - 0.05 <= w[1] < b]
     toks = text.split()
     syl = [(ti, s) for ti, tk in enumerate(toks) for s in tk.split("_")]
     sm = difflib.SequenceMatcher(None, [norm(s) for _, s in syl], [norm(w[0]) for w in ws], autojunk=False)
@@ -113,7 +128,7 @@ for i, p in enumerate(plan):
     if p["seg"] in SILENT:
         sh("ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "anullsrc=r=48000:cl=mono", "-t", f"{b - a:.3f}", w)
     else:
-        sh("ffmpeg", "-v", "error", "-y", "-ss", f"{a:.3f}", "-t", f"{b - a:.3f}", "-i", R["clean"],
+        sh("ffmpeg", "-v", "error", "-y", "-ss", f"{a:.3f}", "-t", f"{b - a:.3f}", "-i", G(p["seg"], "clean"),
            "-af", f"afade=t=in:d={fd},afade=t=out:st={b - a - fd:.3f}:d={fd}", "-ar", "48000", "-ac", "1", w)
     ins += ["-i", w]
 CHAIN = ("highpass=f=70,lowpass=f=11500,afftdn=nr=6:nf=-42:tn=1,"
@@ -136,10 +151,30 @@ sh("ffmpeg", "-v", "error", "-y", *ins, "-filter_complex",
 
 # ---- 4. plate + B-roll
 if not SKIP_PLATE:
-    sh("python3", os.path.join(os.path.dirname(__file__), "plate_zoom.py"), R["src"], R["track"], f"{P}/build/cut.json",
-       f"{P}/assets/talk.mp4", str(R.get("zoom_w", 450)), str(R.get("face_y", 0.40)))
-for name, s, d in R.get("broll", []):
-    sh("ffmpeg", "-v", "error", "-y", "-ss", f"{s}", "-t", f"{d}", "-i", R["broll_src"], "-an",
-       "-vf", "scale=1080:1920:flags=lanczos,fps=30,setsar=1", "-c:v", "libx264", "-preset", "medium", "-crf", "15",
+    # runs of pieces from the same video + framing are zoomed together, then joined (one held last frame at the end)
+    key = lambda p: tuple(str(G(p["seg"], k)) for k in ("src", "track", "zoom_w", "face_y"))
+    runs = []
+    for p in plan:
+        if runs and key(runs[-1][-1]) == key(p):
+            runs[-1].append(p)
+        else:
+            runs.append([p])
+    parts = []
+    for k, run in enumerate(runs):
+        si = run[0]["seg"]
+        cf, out = f"{P}/build/segs/cut{k}.json", f"{P}/build/segs/plate{k}.mp4"
+        json.dump({"dur": 0, "segs": run}, open(cf, "w"))
+        sh("python3", os.path.join(os.path.dirname(__file__), "plate_zoom.py"), G(si, "src"), G(si, "track"), cf, out,
+           str(G(si, "zoom_w", 450)), str(G(si, "face_y", 0.40)), "notpad")
+        parts.append(out)
+    with open(f"{P}/build/segs/plates.txt", "w") as f:
+        f.writelines(f"file '{x}'\n" for x in parts)
+    sh("ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", f"{P}/build/segs/plates.txt",
+       "-vf", "tpad=stop_mode=clone:stop_duration=1.0", "-c:v", "libx264", "-preset", "medium", "-crf", "15",
+       "-pix_fmt", "yuv420p", "-g", "30", "-r", "30", f"{P}/assets/talk.mp4")
+for br in R.get("broll", []):
+    name, s, d = br[:3]
+    sh("ffmpeg", "-v", "error", "-y", "-ss", f"{s}", "-t", f"{d}", "-i", br[3] if len(br) > 3 else R["broll_src"], "-an",
+       "-vf", "scale=1080:1920:force_original_aspect_ratio=increase:flags=lanczos,crop=1080:1920,fps=30,setsar=1,format=yuv420p", "-c:v", "libx264", "-preset", "medium", "-crf", "15",
        "-pix_fmt", "yuv420p", "-g", "30", f"{P}/assets/broll/{name}.mp4")
 print(f"duration {DUR:.2f} s")
