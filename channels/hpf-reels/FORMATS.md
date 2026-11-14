@@ -113,3 +113,21 @@ Each episode's last line asks the question the next episode answers.
 - Donkey kick (at home, on all fours) and cable / machine kickback (gym) are the same movement with the same fault.
   Name them together: "Kickback (ở nhà: donkey kick)".
 - **Safety on set:** never load a compensation. Use bodyweight or the lightest weight, 1–2 reps, coach's hand ready.
+
+## Filming without acting: scenario design (the user's rule)
+Coaches and clients do not act. Do not hand the client lines. Design SITUATIONS during a real session so the
+question or the moment happens by itself, film the whole session continuously and harvest moments in the edit.
+
+- **Pre-talk off camera:** ask the client what worries or confuses them. Do not rehearse; the coach just knows the topics.
+- **Tell the client only:** "buổi tập bình thường, có gì thắc mắc cứ hỏi".
+- **Triggers that create the moment:**
+  1. a prop (put a dumbbell in their hands, a mat on the floor, a 3–4 kg sandbag as a "baby");
+  2. a real routine moment (getting up from the mat, putting the weight back on the floor, the check-in at the start);
+  3. a coach's open question ("Tuần này chị thấy khó chịu nhất lúc nào?");
+  4. a third person asking: a partner, the camera operator, or a real follower comment read from the phone.
+- **If a moment is missed,** recreate the situation (lie down again next set), never the line.
+  New wording is fine.
+- **Camera:** a wide tripod + a handheld/POV camera, lav mics on both people, rolling for the whole session.
+  One session should give 3–5 videos.
+- **Edit:** keep the client's real words. If the question is rambling, the on-screen bubble ("KHÁCH HỎI" /
+  "MẸ BẦU HỎI") summarises it, and the real audio stays underneath.

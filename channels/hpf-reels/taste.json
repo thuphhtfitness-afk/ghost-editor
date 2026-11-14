@@ -248,8 +248,21 @@
    "last": "2026-11-12",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "kh-ng-cho-coach-kh",
+   "say": "không cho coach/khách diễn: tạo tình huống để câu hỏi tự xảy ra, quay liên tục cả buổi, lỡ thì tạo lại tình huống chứ không bắt nói lại câu",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-14",
+   "last": "2026-11-14",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],
- "updated": "2026-11-12"
+ "updated": "2026-11-14"
 }
