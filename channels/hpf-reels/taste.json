@@ -222,8 +222,21 @@
    "last": "2026-11-13",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "hpf-never-use-lo-fi",
+   "say": "HPF: never use lo-fi-02 (wao wao synth); acoustic beds only. Title at the top of the frame when the client lies on a bench so the face is clear.",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-14",
+   "last": "2026-11-14",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],
- "updated": "2026-11-13"
+ "updated": "2026-11-14"
 }

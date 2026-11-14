@@ -28,7 +28,7 @@ GAP = 0.6
 
 
 PROFANITY = {"vãi", "vã", "đéo", "đếch", "địt", "đm", "đmm", "dm", "vl", "vcl", "vkl", "cặc", "lồn", "buồi", "ngu", "đĩ"}
-MUSIC = ["lo-fi-02", "a-baby-story", "chillax"]  # light, warm beds under a coaching voice (HPF)
+MUSIC = ["a-baby-story", "chillax"]  # light, warm beds under a coaching voice (HPF)
 
 
 def core(w):

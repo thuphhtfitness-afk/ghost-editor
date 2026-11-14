@@ -148,6 +148,12 @@ The gym's training channel. One coaching session -> one tutorial reel of 30 s to
 - **Cloud stickers over exposed skin were tried and dropped by the user**: do not add them again unless asked (`cloud` beat exists).
 - Titles for the three Bulgarian split squat videos: line 1 always `BULGARIAN SPLIT SQUAT`; line 2 per video (the user picks).
 
+## Title position and music (the user's latest)
+- **Title position depends on the pose**: a standing coach / client -> belly height (y ~ 770); a client lying on a bench (press,
+  hip thrust ...) -> the TOP of the frame (y ~ 190) so the face is never covered. Check the face on a snapshot first.
+- **Music**: `lo-fi-02` has a wobbling "wao wao" synth the user does not want: never pick it for HPF. Use `a-baby-story`
+  (acoustic, relaxed) or `chillax`; set `"music"` in the spec explicitly (the default is a hash of the name and can land on lo-fi-02).
+
 ## Small fixes without a full re-edit (Reel Fixer)
 - Every finished HPF reel can get a **Reel Fixer page** (artifact): `ed/gen.py`-style data (beats with output times, a
   thumbnail per beat, caption lines) + a page where the user edits text, shifts / lengthens / removes a beat, moves a ring
