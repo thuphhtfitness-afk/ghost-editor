@@ -52,25 +52,41 @@ def cut(src, ss, n, vf, out):
          "-color_trc", "bt709", "-colorspace", "bt709", out])
 
 
+SOURCES = globals().get("SOURCES") or [(0, SRC, globals().get("TX"), VAD)]
+
+
+def source_of(t):
+    """virtual time -> (source file, time inside it): a reel can cut several clips (offset + source seconds)"""
+    off, src = max(((o, s_) for o, s_, *_ in SOURCES if o <= t + 1e-6), key=lambda x: x[0])
+    return src, t - off
+
+
 tl, total = timeline()
 lst = []
 for i, (a, b, es, n, z, pi) in enumerate(tl):
     out = f"build/seg/{a:.3f}_{n}_{z}.mp4"
     lst.append(out)
     cx, cy = (FACE if z > 1 else (0.5, 0.5))
-    cut(SRC, a, n, crop_expr(SRC, z, cx, cy), out)
+    src, la = source_of(a)
+    out = f"build/seg/{os.path.basename(src)}_{la:.3f}_{n}_{z}.mp4"
+    lst[-1] = out
+    cut(src, la, n, crop_expr(src, z, cx, cy), out)
 with open("build/seg/list.txt", "w") as f:
     for p in lst:
         f.write(f"file '{os.path.basename(p)}'\n")
 run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", "build/seg/list.txt", "-c", "copy", "build/plate.mp4"])
 
 parts, fil = [], []
+srcs = [s_[1] for s_ in SOURCES]
 for i, (a, b, es, n, z, pi) in enumerate(tl):
     d = n / FPS
-    fil.append(f"[0:a]atrim={a:.6f}:{a + d:.6f},asetpts=PTS-STARTPTS,afade=t=in:d=0.008,afade=t=out:st={d - 0.008:.4f}:d=0.008[a{i}]")
+    src, la = source_of(a)
+    k = srcs.index(src)
+    fil.append(f"[{k}:a]atrim={la:.6f}:{la + d:.6f},asetpts=PTS-STARTPTS,aresample=48000,afade=t=in:d=0.008,afade=t=out:st={d - 0.008:.4f}:d=0.008[a{i}]")
     parts.append(f"[a{i}]")
 fil.append("".join(parts) + f"concat=n={len(parts)}:v=0:a=1,aresample=48000[v]")
-run(["ffmpeg", "-v", "error", "-y", "-i", SRC, "-filter_complex", ";".join(fil), "-map", "[v]", "-ac", "1", "build/voice_raw.wav"])
+ins = sum((["-i", s_] for s_ in srcs), [])
+run(["ffmpeg", "-v", "error", "-y"] + ins + ["-filter_complex", ";".join(fil), "-map", "[v]", "-ac", "1", "build/voice_raw.wav"])
 
 brs = []
 for k, br_ in enumerate(BROLL):

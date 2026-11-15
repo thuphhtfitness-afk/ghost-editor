@@ -42,7 +42,13 @@ ALT = {1.0: 1.12, 1.06: 1.0, 1.12: 1.0, 1.18: 1.0, 1.32: 1.18}
 
 
 def _speech():
-    return json.load(open(VAD)) if os.path.exists(VAD) else None
+    srcs = globals().get("SOURCES") or [(0, SRC, globals().get("TX"), VAD)]
+    out = []
+    for off, _s, _t, vad in srcs:
+        if not os.path.exists(vad):
+            return None
+        out += [(s + off, e + off) for s, e in json.load(open(vad))]
+    return sorted(out)
 
 
 def subpieces():

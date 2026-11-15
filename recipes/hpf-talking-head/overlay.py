@@ -40,6 +40,7 @@ F_TAG = font("BeVietnamPro-SemiBold.ttf", 42)
 F_SER_XL = font("PlayfairDisplay-Italic%5Bwght%5D.ttf", 112, 500)
 F_SER_L = font("PlayfairDisplay-Italic%5Bwght%5D.ttf", 92, 500)
 F_SER_M = font("PlayfairDisplay-Italic%5Bwght%5D.ttf", 72, 600)
+F_SER_S = font("PlayfairDisplay-Italic%5Bwght%5D.ttf", 58, 600)
 F_OSW = font("Oswald%5Bwght%5D.ttf", 150, 600)
 F_OSW_M = font("Oswald%5Bwght%5D.ttf", 120, 600)
 F_RECAP = font("BeVietnamPro-ExtraBold.ttf", 46)
@@ -167,7 +168,11 @@ from beats import FIX  # caption fixes for mis-heard words
 
 
 def load_words():
-    d = json.load(open(TX))
+    import plan as _plan
+    d = []
+    for off, _src, tx, _vad in getattr(_plan, "SOURCES", [(0, None, TX, None)]):
+        for seg in json.load(open(tx)):
+            d.append({**seg, "words": [{**w, "s": w["s"] + off, "e": w["e"] + off} for w in seg["words"]]})
     tl, total = timeline()
     words = []
     for a, b, es, n, z, pi in tl:
@@ -263,11 +268,13 @@ def frame(t):
     t = t_abs
     # ---- section headers ----
     for t0, t1, l1, l2 in SECTIONS:
+        t1 = min(t1, RECAP[0] - 0.25)   # the recap owns the top band: never two blocks of text at once
         if t0 <= t <= t1 + 0.2:
             a = min(1, (t1 + 0.2 - t) / 0.2)
             hc = Image.new("RGBA", (W, H))
             paste(hc, text_img(N(l1), F_HEAD, WHITE), W / 2, 200, 1, min(1, (t - t0) / 0.15))
-            draw_typed(hc, l2, F_SER_M, CREAM, W / 2, 285, t, t0 + 0.15, 30, cursor=False)
+            f2 = F_SER_M if text_img(l2, F_SER_M, CREAM, glow=True).width - 80 < W - 90 else F_SER_S
+            draw_typed(hc, l2, f2, CREAM, W / 2, 285, t, t0 + 0.15, 30, cursor=False)
             if a < 1:
                 hc.putalpha(hc.split()[3].point(lambda v: int(v * a)))
             c.alpha_composite(hc)

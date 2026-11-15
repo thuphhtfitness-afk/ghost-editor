@@ -163,6 +163,26 @@
     ]
    },
    "supersedes": "th-m-nh-c-n"
+  },
+  {
+   "id": "ph-n-recap-text-b",
+   "say": "phần recap text bị chèn lên header, hãy sửa lại",
+   "from": "user",
+   "kind": "check",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "luu-y-tap-luyen"
+   ],
+   "first": "2026-11-15",
+   "last": "2026-11-15",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],

@@ -60,7 +60,9 @@ Skill talking head của HPF. Học từ 6 video reference:
   giây gốc, file, điểm vào), `FACE`, `SRC`, `VAD`.
 - `beats.py` của reel (KICKER, TITLE_LINES, TITLE_END, SECTIONS, POPS, TAGS, EMOJI, MARKS, CHECKLIST, NUMBERS, PRICE,
   RECAP_LINES, FIX): viết theo transcript, mọi thời điểm bằng `E(<giây gốc>)` để tự khớp sau khi cắt.
-  Tiêu đề dài tự co cỡ chữ cho vừa khung. Clip có display matrix xoay 90 độ được đọc đúng chiều.
+  Tiêu đề và dòng 2 của header dài tự co cỡ chữ; màn recap luôn ẩn header (không bao giờ hai khối chữ chồng nhau).
+  **Ghép nhiều clip nguồn** trong một reel: `SOURCES = [(0, 0081...), (10000, 0082...)]` trong plan.py, giờ của clip 2
+  viết `B + giây` (mẫu `example-6/`, 90 s ghép 0081 + 0082). Clip có display matrix xoay 90 độ được đọc đúng chiều.
   Mẫu: `example/` (dân văn phòng, bảng giá), `example-2/` (case study, checklist, số lớn), `example-3/` (squat,
   khung mặt khác: FACE 0.52/0.40), `example-4/` (người mới, gạch "KHÔNG VẬN ĐỘNG" -> "ĐI TẬP"), `example-5/` (tập hay đi làm, VS).
 - Xuất bản đăng: `final.py ... --crf 14` (~11 Mbit/s, 1080x1920) để nền tảng nén lại vẫn nét.
