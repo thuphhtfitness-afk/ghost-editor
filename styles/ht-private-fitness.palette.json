@@ -1,0 +1,20 @@
+{
+  "name": "HT Private Fitness",
+  "about": "Bảng màu cố định của HT Private Fitness (từ logo). Mọi reel đều dùng bảng màu này: đỏ thương hiệu thay cho màu nhấn, nền trang đỏ / trắng / đen, chữ trắng trên đỏ và trên footage, chữ đỏ trên nền trắng.",
+  "brand_red": "#D3222A",
+  "red_deep": "#A8161E",
+  "white": "#FFFFFF",
+  "paper": "#F8F7F6",
+  "ink": "#0E0E10",
+  "usage": {
+    "page_accent": "brand_red",
+    "page_light": "paper",
+    "page_dark": "ink",
+    "text_on_accent": "white",
+    "text_on_light": "brand_red",
+    "text_on_footage": "white",
+    "duotone": ["ink", "brand_red", "white"],
+    "glow_on_light": "brand_red",
+    "glow_on_dark": "brand_red"
+  }
+}
