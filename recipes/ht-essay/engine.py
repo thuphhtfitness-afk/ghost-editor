@@ -25,7 +25,9 @@ def font(name, size):
     return _fc[k]
 SERIF = "PlayfairDisplay-700.ttf"
 SERIF_I = "PlayfairDisplay-700i.ttf"
-SANS = "InterTight-500.ttf"
+SANS = "InterTight-700.ttf"
+KEY_SERIF = "PlayfairDisplay-900i.ttf"
+KEY_SANS = "InterTight-800.ttf"
 
 def nfc(s): return unicodedata.normalize("NFC", s)
 def norm(s): return re.sub(r"[^\w]", "", nfc(s).lower())
@@ -71,7 +73,7 @@ def look(fr, kind):
         f = f * VIG
     elif kind == "duo":  # black -> royal blue -> white
         lum = f @ np.array([0.299, 0.587, 0.114], np.float32) / 255
-        lum = np.clip((lum - 0.12) / 0.8, 0, 1) ** 1.2
+        lum = np.clip((lum - 0.18) / 0.78, 0, 1) ** 1.55
         lo = np.array(INK, np.float32); mid = np.array(BLUE, np.float32); hi = np.array([255, 250, 248], np.float32)
         a = np.clip(lum * 2, 0, 1)[..., None]; b = np.clip(lum * 2 - 1, 0, 1)[..., None]
         f = lo + (mid - lo) * a + (hi - mid) * b
@@ -128,18 +130,20 @@ def draw_words(layer, f, line, x, y, t, col, anchor="ls"):
             d.text((x, y + dy), w, font=f, fill=col + (int(255 * a),), anchor=anchor)
         x += text_w(f, w) + sp
 
-def caption_layer(layer, cap, t, col, cy, maxw=860):
+def caption_layer(layer, cap, t, col, cy, maxw=940):
     """reference layout: small sans line(s) above, big serif keyword, small sans below"""
     pre, key, post = cap["pre"], cap["key"], cap["post"]
-    sf = font(SANS, cap.get("small", 52))
-    lh = cap.get("small", 52) * 1.22
+    SM = cap.get("small", 56)
+    sf = font(SANS, SM)
+    lh = SM * 1.18
+    KF = cap.get("kfont", KEY_SERIF)
     if key:
         ks = cap.get("size", 0)
         ktxt = " ".join(w for w, _ in key)
         if not ks:
-            ks = 168
-            while ks > 70 and text_w(font(SERIF, ks), ktxt) > maxw: ks -= 4
-        kf = font(SERIF, ks)
+            ks = 210 if KF == KEY_SERIF else 180
+            while ks > 80 and text_w(font(KF, ks), ktxt) > maxw: ks -= 4
+        kf = font(KF, ks)
         kw = text_w(kf, ktxt)
         kx = W / 2 - kw / 2
         # key appears with a quick settle
@@ -160,18 +164,18 @@ def caption_layer(layer, cap, t, col, cy, maxw=860):
         plines = wrap(sf, pre, max(kw, 520)) if pre else []
         for i, ln in enumerate(plines):
             lw = text_w(sf, " ".join(w for w, _ in ln))
-            y = cy - ks * 0.80 - (len(plines) - 1 - i) * lh
+            y = cy - ks * 0.78 - (len(plines) - 1 - i) * lh
             x = min(kx + kw - lw, W - 90 - lw) if i == len(plines) - 1 else kx
             x = max(x, 90)
             draw_words(layer, sf, ln, x, y, t, col)
         qlines = wrap(sf, post, max(kw, 520)) if post else []
         for i, ln in enumerate(qlines):
             lw = text_w(sf, " ".join(w for w, _ in ln))
-            y = cy + ks * 0.30 + (i + 1) * lh * 0.95
+            y = cy + ks * 0.22 + (i + 1) * lh * 0.95
             x = max(90, min(kx + kw - lw, W - 90 - lw)) if i == 0 else max(90, kx + kw * 0.15)
             draw_words(layer, sf, ln, x, y, t, col)
     else:
-        lines = wrap(sf, pre, maxw)
+        lines = wrap(sf, pre, 760)
         for i, ln in enumerate(lines):
             lw = text_w(sf, " ".join(w for w, _ in ln))
             y = cy + (i - (len(lines) - 1) / 2) * lh
@@ -378,6 +382,77 @@ def render_piece(args):
     if card_rd: card_rd.close()
     return out
 
+STOP = set("""thì là mà cái việc của mọi người có thể nó đấy để cho với trong một những các em chị anh ấy ta đó và nhưng rồi đã
+sẽ được này nhé như thế khá rất cũng hơn không phải đúng lại ở từ đến bởi vì tại nè kiểu ví dụ hay hoặc nếu khi xong chứ còn thực
+sự chất ra nào gì đâu vậy giờ bảo mới hết lên tầm khoảng ok đây nữa luôn chỉ cả mình nhá ạ hả nhỉ à ừ đi bị""".split())
+def _auto_key(toks):
+    best = None
+    i = 0
+    while i < len(toks):
+        if norm(toks[i]) in STOP or not norm(toks[i]):
+            i += 1; continue
+        j = i
+        while j < len(toks) and j - i < 3 and norm(toks[j]) not in STOP and norm(toks[j]): j += 1
+        span = (i, j)
+        if best is None or (j - i) >= (best[1] - best[0]): best = span
+        i = j
+    return best
+def _split(toks, n=5):
+    if not toks: return []
+    k = math.ceil(len(toks) / n); sz = math.ceil(len(toks) / k)
+    return [toks[i:i + sz] for i in range(0, len(toks), sz)]
+def chunk_caps(caps):
+    out = []; nk = 0
+    for c in caps:
+        txt = nfc(c["text"]); extra = {k: v for k, v in c.items() if k != "text"}
+        if "/" in txt:
+            for part in [x.strip() for x in txt.split("/") if x.strip()]:
+                d = dict(extra); d["text"] = part
+                if "*" in part:
+                    nk += 1
+                    kt = re.findall(r"\*([^*]+)\*", part)[0]
+                    if kt.startswith("!"): d["text"] = part.replace("*!", "*"); d.setdefault("kfont", KEY_SANS)
+                    d.setdefault("kfont", KEY_SANS if (nk % 3 == 0 or re.search(r"\d", kt)) else KEY_SERIF)
+                out.append(d)
+            continue
+        parts = re.split(r"(\*[^*]+\*)", txt)
+        toks = []
+        for p in parts:
+            for tok in p.strip("*").split(): toks.append((tok, p.startswith("*")))
+        kidx = [i for i, (_, k) in enumerate(toks) if k]
+        chunks = []
+        if kidx:
+            k0, k1 = kidx[0], kidx[-1] + 1
+            pre, key, post = toks[:k0], toks[k0:k1], toks[k1:]
+            pa = pre[-2:] if len(pre) > 2 else pre; pre_rest = pre[:len(pre) - len(pa)]
+            pb = post[:2] if len(post) > 2 else post; post_rest = post[len(pb):]
+            chunks += [[(w, False) for w, _ in ch] for ch in _split(pre_rest)]
+            chunks.append(pa + key + pb)
+            chunks += [[(w, False) for w, _ in ch] for ch in _split(post_rest)]
+        else:
+            chunks = _split(toks)
+        for ch in chunks:
+            words = [w for w, _ in ch]
+            if not any(k for _, k in ch):
+                sp = _auto_key(words)
+                if sp: ch = [(w, sp[0] <= i < sp[1]) for i, (w, _) in enumerate(ch)]
+            # rebuild text with *key*
+            outt = []; inkey = False
+            for w, k in ch:
+                if k and not inkey: outt.append("*" + w); inkey = True
+                elif k: outt.append(w)
+                else:
+                    if inkey: outt[-1] += "*"; inkey = False
+                    outt.append(w)
+            if inkey: outt[-1] += "*"
+            d = dict(extra); d["text"] = " ".join(outt)
+            if any(k for _, k in ch):
+                nk += 1
+                kt = "".join(w for w, k in ch if k)
+                d.setdefault("kfont", KEY_SANS if (nk % 3 == 0 or re.search(r"\d", kt)) else KEY_SERIF)
+            out.append(d)
+    return out
+
 # ---------------- spec prep ----------------
 def build(spec_path, outdir, workers=4, only=None):
     spec = json.load(open(spec_path))
@@ -401,7 +476,8 @@ def build(spec_path, outdir, workers=4, only=None):
             mid = (w["s"] + w["e"]) / 2
             if a <= mid < b:
                 rw.append({"w": nfc(w["w"].strip()), "s": max(o0, w["s"] - a + o0), "e": min(o1, w["e"] - a + o0)})
-    # captions: sequential alignment
+    # captions: split into short chunks (2-5 words), each with one big keyword
+    spec["caps"] = chunk_caps(spec["caps"])
     caps = []
     ctoks = []
     for ci, c in enumerate(spec["caps"]):
