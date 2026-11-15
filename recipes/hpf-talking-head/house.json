@@ -1,0 +1,21 @@
+{
+ "about": "HPF talking head house look (fixed reel to reel; only content changes). See SYSTEM.md.",
+ "palette": {"cream": "#F6EAAA", "white": "#FFFFFF", "ink": "#1C1814", "strike": "#E63946", "ok": "#3CB45A"},
+ "type": {
+  "caption": {"font": "Be Vietnam Pro ExtraBold", "px": 66, "case": "lowercase", "y": 1420, "mode": "one word at a time"},
+  "kicker": {"font": "Be Vietnam Pro ExtraBold", "px": 40, "case": "upper", "deco": "✦"},
+  "hook": {"font": "Playfair Display Italic 500", "px": 112, "colour": "cream", "reveal": "typewriter 24 cps + cursor"},
+  "header": {"line1": "Be Vietnam Pro ExtraBold 50 white 'N.) ...'", "line2": "Playfair Display Italic 600 72 cream, typed"},
+  "pop_serif": "Playfair Display Italic 112 cream + glow",
+  "pop_caps": "Oswald 600 150 white + glow",
+  "tag": "cream rounded box, Be Vietnam Pro SemiBold 42 ink",
+  "recap": "Be Vietnam Pro ExtraBold 46, cream/white alternating"
+ },
+ "zones": {"top": [120, 700], "chest": [1290, 1450], "face": "never"},
+ "legibility": "black gradient 0-700 px, max 41 % at the top edge; no grade on the face",
+ "zoom_cycle": [1.0, 1.18, 1.32],
+ "stickers": "Fluent 3D emoji (MIT), pop with ease-back, gentle bob, collect in a row for lists",
+ "broll": "own coaching footage, full screen, <= 25 % runtime, <= 3 per minute, captions keep running",
+ "sound": {"voice": "highpass 80 Hz, compressor 2.5:1, master -14 LUFS / -1.5 dBTP", "sfx": "paper-flip on a section, whoosh into B-roll, zip on a strike, riffle on the recap", "music": "added on the platform at post time"},
+ "vary_per_reel": ["sections and their wording", "keyword pops", "emoji set", "the data moment", "B-roll choice"]
+}

@@ -1,6 +1,6 @@
 ---
 name: ghost-editor
-description: "AI video editor for talking-head reels. Turns a raw phone recording of someone talking to camera (retakes, pauses, false starts) into a finished vertical 1080x1920 reel for Instagram, TikTok or Shorts: the best take of each sentence, pause trimming, word-timed captions that never cover the face, motion scenes on the spoken word, sound effects mixed against the voice and checked B-roll. Use when the user hands over a talking-head video and says \"edit this\", \"make a reel\", \"make it look like this video\", \"add captions/sound effects\", \"pick the best takes\", \"remove the pauses\", asks for a re-cut, or names a style. Named styles (recipes/, docs/PLAYBOOK.md): Clean OS, Seoul list, RESULT, Face RESULT, stan style, vector explainer, POV montage, Whiteboard, Kinetic doc, Step Deck, Product page, Tactile paper, Caption News, News Package, Telestrator, Halftone Dossier, Swiss Grid, Data Story, Hologram HUD; plus seven presets (clean, editorial, meme, cinematic, launch, kinetic, pop). Not for landscape screen recordings."
+description: "AI video editor for talking-head reels. Turns a raw phone recording of someone talking to camera (retakes, pauses, false starts) into a finished vertical 1080x1920 reel for Instagram, TikTok or Shorts: the best take of each sentence, pause trimming, word-timed captions that never cover the face, motion scenes on the spoken word, sound effects mixed against the voice and checked B-roll. Use when the user hands over a talking-head video and says \"edit this\", \"make a reel\", \"make it look like this video\", \"add captions/sound effects\", \"pick the best takes\", \"remove the pauses\", asks for a re-cut, or names a style. Named styles (recipes/, docs/PLAYBOOK.md): Clean OS, Seoul list, RESULT, Face RESULT, stan style, vector explainer, POV montage, Whiteboard, Kinetic doc, Step Deck, Product page, Tactile paper, HPF talking head, Caption News, News Package, Telestrator, Halftone Dossier, Swiss Grid, Data Story, Hologram HUD; plus seven presets (clean, editorial, meme, cinematic, launch, kinetic, pop). Not for landscape screen recordings."
 ---
 
 # ghost-editor
@@ -206,6 +206,12 @@ Seven presets: `clean`, `editorial`, `meme`, `cinematic`, `launch`, `kinetic`, `
 - `recipes/hologram-hud/`, **Hologram HUD**: the thing the speaker talks about is scanned into a glowing wireframe,
   target boxes lock onto its parts and values roll in, cut against the face as shot, never over it; ported from
   lemo-opuscar (MIT). Call: "Hologram HUD", "hologram scan". Read its SYSTEM.md first.
+- `recipes/hpf-talking-head/`, **HPF talking head** (Vietnamese coach/expert talking head, also an interview cut down to
+  the answers): one spoken word at a time on the chest, a cream Playfair Display Italic hook typed on with a cursor and
+  sparkles, numbered section headers held on the wall band, cream tags, keyword pops (serif or Oswald caps), Fluent 3D
+  emoji that pop on the word and collect in a row, a struck-through number, own coaching footage as full-screen cảnh
+  trám, a recap at the end; everything in two safe zones, never on the face; plain ffmpeg + Pillow, no HyperFrames.
+  Call: "HPF talking head", "skill talking head của HPF". Read its SYSTEM.md first.
 The visual inventory of every style (playing loops, soundboard, rules) is docs/PLAYBOOK.md.
 **Check the style's prerequisite before planning** (references/broll.md section 6): stan style needs real screen
 recordings, cinematic needs one consistent world of footage. If it is missing, say what is missing and propose another
