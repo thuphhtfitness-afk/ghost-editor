@@ -3,6 +3,7 @@ import json, os
 FPS = 30
 SRC = "raw/0081.mp4"
 VAD = "build/vad_0081.json"
+TX = "tx/0081.json"
 
 # (a, b, zoom) in original seconds of 0081, in EDIT order. zoom: 1.0 as shot, 1.12, 1.18 tight, 1.32 punch.
 # Silences inside a piece are cut out automatically (VAD), each sub-cut alternates the shot size.

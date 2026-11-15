@@ -51,8 +51,10 @@ Skill talking head của HPF. Học từ 6 video reference:
 ## Slot nội dung (đổi theo reel)
 - `plan.py` của reel: `PIECES` (a, b, zoom) theo thứ tự dựng (câu hook đứng đầu, `HOOK_PIECES`), `BROLL` (cửa sổ theo
   giây gốc, file, điểm vào), `FACE`, `SRC`, `VAD`.
-- Khối **beats** trong `overlay.py` (HOOK_END, SECTIONS, POPS, TAGS, EMOJI, MARKS, PRICE, RECAP_LINES, FIX): viết lại theo
-  transcript, mọi thời điểm bằng `E(<giây gốc>)` để tự khớp sau khi cắt.
+- `beats.py` của reel (KICKER, TITLE_LINES, TITLE_END, SECTIONS, POPS, TAGS, EMOJI, MARKS, CHECKLIST, NUMBERS, PRICE,
+  RECAP_LINES, FIX): viết theo transcript, mọi thời điểm bằng `E(<giây gốc>)` để tự khớp sau khi cắt.
+  Mẫu: `example/` (dân văn phòng, bảng giá) và `example-2/` (case study, checklist, số lớn).
+- Xuất bản đăng: `final.py ... --crf 14` (~11 Mbit/s, 1080x1920) để nền tảng nén lại vẫn nét.
 
 ## Quy trình
 ```bash
@@ -62,7 +64,7 @@ bash $H/fetch_assets.sh                       # font có dấu tiếng Việt + 
 cd $P && python3 $H/transcribe_vi.py large-v3-turbo <clip>   # tx/<clip>.txt + .json (word timing)
 # kiểm tra từ nghe chưa chắc bằng large-v3 trên đoạn ngắn, thêm vào FIX
 python3 $H/vad.py wav/<clip>.wav build/vad_<clip>.json   # khoảng lặng
-cp $H/example/plan.py $P/plan.py              # sửa PIECES (hook đầu), BROLL theo câu chọn
+cp $H/example/plan.py $H/example/beats.py $P/   # sửa PIECES (hook đầu), BROLL; beats theo câu chọn
 python3 $H/plate.py                           # build/plate.mp4, build/voice_raw.wav, build/broll/*
 python3 $H/snaps.py <t1,...> && python3 $H/overlay.py --still <t1,...> build/sheet.jpg bg   # duyệt
 python3 $H/music_synth.py <giây>              # audio/bed.wav + audio/click.wav (nếu chưa có nhạc kênh)

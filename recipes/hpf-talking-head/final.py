@@ -5,6 +5,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 S = os.environ.get("GHOST", os.path.abspath(os.path.join(HERE, "..", "..")))
 out = sys.argv[1]
 bed = sys.argv[sys.argv.index("--bed") + 1] if "--bed" in sys.argv else "audio/bed.wav"
+CRF = int(sys.argv[sys.argv.index("--crf") + 1]) if "--crf" in sys.argv else 15
 bed_db = float(sys.argv[sys.argv.index("--bed-db") + 1]) if "--bed-db" in sys.argv else -17
 os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
 ev = json.loads(subprocess.run([sys.executable, f"{HERE}/overlay.py", "--events"], capture_output=True, text=True, check=True).stdout)
@@ -39,7 +40,7 @@ fa.append("".join(mix) + f"amix=inputs={len(mix)}:normalize=0:duration=first,atr
           "afade=t=out:st=" + f"{END - 0.5:.3f}" + ":d=0.5,loudnorm=I=-14:TP=-1.5:LRA=9,aresample=48000[a]")
 
 cmd = ["ffmpeg", "-v", "error", "-stats", "-y"] + inp + ["-filter_complex", ";".join(fv + fa), "-map", "[v]", "-map", "[a]",
-       "-c:v", "libx264", "-preset", "slow", "-crf", "17", "-profile:v", "high", "-level", "4.2", "-maxrate", "20M",
+       "-c:v", "libx264", "-preset", "slow", "-crf", str(CRF), "-profile:v", "high", "-level", "4.2", "-maxrate", "20M",
        "-bufsize", "30M", "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709",
        "-movflags", "+faststart", "-c:a", "aac", "-b:a", "256k", "-ar", "48000", "-ac", "2", out]
 gen = subprocess.Popen([sys.executable, f"{HERE}/overlay.py", "--frames"], stdout=subprocess.PIPE)
