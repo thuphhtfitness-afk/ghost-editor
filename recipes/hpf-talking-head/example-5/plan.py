@@ -16,8 +16,8 @@ PIECES = [
 ]
 HOOK_PIECES = 1
 BROLL = [
-    (155.60, 159.40, "raw/0087.mp4", 4.0, 1.00, 0.5, 0.5),   # họ đã cố gắng rất nhiều -> client on the leg curl
-    (274.70, 278.90, "raw/0092.mp4", 5.0, 1.00, 0.5, 0.5),   # điều chỉnh cho thoải mái nhất -> coach adjusting
+    (155.60, 159.40, "raw/new3.mp4", 7.0, 1.00, 0.5, 0.5, "ccw"),  # họ đã cố gắng rất nhiều -> dumbbell row, effort
+    (274.70, 278.90, "raw/new1.mp4", 12.0, 1.00, 0.5, 0.5, "cw"),  # điều chỉnh cho thoải mái nhất -> coach spotting
 ]
 FACE = (0.40, 0.44)
 GAP_KEEP = 0.22

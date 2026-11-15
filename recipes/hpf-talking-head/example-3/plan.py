@@ -15,8 +15,8 @@ PIECES = [
 ]
 HOOK_PIECES = 1
 BROLL = [
-    (43.50, 48.90, "raw/0091.mp4", 14.0, 1.00, 0.5, 0.5),   # bài tập giả lập hành động hằng ngày -> client training, coach
-    (61.20, 64.00, "raw/0089.mp4", 8.5, 1.00, 0.5, 0.5),    # target nhóm cơ này -> seated row
+    (43.50, 48.90, "raw/new4.mp4", 0.5, 1.00, 0.5, 0.5, "ccw"),   # bài tập giả lập hành động hằng ngày -> squat with the coach
+    (61.20, 64.00, "raw/new2.mp4", 10.0, 1.00, 0.5, 0.5, "cw"),   # target nhóm cơ này -> machine work
 ]
 FACE = (0.52, 0.40)
 GAP_KEEP = 0.22

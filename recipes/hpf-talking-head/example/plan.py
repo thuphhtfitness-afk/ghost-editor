@@ -31,9 +31,9 @@ HOOK_PIECES = 1          # the first N pieces are the cold-open hook; a flash + 
 # cảnh trám: full screen over the talking head between two ORIGINAL times of 0081 (voice keeps running)
 # (orig_from, orig_to, file, src_start, zoom, cx, cy)
 BROLL = [
-    (134.00, 137.40, "raw/0091.mp4", 5.0, 1.00, 0.5, 0.5),   # khách giảm cân -> coach behind a client on the band pull
-    (167.46, 171.98, "raw/0087.mp4", 20.5, 1.00, 0.5, 0.5),  # đi tập = stress lên cơ thể -> leg curl, coach watching
-    (311.12, 314.62, "raw/0092.mp4", 13.4, 1.00, 0.5, 0.5),  # mình sẽ hỗ trợ họ -> coach adjusting her form
+    (134.00, 137.40, "raw/new1.mp4", 3.0, 1.00, 0.5, 0.5, "cw"),   # khách giảm cân -> coach spotting a client on the machine
+    (167.46, 171.98, "raw/new3.mp4", 1.0, 1.00, 0.5, 0.5, "ccw"),  # đi tập = stress lên cơ thể -> dumbbell row, coach correcting
+    (311.12, 314.62, "raw/new5.mp4", 2.0, 1.00, 0.5, 0.5, "ccw"),  # mình sẽ hỗ trợ họ -> coach kneeling, fixing her stance
 ]
 FACE = (0.40, 0.44)
 GAP_KEEP = 0.22          # a silence shorter than this stays; longer ones are cut to PAD_IN + PAD_OUT

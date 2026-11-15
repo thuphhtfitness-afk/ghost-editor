@@ -25,9 +25,9 @@ PIECES = [
 ]
 HOOK_PIECES = 1
 BROLL = [
-    (99.70, 102.90, "raw/0087.mp4", 1.0, 1.00, 0.5, 0.5),   # không phải họ không làm được -> client training on her own
-    (117.10, 120.60, "raw/0089.mp4", 2.0, 1.00, 0.5, 0.5),  # đi tập không vui -> seated band row
-    (155.35, 158.30, "raw/0092.mp4", 0.0, 1.00, 0.5, 0.5),  # người đồng hành, support -> coach beside her
+    (99.70, 102.90, "raw/new2.mp4", 2.0, 1.00, 0.5, 0.5, "cw"),    # không phải họ không làm được -> client on the machine, coach by
+    (117.10, 120.60, "raw/0089.mp4", 2.0, 1.00, 0.5, 0.5),         # đi tập không vui -> seated band row
+    (155.35, 158.30, "raw/0092.mp4", 0.0, 1.00, 0.5, 0.5),         # người đồng hành, support -> coach beside her
 ]
 FACE = (0.40, 0.44)
 GAP_KEEP = 0.22

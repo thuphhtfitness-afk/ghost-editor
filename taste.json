@@ -121,6 +121,26 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "thay-c-nh-kh-ch",
+   "say": "thay cảnh khách tập leg curl bằng source mới; thay linh hoạt các source vào các cảnh trám tập luyện, đừng dùng lặp đi lặp lại",
+   "from": "user",
+   "kind": "process",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "dan-van-phong"
+   ],
+   "first": "2026-11-15",
+   "last": "2026-11-15",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],

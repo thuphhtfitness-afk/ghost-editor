@@ -17,12 +17,20 @@ def dims(path):
     return int(o[0]), int(o[1])
 
 
-def crop_expr(src, z, cx, cy):
+def crop_expr(src, z, cx, cy, rot=None):
     SW, SH = dims(src)
+    if rot in ("cw", "ccw"):
+        SW, SH = SH, SW
+    if SW / SH > W / H:  # wider than 9:16 (e.g. a 4K landscape clip): centre-crop to 9:16 first
+        SW = int(SH * W / H)
+    FW, FH = dims(src)
+    if rot in ("cw", "ccw"):
+        FW, FH = FH, FW
     cw, ch = round(SW / z / 2) * 2, round(SH / z / 2) * 2
-    x = min(max(cx * SW - cw / 2, 0), SW - cw)
-    y = min(max(cy * SH - ch / 2, 0), SH - ch)
-    return f"crop={cw}:{ch}:{int(x)}:{int(y)},scale={W}:{H}:flags=lanczos"
+    x = min(max(cx * FW - cw / 2, 0), FW - cw)
+    y = min(max(cy * FH - ch / 2, 0), FH - ch)
+    pre = {"cw": "transpose=1,", "ccw": "transpose=2,"}.get(rot, "")
+    return f"{pre}crop={cw}:{ch}:{int(x)}:{int(y)},scale={W}:{H}:flags=lanczos"
 
 
 def run(cmd):
@@ -61,11 +69,13 @@ fil.append("".join(parts) + f"concat=n={len(parts)}:v=0:a=1,aresample=48000[v]")
 run(["ffmpeg", "-v", "error", "-y", "-i", SRC, "-filter_complex", ";".join(fil), "-map", "[v]", "-ac", "1", "build/voice_raw.wav"])
 
 brs = []
-for k, (o0, o1, src, ss, bz, bx, by) in enumerate(BROLL):
+for k, br_ in enumerate(BROLL):
+    o0, o1, src, ss, bz, bx, by = br_[:7]
+    rot = br_[7] if len(br_) > 7 else None
     t0, t1 = to_edit(o0), to_edit(o1)
     n = round((t1 - t0) * FPS)
-    out = f"build/broll/{k:02d}_{os.path.basename(src)}_{ss}_{n}.mp4"
-    cut(src, ss, n, crop_expr(src, bz, bx, by), out)
+    out = f"build/broll/{k:02d}_{os.path.basename(src)}_{ss}_{n}_{bx}_{rot}.mp4"
+    cut(src, ss, n, crop_expr(src, bz, bx, by, rot), out)
     brs.append({"file": out, "t0": round(t0 * FPS) / FPS, "n": n})
 json.dump(brs, open("build/broll.json", "w"), indent=1)
 print("subcuts", len(tl), "total", total, "frames", round(total / FPS, 2), "s; broll", [(b["t0"], b["n"]) for b in brs])

@@ -46,6 +46,9 @@ Skill talking head của HPF. Học từ 6 video reference:
    đoạn nói (nam ~110-160 Hz, nữ > 175 Hz); không cắt đoạn nào của người hỏi vào reel.
 8. **Mỗi reel một ý chính, không trùng reel trước** của cùng nguồn; bỏ hẳn các đoạn host tự nói là dễ sai hoặc người
    dùng yêu cầu bỏ (vd: thoát vị, ngã). Header / tag / recap chỉ dùng chữ host đã nói.
+9. **Cảnh trám không lặp.** Lập bảng nguồn cho cả đợt reel: một nguồn không dùng 2 lần trong cùng reel, tối đa 2 lần
+   trong cả đợt và ở khoảnh khắc khác nhau; ưu tiên cảnh khớp đúng câu (reel squat dùng cảnh squat). Không dùng cảnh
+   leg curl (0087) nữa. Clip quay ngang thiếu thông tin xoay: thêm `"cw"`/`"ccw"` cuối dòng `BROLL` (plate.py xoay + cắt 9:16).
 6. **Nhạc nền nhẹ** (lo-fi êm), sidechain hạ khi host nói, nằm dưới giọng ~17 dB. Không có nhạc từ thư viện thì
    `music_synth.py` tạo một bed không bản quyền; có nhạc của kênh thì truyền `--bed`.
 
