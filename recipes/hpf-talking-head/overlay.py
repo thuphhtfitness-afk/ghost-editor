@@ -179,6 +179,8 @@ def load_words():
     out = []
     for w in words:
         txt = FIX.get(w[2].strip(",.?"), w[2].strip(",.?"))
+        if not txt:
+            continue
         if txt.startswith("-") and out:
             out[-1][2] += txt; out[-1][1] = w[1]; continue
         if txt.isdigit() or txt[0].isdigit():
@@ -313,6 +315,9 @@ def frame(t):
     if PRICE and PRICE[0] <= t <= PRICE[1]:
         a, s = env(t, PRICE[0], PRICE[1])
         old = text_img(PRICE[2], F_OSW, WHITE)
+        fit = min(1.0, 980 / old.width)
+        if fit < 1:
+            old = old.resize((int(old.width * fit), int(old.height * fit)), Image.LANCZOS)
         paste(c, old, W / 2 - 40, 470, s, a)
         if t >= STRIKE_T:
             p = min(1, (t - STRIKE_T) / 0.3)

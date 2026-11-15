@@ -49,9 +49,9 @@ def subpieces():
     """[(a, b, zoom)] after cutting silences, zoom alternating on every in-sentence cut"""
     sp = _speech()
     out = []
-    for a, b, z in PIECES:
+    for pi, (a, b, z) in enumerate(PIECES):
         if not sp:
-            out.append((a, b, z)); continue
+            out.append((a, b, z, pi)); continue
         regs = []
         for s, e in sp:
             s2, e2 = max(a, s - PAD_IN), min(b, e + PAD_OUT)
@@ -63,7 +63,7 @@ def subpieces():
         if not regs:
             regs = [[a, b]]
         for i, (s, e) in enumerate(regs):
-            out.append((s, e, z if i % 2 == 0 else ALT.get(z, 1.0)))
+            out.append((s, e, z if i % 2 == 0 else ALT.get(z, 1.0), pi))
     return out
 
 
@@ -71,9 +71,8 @@ def timeline():
     """[(a, b_snapped, edit_start, nframes, zoom, piece_index)]"""
     out, t = [], 0
     subs = subpieces()
-    for a, b, z in subs:
+    for a, b, z, pi in subs:
         n = max(1, round((b - a) * FPS))
-        pi = next(i for i, p in enumerate(PIECES) if p[0] - 1e-6 <= a <= p[1] + 1e-6)
         out.append((a, a + n / FPS, t / FPS, n, z, pi))
         t += n
     return out, t

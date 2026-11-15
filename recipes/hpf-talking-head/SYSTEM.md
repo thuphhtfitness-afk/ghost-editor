@@ -42,6 +42,10 @@ Skill talking head của HPF. Học từ 6 video reference:
    đặt lên đầu video; hết câu thì **flash trắng 0,35 s + tiếng click** rồi về cảnh mở đầu và tiêu đề.
 4. **Cắt sạch khoảng lặng**: VAD (`vad.py`) -> mọi khoảng lặng > 0,22 s trong câu bị cắt còn ~0,2 s, mỗi chỗ cắt đổi cỡ khung.
 5. **Cảnh trám = coach đang chỉnh tư thế cho khách** trên máy / dây kéo (footage của phòng tập), không dùng cảnh đứng chờ.
+7. **Chỉ lấy giọng host.** Clip phỏng vấn có giọng người hỏi xen vào: `speaker_pitch.py <clip> <từ> <đến>` ghi cao độ từng
+   đoạn nói (nam ~110-160 Hz, nữ > 175 Hz); không cắt đoạn nào của người hỏi vào reel.
+8. **Mỗi reel một ý chính, không trùng reel trước** của cùng nguồn; bỏ hẳn các đoạn host tự nói là dễ sai hoặc người
+   dùng yêu cầu bỏ (vd: thoát vị, ngã). Header / tag / recap chỉ dùng chữ host đã nói.
 6. **Nhạc nền nhẹ** (lo-fi êm), sidechain hạ khi host nói, nằm dưới giọng ~17 dB. Không có nhạc từ thư viện thì
    `music_synth.py` tạo một bed không bản quyền; có nhạc của kênh thì truyền `--bed`.
 
@@ -53,7 +57,8 @@ Skill talking head của HPF. Học từ 6 video reference:
   giây gốc, file, điểm vào), `FACE`, `SRC`, `VAD`.
 - `beats.py` của reel (KICKER, TITLE_LINES, TITLE_END, SECTIONS, POPS, TAGS, EMOJI, MARKS, CHECKLIST, NUMBERS, PRICE,
   RECAP_LINES, FIX): viết theo transcript, mọi thời điểm bằng `E(<giây gốc>)` để tự khớp sau khi cắt.
-  Mẫu: `example/` (dân văn phòng, bảng giá) và `example-2/` (case study, checklist, số lớn).
+  Mẫu: `example/` (dân văn phòng, bảng giá), `example-2/` (case study, checklist, số lớn), `example-3/` (squat,
+  khung mặt khác: FACE 0.52/0.40), `example-4/` (người mới, gạch "KHÔNG VẬN ĐỘNG" -> "ĐI TẬP"), `example-5/` (tập hay đi làm, VS).
 - Xuất bản đăng: `final.py ... --crf 14` (~11 Mbit/s, 1080x1920) để nền tảng nén lại vẫn nét.
 
 ## Quy trình
