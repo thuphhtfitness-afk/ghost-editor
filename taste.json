@@ -1,6 +1,128 @@
 {
  "version": 1,
  "about": "Your corrections across reels, recorded with scripts/taste.py add (from: user, quoted as 'you said') next to rules the skill learned (from: skill). A prior, not evidence: reel.json always wins.",
- "rules": [],
- "reels": []
+ "rules": [
+  {
+   "id": "ph-n-u-n-y",
+   "say": "phần đầu này hãy thêm gradient màu trắng hoặc đen để làm nổi chữ, nếu cần highlight chữ",
+   "from": "user",
+   "kind": "prefer",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "dan-van-phong"
+   ],
+   "first": "2026-11-15",
+   "last": "2026-11-15",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
+  },
+  {
+   "id": "emoji-c-c-cafe-tr",
+   "say": "emoji cốc cafe, trà sữa chuyển xuống phần tường màu trắng, để bên trái để nhìn rõ",
+   "from": "user",
+   "kind": "prefer",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "dan-van-phong"
+   ],
+   "first": "2026-11-15",
+   "last": "2026-11-15",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
+  },
+  {
+   "id": "ph-n-hook-s-l",
+   "say": "phần hook sẽ là câu: cả phòng đặt đồ ăn mà mình ko ăn thì khá dở hơi -> thêm effects flash + sound effects: click để chuyển cảnh về scene đầu",
+   "from": "user",
+   "kind": "process",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "dan-van-phong"
+   ],
+   "first": "2026-11-15",
+   "last": "2026-11-15",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
+  },
+  {
+   "id": "c-t-b-t-nh",
+   "say": "cắt bớt những đoạn trống không có thoại để vid đỡ bị dài dòng",
+   "from": "user",
+   "kind": "process",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "dan-van-phong"
+   ],
+   "first": "2026-11-15",
+   "last": "2026-11-15",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
+  },
+  {
+   "id": "thay-c-c-c-nh",
+   "say": "thay các cảnh trám luyện tập bằng các vid coach hướng dẫn khách tập (máy, dây kéo)",
+   "from": "user",
+   "kind": "prefer",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "dan-van-phong"
+   ],
+   "first": "2026-11-15",
+   "last": "2026-11-15",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
+  },
+  {
+   "id": "th-m-nh-c-n",
+   "say": "thêm nhạc nền nhẹ nhàng, ko quá to át tiếng host",
+   "from": "user",
+   "kind": "default",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "dan-van-phong"
+   ],
+   "first": "2026-11-15",
+   "last": "2026-11-15",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
+  }
+ ],
+ "reels": [],
+ "updated": "2026-11-15"
 }

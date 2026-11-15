@@ -11,8 +11,11 @@ emoji gom hàng, con số gạch đi, cảnh trám bằng footage tập luyện 
 - `transcribe_vi.py` faster-whisper tiếng Việt, word timing
 - `plate.py` cắt frame-exact từ file 3K/4K gốc + punch-in + cảnh trám -> build/plate.mp4, build/voice_raw.wav
 - `overlay.py` toàn bộ đồ hoạ (PIL, RGBA stream) + snapshot duyệt (`--still`) + danh sách SFX (`--events`)
-- `final.sh` ghép plate + overlay + giọng + SFX, master -14 LUFS, H.264 1080x1920 30 fps
+- `vad.py` khoảng lặng (silero VAD) cho bước cắt trống
+- `snaps.py` khung duyệt (có cả layer cảnh trám)
+- `music_synth.py` nhạc nền lo-fi nhẹ + tiếng click, tự tạo, không bản quyền
+- `final.py` ghép plate + cảnh trám + overlay + giọng + nhạc ducked + SFX, master -14 LUFS, H.264 1080x1920 30 fps
 - `fetch_assets.sh` font có dấu tiếng Việt (Be Vietnam Pro, Playfair Display, Oswald; OFL) + emoji Fluent 3D (MIT)
-- `example/plan.py` reel đầu tiên: "Dân văn phòng giảm cân sao cho đỡ stress?" (DJI 0081 + cảnh trám 0084)
+- `example/plan.py` reel đầu tiên: "Dân văn phòng giảm cân sao cho đỡ stress?" (DJI 0081 + cảnh trám 0087/0091/0092, hook mở bằng câu "cả phòng đặt đồ ăn…")
 
 Chạy trên Linux/macOS, chỉ cần ffmpeg, Python 3 (Pillow, numpy, faster-whisper). Không cần HyperFrames.

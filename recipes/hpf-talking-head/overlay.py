@@ -46,6 +46,7 @@ F_RECAP = font("BeVietnamPro-ExtraBold.ttf", 46)
 
 N = lambda s: unicodedata.normalize("NFC", s)
 _cache = {}
+WORD_LAG = 0.08   # whisper word onsets run early on this mic
 
 
 def text_img(txt, f, fill, shadow=True, glow=False, stroke=0):
@@ -90,6 +91,25 @@ def tag_img(txt):
     d = ImageDraw.Draw(im)
     d.rounded_rectangle((15, 15, 15 + w, 15 + h), 14, fill=CREAM)
     d.text((15 + px - bb[0], 15 + py - bb[1]), txt, font=F_TAG, fill=INK)
+    _cache[key] = im
+    return im
+
+
+def kicker_img(txt):
+    key = ("kick", txt)
+    if key in _cache:
+        return _cache[key]
+    txt = N(txt)
+    bb = F_KICK.getbbox(txt)
+    px, py = 24, 14
+    w, h = bb[2] - bb[0] + px * 2, bb[3] - bb[1] + py * 2
+    im = Image.new("RGBA", (w + 30, h + 30))
+    sh = Image.new("RGBA", im.size)
+    ImageDraw.Draw(sh).rectangle((15, 21, 15 + w, 21 + h), fill=(0, 0, 0, 120))
+    im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(6)))
+    d = ImageDraw.Draw(im)
+    d.rectangle((15, 15, 15 + w, 15 + h), fill=CREAM)
+    d.text((15 + px - bb[0], 15 + py - bb[1]), txt, font=F_KICK, fill=INK)
     _cache[key] = im
     return im
 
@@ -150,11 +170,11 @@ def load_words():
     d = json.load(open("tx/0081.json"))
     tl, total = timeline()
     words = []
-    for a, b, es, n, z, br in tl:
+    for a, b, es, n, z, pi in tl:
         for s in d:
             for w in s["words"]:
-                if w["s"] >= a - 0.02 and w["s"] < b - 0.05:
-                    words.append([es + (w["s"] - a), es + (min(w["e"], b) - a), w["w"], w["s"]])
+                if w["e"] > a + 0.1 and w["s"] < b - 0.05:
+                    words.append([es + max(0, w["s"] + WORD_LAG - a), es + (min(w["e"] + WORD_LAG, b) - a), w["w"], w["s"]])
     # merge "60" "-70" style number pairs, apply fixes, strip punctuation
     out = []
     for w in words:
@@ -176,11 +196,13 @@ TL, _ = timeline()
 END = TOTAL / FPS + 0.6   # held tail
 
 # ---------------- beats ----------------
-HOOK_END = E(64.50)
+TITLE_T0 = hook_end()          # cold-open hook ends: flash + click, the title starts
+TITLE_END = E(64.50)
+HOOK_END = TITLE_END
 SECTIONS = [  # (t0, t1, line1, line2)
     (E(134.00), E(141.70), "1.) KHÁCH GIẢM CÂN", "ăn trong ngưỡng thâm hụt"),
     (E(167.46), E(197.86), "2.) ĐỪNG ĐỂ VIỆC ĂN UỐNG", "thành thêm một nỗi stress"),
-    (E(226.02), E(308.80), "3.) CHẤP NHẬN", "kết quả sẽ đến muộn hơn"),
+    (E(226.02), E(289.28), "3.) CHẤP NHẬN", "kết quả sẽ đến muộn hơn"),
     (E(311.12), E(353.15), "4.) ĐIỀU CHỈNH", "các bữa còn lại trong ngày"),
 ]
 # keyword pops in the caption zone: (t0, t1, text, style)  style: ser / osw
@@ -201,9 +223,9 @@ TAGS = [  # (t0, t1, text)
 ]
 # emoji stickers: (t0, t1, name, x, y, size)
 EMOJI = [
-    (E(51.28), HOOK_END, "coffee", 330, 610, 150),
-    (E(54.28), HOOK_END, "bubbletea", 540, 610, 150),
-    (E(60.20), HOOK_END, "fries", 750, 610, 150),
+    (E(51.28), HOOK_END, "coffee", 150, 780, 135),
+    (E(54.28), HOOK_END, "bubbletea", 150, 945, 135),
+    (E(60.20), HOOK_END, "fries", 150, 1110, 135),
     (E(177.20), E(178.08), "sweat", 860, 640, 170),
     (E(183.80), E(184.60), "yum", 860, 640, 170),
     (E(192.36), E(197.86), "coffee", 400, 480, 160),
@@ -257,8 +279,8 @@ def caption_zone_busy(t):
 def _grad():
     g = Image.new("RGBA", (W, H))
     d = ImageDraw.Draw(g)
-    for y in range(0, 700):
-        d.line((0, y, W, y), fill=(0, 0, 0, int(105 * (1 - y / 700) ** 1.6)))
+    for y in range(0, 820):
+        d.line((0, y, W, y), fill=(0, 0, 0, int(165 * (1 - y / 820) ** 1.35)))
     return g
 
 
@@ -266,12 +288,14 @@ GRAD = _grad()
 
 
 def frame(t):
+    t_abs = t
     c = GRAD.copy()
     # ---- hook (ref 1 + ref 6 title) ----
-    if t < HOOK_END:
+    if TITLE_T0 <= t < HOOK_END:
         a = min(1, (HOOK_END - t) / 0.2)
-        k = text_img("✦  DÂN VĂN PHÒNG  ✦", F_KICK, WHITE)
-        paste(c, k, W / 2, 150, 1, a * min(1, t / 0.15))
+        t = t - TITLE_T0  # title clock
+        k = kicker_img("✦ DÂN VĂN PHÒNG ✦")
+        paste(c, k, W / 2, 150, 0.9 + 0.1 * ease_back(t / 0.25), a * min(1, t / 0.12))
         hc = Image.new("RGBA", (W, H))
         draw_typed(hc, "giảm cân sao cho", F_SER_XL, CREAM, W / 2, 265, t, 0.10, 24, cursor=False)
         draw_typed(hc, "đỡ stress?", F_SER_XL, CREAM, W / 2, 385, t, 0.10 + 16 / 24, 24)
@@ -282,6 +306,7 @@ def frame(t):
             tw = 0.85 + 0.15 * math.sin(t * 6)
             paste(c, emoji("sparkles", 90), 905, 330, tw, a)
             paste(c, emoji("star", 60), 170, 225, 1.1 - tw * 0.2, a)
+    t = t_abs
     # ---- section headers ----
     for t0, t1, l1, l2 in SECTIONS:
         if t0 <= t <= t1 + 0.2:
@@ -355,16 +380,20 @@ def frame(t):
                 k = min(1, (t - s0) / 0.06)
                 paste(c, text_img(txt.lower(), F_CAP, WHITE), W / 2, cy, 0.92 + 0.08 * k, 1)
                 break
+    # ---- flash on the hook -> scene cut (white, 0.35 s) ----
+    if TITLE_T0 - 0.04 <= t_abs < TITLE_T0 + 0.35:
+        k = (t_abs - TITLE_T0 + 0.04) / 0.39
+        fl = Image.new("RGBA", (W, H), (255, 255, 255, int(235 * (1 - k) ** 1.7)))
+        c.alpha_composite(fl)
     return c
 
 
 def sfx_events():
-    ev = [(0.05, "cc0-whoosh-reverse", -16)]
+    ev = [(TITLE_T0 - 0.03, "@click", -6), (TITLE_T0 + 0.05, "cc0-whoosh-reverse", -18)]
     for t0, *_ in SECTIONS:
         ev.append((t0, "cc0-paper-flip", -14))
-    for (a, b, es, n, z, br) in TL:
-        if br:
-            ev.append((max(0, es - 0.25), "cc0-whoosh-reverse", -18))
+    for o0, *_ in BROLL:
+        ev.append((max(0, E(o0) - 0.22), "cc0-whoosh-reverse", -20))
     ev.append((STRIKE_T, "cc0-cartoon-zip", -18))
     ev.append((RECAP[0], "cc0-paper-riffle", -16))
     return ev

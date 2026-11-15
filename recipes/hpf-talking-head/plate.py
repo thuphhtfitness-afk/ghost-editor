@@ -1,15 +1,24 @@
-"""Build the cut plate: every piece trimmed frame-exact from the 3K source, punch-in crop, B-roll swaps.
-Video and voice are cut at the same snapped times. Output: build/plate.mp4 (1080x1920 30fps) + build/voice.wav"""
-import subprocess, sys, os
+"""Build the cut plate: every (silence-trimmed) sub-piece cut frame-exact from the 3K source with its shot size,
+the voice cut at the same snapped times, and the cảnh trám clips as separate layers.
+Out: build/plate.mp4 (1080x1920 30 fps), build/voice_raw.wav, build/broll/NN.mp4 + build/broll.json"""
+import subprocess, sys, os, json
 sys.path.insert(0, os.getcwd())  # the reel project holds plan.py
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from plan import *
 
 W, H = 1080, 1920
-SW, SH = 1728, 3072
 os.makedirs("build/seg", exist_ok=True)
+os.makedirs("build/broll", exist_ok=True)
 
 
-def crop_expr(z, cx, cy):
+def dims(path):
+    o = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
+                        "-of", "csv=p=0", path], capture_output=True, text=True).stdout.strip().split(",")
+    return int(o[0]), int(o[1])
+
+
+def crop_expr(src, z, cx, cy):
+    SW, SH = dims(src)
     cw, ch = round(SW / z / 2) * 2, round(SH / z / 2) * 2
     x = min(max(cx * SW - cw / 2, 0), SW - cw)
     y = min(max(cy * SH - ch / 2, 0), SH - ch)
@@ -22,37 +31,41 @@ def run(cmd):
         print(r.stderr[-2000:]); sys.exit(1)
 
 
-tl, total = timeline()
-lst = []
-for i, (a, b, es, n, z, br) in enumerate(tl):
-    out = f"build/seg/{i:02d}.mp4"
-    lst.append(out)
-    if os.path.exists(out) and "--force" not in sys.argv:
-        continue
-    if br:
-        bs, bz, bx, by = br
-        src, ss, vf = BROLL, bs, crop_expr(bz, bx, by)
-    else:
-        cx = FACE[0] if z > 1 else 0.5
-        cy = FACE[1] if z > 1 else 0.5
-        src, ss, vf = SRC, a, crop_expr(z, cx, cy)
+def cut(src, ss, n, vf, out):
+    if os.path.exists(out):
+        return
     run(["ffmpeg", "-v", "error", "-y", "-ss", f"{ss:.6f}", "-i", src,
          "-vf", f"fps={FPS},{vf},format=yuv420p", "-frames:v", str(n), "-an",
          "-c:v", "libx264", "-preset", "medium", "-crf", "14", "-color_primaries", "bt709",
          "-color_trc", "bt709", "-colorspace", "bt709", out])
-    print("seg", i, n, "frames", "broll" if br else f"z{z}", flush=True)
 
+
+tl, total = timeline()
+lst = []
+for i, (a, b, es, n, z, pi) in enumerate(tl):
+    out = f"build/seg/{a:.3f}_{n}_{z}.mp4"
+    lst.append(out)
+    cx, cy = (FACE if z > 1 else (0.5, 0.5))
+    cut(SRC, a, n, crop_expr(SRC, z, cx, cy), out)
 with open("build/seg/list.txt", "w") as f:
     for p in lst:
         f.write(f"file '{os.path.basename(p)}'\n")
 run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", "build/seg/list.txt", "-c", "copy", "build/plate.mp4"])
 
-# voice: same snapped windows, 8 ms fades at every cut against clicks
 parts, fil = [], []
-for i, (a, b, es, n, z, br) in enumerate(tl):
+for i, (a, b, es, n, z, pi) in enumerate(tl):
     d = n / FPS
     fil.append(f"[0:a]atrim={a:.6f}:{a + d:.6f},asetpts=PTS-STARTPTS,afade=t=in:d=0.008,afade=t=out:st={d - 0.008:.4f}:d=0.008[a{i}]")
     parts.append(f"[a{i}]")
 fil.append("".join(parts) + f"concat=n={len(parts)}:v=0:a=1,aresample=48000[v]")
 run(["ffmpeg", "-v", "error", "-y", "-i", SRC, "-filter_complex", ";".join(fil), "-map", "[v]", "-ac", "1", "build/voice_raw.wav"])
-print("total", total, "frames", total / FPS, "s")
+
+brs = []
+for k, (o0, o1, src, ss, bz, bx, by) in enumerate(BROLL):
+    t0, t1 = to_edit(o0), to_edit(o1)
+    n = round((t1 - t0) * FPS)
+    out = f"build/broll/{k:02d}_{os.path.basename(src)}_{ss}_{n}.mp4"
+    cut(src, ss, n, crop_expr(src, bz, bx, by), out)
+    brs.append({"file": out, "t0": round(t0 * FPS) / FPS, "n": n})
+json.dump(brs, open("build/broll.json", "w"), indent=1)
+print("subcuts", len(tl), "total", total, "frames", round(total / FPS, 2), "s; broll", [(b["t0"], b["n"]) for b in brs])

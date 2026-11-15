@@ -10,7 +10,8 @@ Skill talking head của HPF. Học từ 6 video reference:
   tiêu đề hook serif lớn gõ chữ, ảnh/emoji hiện phía trên đầu, recap cả list ở cuối.
 
 ## Bất biến (cái làm nên style)
-1. Mặt người nói **giữ nguyên màu như quay**, không grade. Chỉ có 1 gradient tối nhẹ ở đỉnh khung (0-700 px) để chữ đọc được.
+1. Mặt người nói **giữ nguyên màu như quay**, không grade. Gradient đen ở đỉnh khung (0-820 px, tối đa ~65 %) để chữ nổi;
+   kicker của tiêu đề nằm trên **ô highlight kem**, chữ mực.
 2. **Không gì đè lên mặt.** Đồ hoạ chỉ ở 2 vùng an toàn: **dải tường phía trên** (y 120-700: hook, header, emoji, bảng
    giá, recap) và **vùng ngực** (y 1290-1450: tag, keyword pop, caption). Đo vị trí mặt ở mọi mức zoom trước khi đặt.
 3. **Caption 1 từ một lúc**, chữ thường, Be Vietnam Pro ExtraBold 66 px trắng có bóng mềm, y = 1420. Keyword pop thay chỗ caption.
@@ -29,15 +30,27 @@ Skill talking head của HPF. Học từ 6 video reference:
 11. **Cắt**: chọn câu theo transcript, cắt theo thời gian từng từ (a = từ đầu - 0.12, b = từ cuối + 0.22), snap theo frame,
     hình và tiếng cắt cùng điểm, fade 8 ms. Xen kẽ zoom 1.00 / 1.18 / 1.32 (punch vào mặt) để giấu jump cut; 1.32 cho câu chốt.
 12. **Recap** ở 3-4 s cuối: cả list các mục, dòng kem/trắng xen kẽ. Đuôi giữ khung cuối 0.6 s.
-13. Âm thanh: giọng highpass 80 Hz + compressor nhẹ, master -14 LUFS / -1.5 dBTP. SFX tiết chế (~1 mỗi 10 s, -14..-18 dB).
-    Nhạc nền: thêm từ thư viện của nền tảng lúc đăng.
+13. Âm thanh: giọng highpass 80 Hz + compressor nhẹ, nhạc nền ducked ~17 dB dưới giọng, master -14 LUFS / -1.5 dBTP.
+    SFX tiết chế (~1 mỗi 10 s, -14..-20 dB); click + flash ở chỗ hook chuyển về cảnh đầu.
 14. Không chữ nào trên màn hình nói điều người nói không nói. Header/tag/recap chỉ tóm lời của họ.
+
+## Sửa của chủ kênh (áp dụng cho MỌI video sau, `taste.json`)
+1. **Gradient đen phía trên đủ đậm** để tiêu đề nổi; highlight kicker bằng ô kem.
+2. **Emoji của một liệt kê** (☕🧋🍟) xếp **cột dọc trên mảng tường trơn bên trái đầu**, không đặt trên tường có đồ trang trí
+   hay chồng lên tiêu đề.
+3. **Hook = câu đắt nhất / gần gũi nhất** lấy từ giữa bài (ví dụ "cả phòng đặt đồ ăn mà mình lại không ăn thì khá dở hơi"),
+   đặt lên đầu video; hết câu thì **flash trắng 0,35 s + tiếng click** rồi về cảnh mở đầu và tiêu đề.
+4. **Cắt sạch khoảng lặng**: VAD (`vad.py`) -> mọi khoảng lặng > 0,22 s trong câu bị cắt còn ~0,2 s, mỗi chỗ cắt đổi cỡ khung.
+5. **Cảnh trám = coach đang chỉnh tư thế cho khách** trên máy / dây kéo (footage của phòng tập), không dùng cảnh đứng chờ.
+6. **Nhạc nền nhẹ** (lo-fi êm), sidechain hạ khi host nói, nằm dưới giọng ~17 dB. Không có nhạc từ thư viện thì
+   `music_synth.py` tạo một bed không bản quyền; có nhạc của kênh thì truyền `--bed`.
 
 ## House look (cố định)
 `house.json`. Mỗi reel chỉ đổi nội dung: câu chọn, header, keyword, tag, emoji, cảnh trám.
 
 ## Slot nội dung (đổi theo reel)
-- `plan.py` của reel: `PIECES` (a, b, zoom, broll), `FACE`, nguồn `SRC` / `BROLL`.
+- `plan.py` của reel: `PIECES` (a, b, zoom) theo thứ tự dựng (câu hook đứng đầu, `HOOK_PIECES`), `BROLL` (cửa sổ theo
+  giây gốc, file, điểm vào), `FACE`, `SRC`, `VAD`.
 - Khối **beats** trong `overlay.py` (HOOK_END, SECTIONS, POPS, TAGS, EMOJI, MARKS, PRICE, RECAP_LINES, FIX): viết lại theo
   transcript, mọi thời điểm bằng `E(<giây gốc>)` để tự khớp sau khi cắt.
 
@@ -48,9 +61,11 @@ bash $H/fetch_assets.sh                       # font có dấu tiếng Việt + 
 # tách audio 16 kHz mono vào $P/wav/<clip>.wav, rồi:
 cd $P && python3 $H/transcribe_vi.py large-v3-turbo <clip>   # tx/<clip>.txt + .json (word timing)
 # kiểm tra từ nghe chưa chắc bằng large-v3 trên đoạn ngắn, thêm vào FIX
-cp $H/example/plan.py $P/plan.py              # sửa PIECES theo câu chọn
-python3 $H/plate.py                           # build/plate.mp4 + build/voice_raw.wav
-python3 $H/overlay.py --still <t1,t2,...> build/sheet.jpg bg   # duyệt: snapshot build/snap/NN.png trước
-bash $H/final.sh finals/<tên>.mp4
+python3 $H/vad.py wav/<clip>.wav build/vad_<clip>.json   # khoảng lặng
+cp $H/example/plan.py $P/plan.py              # sửa PIECES (hook đầu), BROLL theo câu chọn
+python3 $H/plate.py                           # build/plate.mp4, build/voice_raw.wav, build/broll/*
+python3 $H/snaps.py <t1,...> && python3 $H/overlay.py --still <t1,...> build/sheet.jpg bg   # duyệt
+python3 $H/music_synth.py <giây>              # audio/bed.wav + audio/click.wav (nếu chưa có nhạc kênh)
+python3 $H/final.py finals/<tên>.mp4 [--bed <nhạc>] [--bed-db -17]
 ```
 Duyệt sheet trước khi render: không đồ hoạ nào chạm mặt ở shot tight 1.32, chữ không tràn mép, mỗi beat đúng chữ.
