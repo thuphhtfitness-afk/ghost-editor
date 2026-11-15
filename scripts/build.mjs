@@ -1004,7 +1004,7 @@ for (const b of beatsList) {
       }).join(" ");
       // bg: the words sit in a box (HPF: white words on a wine-red box)
       const body = b.bg ? `<span style="display:inline-block;background:${b.bg};padding:.1em .32em .14em;border-radius:.14em;line-height:1.05">${spans}</span>` : spans;
-      inner = `<div id="${id}-in" class="ov title" style="left:${b.x ?? 60}px;right:${b.x ?? 60}px;top:${b.y ?? 190}px;z-index:4;text-align:${b.align ?? "center"};font-family:'${b.font ?? brand.font ?? "Inter"}', Inter, sans-serif;font-size:${b.size ?? 120}px;font-weight:${b.weight ?? 900};line-height:0.98;letter-spacing:${b.tracking ?? "-2px"};text-transform:uppercase;color:${b.color ?? "#fff"};text-shadow:${b.glow ? `0 0 28px ${b.glow}, ` : ""}0 6px 24px rgba(0,0,0,.45)">${body}</div>`;
+      inner = `<div id="${id}-in" class="ov title" style="left:${b.x ?? 60}px;right:${b.x ?? 60}px;top:${b.y ?? 190}px;z-index:4;text-align:${b.align ?? "center"};font-family:'${b.font ?? brand.font ?? "Inter"}', Inter, sans-serif;font-size:${b.size ?? 120}px;font-weight:${b.weight ?? 900};font-style:${b.italic ? "italic" : "normal"};line-height:0.98;letter-spacing:${b.tracking ?? "-2px"};text-transform:${b.case === "none" ? "none" : "uppercase"};color:${b.color ?? "#fff"};text-shadow:${b.glow ? `0 0 28px ${b.glow}, ` : ""}0 6px 24px rgba(0,0,0,.45)">${body}</div>`;
       if (b.sfx) beatSfx(b, t0, null, "title");
       break;
     }
