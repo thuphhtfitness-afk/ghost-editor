@@ -8,8 +8,8 @@ END = TOTAL / FPS + 0.6
 TITLE_T0 = hook_end()
 TITLE_END = E(151.80)
 HOOK_END = TITLE_END
-KICKER = "DÂN VĂN PHÒNG"
-TITLE_LINES = ["tập hay đi làm", "quan trọng hơn?"]
+KICKER = "TẬP HAY ĐI LÀM?"
+TITLE_LINES = ["lưu ý tập luyện", "dành cho dân văn phòng"]
 SECTIONS = [
     (E(152.40), E(167.60), "1.) KHI DÂN VĂN PHÒNG ĐI TẬP", "họ đã cố gắng rất nhiều"),
     (E(248.40), E(256.00), "2.) TẬP HAY ĐI LÀM?", "hai cái bổ trợ cho nhau"),
@@ -26,8 +26,6 @@ POPS = [
     (E(278.14), E(278.85), "thoải mái nhất", "ser"),
 ]
 TAGS = [
-    (E(269.46), E(270.50), "thân hình đẹp hơn"),
-    (E(270.58), E(272.20), "nhưng stress hơn, làm việc kém"),
     (E(160.92), E(162.25), "một lối sống, một thói quen mới"),
 ]
 EMOJI = [
@@ -37,11 +35,11 @@ EMOJI = [
     (E(262.84), E(264.20), "weary", 860, 640, 165),
     (E(147.08), E(151.80), "office", 150, 800, 135),
 ]
-MARKS = [
-    (E(269.70), E(274.15), 150, 800, "ok"),
-    (E(270.58), E(274.15), 150, 900, "no"),
+MARKS = []
+CHECKLIST = [   # hook: ✓ what you gain, ✗ what it costs
+    (E(269.46), E(274.15), 70, 800, "thân hình đẹp hơn", "ok"),
+    (E(270.58), E(274.15), 70, 900, "stress hơn, làm việc kém", "no"),
 ]
-CHECKLIST = []
 NUMBERS = [(E(251.92), E(256.00), "VS", 540, 470)]
 PRICE = None
 STRIKE_T = NEW_PRICE_T = 0

@@ -6,17 +6,16 @@ VAD = "build/vad_0083.json"
 TX = "tx/0083.json"
 PIECES = [
     (119.20, 121.25, 1.18),  # HOOK: ngồi bình thường là squat, ngồi xổm là squat mà
-    (31.25, 40.80, 1.00),    # mọi người hình dung squat là để tập trung cho nhóm cơ này, nhóm cơ này
+    (34.15, 40.80, 1.00),    # mọi người hình dung squat là để tập trung cho nhóm cơ này, nhóm cơ này
     (41.40, 50.40, 1.18),    # nhưng thực chất các bài tập đang giả lập lại hành động hằng ngày
     (53.40, 67.75, 1.00),    # mỗi người một target: lift nặng hơn, target nhóm cơ, hay chỉ bổ trợ
     (104.00, 109.65, 1.18),  # cái squat này mọi người đã thấy rõ khi bê vác đồ
     (110.15, 114.35, 1.00),  # hoặc làm một cái chuyển động gì đấy
-    (199.05, 205.70, 1.32),  # với con squat thì nó giả lập cho việc chuyển động trong ngày
 ]
 HOOK_PIECES = 1
 BROLL = [
     (43.50, 48.90, "raw/new4.mp4", 0.5, 1.00, 0.5, 0.5, "ccw"),   # bài tập giả lập hành động hằng ngày -> squat with the coach
-    (61.20, 64.00, "raw/new2.mp4", 10.0, 1.00, 0.5, 0.5, "cw"),   # target nhóm cơ này -> machine work
+    (61.20, 64.00, "raw/new6.mp4", 3.2, 1.00, 0.5, 0.5),         # target nhóm cơ này -> goblet squat (portrait via display matrix)
 ]
 FACE = (0.52, 0.40)
 GAP_KEEP = 0.22

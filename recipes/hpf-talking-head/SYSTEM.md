@@ -49,8 +49,8 @@ Skill talking head của HPF. Học từ 6 video reference:
 9. **Cảnh trám không lặp.** Lập bảng nguồn cho cả đợt reel: một nguồn không dùng 2 lần trong cùng reel, tối đa 2 lần
    trong cả đợt và ở khoảnh khắc khác nhau; ưu tiên cảnh khớp đúng câu (reel squat dùng cảnh squat). Không dùng cảnh
    leg curl (0087) nữa. Clip quay ngang thiếu thông tin xoay: thêm `"cw"`/`"ccw"` cuối dòng `BROLL` (plate.py xoay + cắt 9:16).
-6. **Nhạc nền nhẹ** (lo-fi êm), sidechain hạ khi host nói, nằm dưới giọng ~17 dB. Không có nhạc từ thư viện thì
-   `music_synth.py` tạo một bed không bản quyền; có nhạc của kênh thì truyền `--bed`.
+6. **Nhạc nền sôi động vừa phải** (sửa lần 2): `music_up.py` (108 BPM, kick đều, clap 2-4, pluck, bass nảy), `final.py --bed
+   audio/bed_up.wav --bed-db -12.5`; vẫn sidechain hạ khi host nói, không át giọng. Có nhạc của kênh thì truyền `--bed`.
 
 ## House look (cố định)
 `house.json`. Mỗi reel chỉ đổi nội dung: câu chọn, header, keyword, tag, emoji, cảnh trám.
@@ -60,6 +60,7 @@ Skill talking head của HPF. Học từ 6 video reference:
   giây gốc, file, điểm vào), `FACE`, `SRC`, `VAD`.
 - `beats.py` của reel (KICKER, TITLE_LINES, TITLE_END, SECTIONS, POPS, TAGS, EMOJI, MARKS, CHECKLIST, NUMBERS, PRICE,
   RECAP_LINES, FIX): viết theo transcript, mọi thời điểm bằng `E(<giây gốc>)` để tự khớp sau khi cắt.
+  Tiêu đề dài tự co cỡ chữ cho vừa khung. Clip có display matrix xoay 90 độ được đọc đúng chiều.
   Mẫu: `example/` (dân văn phòng, bảng giá), `example-2/` (case study, checklist, số lớn), `example-3/` (squat,
   khung mặt khác: FACE 0.52/0.40), `example-4/` (người mới, gạch "KHÔNG VẬN ĐỘNG" -> "ĐI TẬP"), `example-5/` (tập hay đi làm, VS).
 - Xuất bản đăng: `final.py ... --crf 14` (~11 Mbit/s, 1080x1920) để nền tảng nén lại vẫn nét.

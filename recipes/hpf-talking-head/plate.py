@@ -12,9 +12,13 @@ os.makedirs("build/broll", exist_ok=True)
 
 
 def dims(path):
-    o = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
-                        "-of", "csv=p=0", path], capture_output=True, text=True).stdout.strip().split(",")
-    return int(o[0]), int(o[1])
+    """display size after ffmpeg's autorotate (a phone clip can carry a 90 degree display matrix)"""
+    o = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height:stream_side_data=rotation",
+                        "-of", "json", path], capture_output=True, text=True).stdout
+    st = json.loads(o)["streams"][0]
+    w, h = int(st["width"]), int(st["height"])
+    rot = next((abs(int(sd.get("rotation", 0))) for sd in st.get("side_data_list", []) if "rotation" in sd), 0)
+    return (h, w) if rot in (90, 270) else (w, h)
 
 
 def crop_expr(src, z, cx, cy, rot=None):

@@ -115,12 +115,13 @@
    "first": "2026-11-15",
    "last": "2026-11-15",
    "times": 1,
-   "active": true,
+   "active": false,
    "when": {
     "style": [
      "hpf-talking-head"
     ]
-   }
+   },
+   "supersededBy": "c-c-vid-h-y"
   },
   {
    "id": "thay-c-nh-kh-ch",
@@ -141,6 +142,27 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "c-c-vid-h-y",
+   "say": "các vid hãy thay nhạc nền sôi động hơn chút",
+   "from": "user",
+   "kind": "default",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "dan-van-phong"
+   ],
+   "first": "2026-11-15",
+   "last": "2026-11-15",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   },
+   "supersedes": "th-m-nh-c-n"
   }
  ],
  "reels": [],

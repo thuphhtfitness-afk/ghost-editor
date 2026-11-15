@@ -249,8 +249,9 @@ def frame(t):
         paste(c, k, W / 2, 150, 0.9 + 0.1 * ease_back(t / 0.25), a * min(1, t / 0.12))
         hc = Image.new("RGBA", (W, H))
         t_line = 0.10
+        tf = F_SER_XL if all(text_img(l, F_SER_XL, CREAM, glow=True).width - 80 < W - 90 for l in TITLE_LINES) else F_SER_L
         for li, line in enumerate(TITLE_LINES):
-            draw_typed(hc, line, F_SER_XL, CREAM, W / 2, 265 + li * 120, t, t_line, 24, cursor=li == len(TITLE_LINES) - 1)
+            draw_typed(hc, line, tf, CREAM, W / 2, 265 + li * (120 if tf is F_SER_XL else 104), t, t_line, 24, cursor=li == len(TITLE_LINES) - 1)
             t_line += len(line) / 24
         if a < 1:
             hc.putalpha(hc.split()[3].point(lambda v: int(v * a)))
@@ -297,12 +298,17 @@ def frame(t):
                 d.line((28, 28, 56, 56), fill=WHITE, width=9); d.line((56, 28, 28, 56), fill=WHITE, width=9)
             paste(c, b, x, y, s, a)
     # ---- checklist on the plain wall (lines tick in on their words) ----
-    for t0, t1, x, y, line in CHECKLIST:
+    for item in CHECKLIST:
+        t0, t1, x, y, line = item[:5]
+        kind = item[5] if len(item) > 5 else "ok"
         a, s = env(t, t0, t1)
         if a:
             b = Image.new("RGBA", (64, 64)); d = ImageDraw.Draw(b)
-            d.ellipse((2, 2, 62, 62), fill=(60, 180, 90, 255), outline=WHITE, width=4)
-            d.line((18, 33, 28, 44, 47, 21), fill=WHITE, width=7, joint="curve")
+            d.ellipse((2, 2, 62, 62), fill=(60, 180, 90, 255) if kind == "ok" else RED, outline=WHITE, width=4)
+            if kind == "ok":
+                d.line((18, 33, 28, 44, 47, 21), fill=WHITE, width=7, joint="curve")
+            else:
+                d.line((21, 21, 43, 43), fill=WHITE, width=7); d.line((43, 21, 21, 43), fill=WHITE, width=7)
             paste(c, b, x, y, s, a)
             im = tag_img(line)
             paste(c, im, x + 44 + im.width / 2 - 15, y, 0.9 + 0.1 * s, a)
