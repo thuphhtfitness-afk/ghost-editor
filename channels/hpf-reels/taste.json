@@ -261,8 +261,21 @@
    "last": "2026-11-14",
    "times": 1,
    "active": true
+  },
+  {
+   "id": "tuy-n-case-s-a",
+   "say": "tuyến Case sửa bài khác POV: máy chân máy cao thấy cả 2 người, bắt đầu từ cơ thể khách, chuỗi cue, nói thật 'cần thời gian', bán PT; 1 buổi quay 2 máy ra cả POV và case",
+   "from": "user",
+   "kind": "note",
+   "origin": "correction",
+   "source": [],
+   "reels": [],
+   "first": "2026-11-16",
+   "last": "2026-11-16",
+   "times": 1,
+   "active": true
   }
  ],
  "reels": [],
- "updated": "2026-11-14"
+ "updated": "2026-11-16"
 }

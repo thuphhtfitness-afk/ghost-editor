@@ -131,3 +131,32 @@ question or the moment happens by itself, film the whole session continuously an
   One session should give 3–5 videos.
 - **Edit:** keep the client's real words. If the question is rambling, the on-screen bubble ("KHÁCH HỎI" /
   "MẸ BẦU HỎI") summarises it, and the real audio stays underneath.
+
+## Line G: Case sửa bài (third-person coaching case), 90–150 s. Different from Line B (POV)
+Reference: a female coach fixing hip thrust for a client with a rounded upper back. The camera is on a high tripod
+and shows both people. The coach diagnoses the BODY first, then explains why the fault happens for THIS person,
+then fixes it with a chain of cues, and says honestly "not 100% yet, it takes time".
+
+| | POV sửa tập (Line B) | Case sửa bài (Line G) |
+|---|---|---|
+| Camera | coach's eyes (head/chest mount) | high tripod, both people in frame |
+| Starts from | the fault in the movement | the client's body (posture, mobility, weak muscle) |
+| Cues | 1 fault, 1 cue | several linked faults, a chain of cues |
+| Ending | "Đấy." + "Nếu bạn…" | "chưa 100%, cần thời gian" + "mỗi cơ thể một khác" |
+| Sells | saves, new viewers | PT / thẩm định |
+
+- **8 beats:**
+  1. chân dung cơ thể
+  2. a quick test on camera
+  3. see the fault
+  4. link the fault to the root cause
+  5. chain of cues, asking for feel after each
+  6. honest "not 100% yet"
+  7. a supporting drill outside the session
+  8. CTA thẩm định
+- **One session, two lines:** 2 cameras (POV + high tripod), lav mics on both. The coach thinks aloud.
+  Editor cuts a tight POV (1 fault, best cue) and a long case (whole process).
+  Post the POV first, the case 1–2 weeks later.
+- **Edit:** round zoom-in inset on the fault, force-direction arrows (pushing forward ✗ / up ✓), ✓/✗ split, a label per cue.
+- **Exercise bank:** 15 exercises with POV + case talking points: goblet squat, leg press, hip thrust, RDL, Bulgarian,
+  step-up, leg curl, kickback, hip abduction, lat pulldown, seated row, push-up, shoulder press, lateral raise, plank.
