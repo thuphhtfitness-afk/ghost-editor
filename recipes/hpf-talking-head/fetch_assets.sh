@@ -3,7 +3,7 @@
 set -e
 mkdir -p ~/.fonts emoji
 b=https://raw.githubusercontent.com/google/fonts/main/ofl
-for u in "playfairdisplay/PlayfairDisplay-Italic%5Bwght%5D.ttf" "oswald/Oswald%5Bwght%5D.ttf" \
+for u in "playfairdisplay/PlayfairDisplay-Italic%5Bwght%5D.ttf" "oswald/Oswald%5Bwght%5D.ttf" "caveat/Caveat%5Bwght%5D.ttf" \
          "bevietnampro/BeVietnamPro-SemiBold.ttf" "bevietnampro/BeVietnamPro-ExtraBold.ttf"; do
   curl -sS -fL -o ~/.fonts/$(basename "$u") "$b/$u"; done
 fc-cache -f >/dev/null || true

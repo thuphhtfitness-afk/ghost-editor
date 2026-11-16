@@ -40,6 +40,9 @@ F_TAG = font("BeVietnamPro-SemiBold.ttf", 42)
 F_SER_XL = font("PlayfairDisplay-Italic%5Bwght%5D.ttf", 112, 500)
 F_SER_L = font("PlayfairDisplay-Italic%5Bwght%5D.ttf", 92, 500)
 F_SER_M = font("PlayfairDisplay-Italic%5Bwght%5D.ttf", 72, 600)
+F_HAND = font("Caveat%5Bwght%5D.ttf", 66, 700)
+F_HAND_L = font("Caveat%5Bwght%5D.ttf", 88, 700)
+INKB = (29, 53, 87, 255)       # marker blue
 F_SER_S = font("PlayfairDisplay-Italic%5Bwght%5D.ttf", 58, 600)
 F_OSW = font("Oswald%5Bwght%5D.ttf", 150, 600)
 F_OSW_M = font("Oswald%5Bwght%5D.ttf", 120, 600)
@@ -269,6 +272,9 @@ def frame(t):
     # ---- section headers ----
     for t0, t1, l1, l2 in SECTIONS:
         t1 = min(t1, RECAP[0] - 0.25)   # the recap owns the top band: never two blocks of text at once
+        bd_ = globals().get("BOARD")
+        if bd_ and bd_["t0"] - 0.1 <= t <= bd_["t1"]:
+            continue                    # the whiteboard owns the top band too
         if t0 <= t <= t1 + 0.2:
             a = min(1, (t1 + 0.2 - t) / 0.2)
             hc = Image.new("RGBA", (W, H))
@@ -319,6 +325,46 @@ def frame(t):
             paste(c, b, x, y, s, a)
             im = tag_img(line)
             paste(c, im, x + 44 + im.width / 2 - 15, y, 0.9 + 0.1 * s, a)
+    # ---- whiteboard: before -> marker arrow + time benchmark -> after (beats.BOARD) ----
+    bd = globals().get("BOARD")
+    if bd and bd["t0"] <= t <= bd["t1"]:
+        a = min(1, (t - bd["t0"]) / 0.18, (bd["t1"] - t) / 0.2)
+        x0, y0, x1, y1 = bd["box"]
+        slide = (1 - ease_back(min(1, (t - bd["t0"]) / 0.35))) * 60
+        layer = Image.new("RGBA", (W, H))
+        sh = Image.new("RGBA", (W, H)); ImageDraw.Draw(sh).rounded_rectangle((x0, y0 + 14, x1, y1 + 14), 26, fill=(0, 0, 0, 90))
+        layer.alpha_composite(sh.filter(ImageFilter.GaussianBlur(14)))
+        d = ImageDraw.Draw(layer)
+        d.rounded_rectangle((x0, y0, x1, y1), 26, fill=(252, 252, 250, 255), outline=(205, 208, 212, 255), width=6)
+        d.rounded_rectangle((x0 + (x1 - x0) * 0.3, y1 - 4, x0 + (x1 - x0) * 0.7, y1 + 14), 6, fill=(170, 175, 182, 255))  # marker tray
+        for lt, txt, lx, ly, f in bd.get("labels", []):
+            f = F_HAND_L if f == "L" else F_HAND
+            if t >= lt:
+                s_, typing = typed(txt, t, lt, 26)
+                if s_:
+                    im = text_img(s_, f, INKB, shadow=False)
+                    full = text_img(txt, f, INKB, shadow=False)
+                    layer.alpha_composite(im, (int(lx - full.width / 2), int(ly - im.height / 2)))
+        for key in ("before", "after"):
+            path, pt, px, py, sc, ang = bd[key]
+            if t >= pt:
+                k_ = ("cut", path, sc, ang)
+                if k_ not in _cache:
+                    im = Image.open(path).convert("RGBA")
+                    im = im.resize((int(im.width * sc), int(im.height * sc)), Image.LANCZOS)
+                    _cache[k_] = im.rotate(ang, resample=Image.BICUBIC, expand=True)
+                paste(layer, _cache[k_], px, py, 0.6 + 0.4 * ease_back((t - pt) / 0.3), min(1, (t - pt) / 0.1))
+        at0, at1, (ax0, ay, ax1) = bd["arrow"]
+        if t >= at0:
+            p = min(1, (t - at0) / max(0.05, at1 - at0))
+            pts = [(ax0 + (ax1 - ax0) * u, ay + 10 * math.sin(u * math.pi * 1.5)) for u in [i / 40 * p for i in range(41)]]
+            d.line(pts, fill=INKB, width=10, joint="curve")
+            if p >= 1:
+                ex, ey = pts[-1]
+                d.line((ex - 34, ey - 22, ex, ey, ex - 34, ey + 24), fill=INKB, width=10, joint="curve")
+        if a < 1:
+            layer.putalpha(layer.split()[3].point(lambda v: int(v * a)))
+        c.alpha_composite(layer, (0, int(slide)))
     # ---- paper cut-out stickers of people (sticker.py), pop in with a small tilt ----
     for t0, t1, path, x, y, sc, ang in globals().get("CUTOUTS", []):
         a, s = env(t, t0, t1, 0.10, 0.18)
@@ -394,6 +440,11 @@ def sfx_events():
         ev.append((max(0, E(o0) - 0.22), "cc0-whoosh-reverse", -20))
     if PRICE:
         ev.append((STRIKE_T, "cc0-cartoon-zip", -18))
+    if globals().get("BOARD"):
+        bd = BOARD
+        ev.append((bd["t0"], "cc0-paper-flip", -15))
+        ev.append((bd["arrow"][0], "cc0-whoosh-reverse", -20))
+        ev.append((bd["after"][1], "cc0-paper-riffle", -18))
     for t0, *_ in globals().get("CUTOUTS", []):
         ev.append((t0, "cc0-paper-flip", -15))
     ev.append((RECAP[0], "cc0-paper-riffle", -16))

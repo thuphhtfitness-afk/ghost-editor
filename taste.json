@@ -203,6 +203,26 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "ph-n-case-study-thi",
+   "say": "phần case study thiết kế dạng whiteboard, từ ảnh before của KH -> ảnh after + benchmark thời gian 6 tháng",
+   "from": "user",
+   "kind": "prefer",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "case-study"
+   ],
+   "first": "2026-11-16",
+   "last": "2026-11-16",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],

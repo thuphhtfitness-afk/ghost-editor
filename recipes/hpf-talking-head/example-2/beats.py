@@ -6,7 +6,7 @@ TOTAL = timeline()[1]
 END = TOTAL / FPS + 0.6
 
 TITLE_T0 = hook_end()
-TITLE_END = E(63.25)
+TITLE_END = E(60.40)
 HOOK_END = TITLE_END
 KICKER = "CASE STUDY"
 TITLE_LINES = ["tự tập được rồi,", "sao vẫn quay lại?"]
@@ -36,8 +36,6 @@ TAGS = [
 EMOJI = [
     (E(135.48), E(136.30), "office", 150, 800, 135),
     (E(138.10), E(138.65), "lifting", 150, 980, 135),
-    (E(63.80), E(68.15), "target", 150, 800, 135),
-    (E(64.84), E(68.15), "calendar", 150, 970, 135),
     (E(140.70), E(141.55), "exhale", 860, 640, 170),
     (E(226.79), E(229.25), "thinking", 860, 640, 170),
     (E(246.52), E(249.45), "heart", 860, 640, 160),
@@ -50,14 +48,18 @@ CHECKLIST = [  # ticked lines on the plain wall, left of the head
     (E(81.50), E(82.40), 70, 980, "biết phải làm gì"),
 ]
 NUMBERS = [
-    (E(64.84), E(68.15), "6 THÁNG", 330, 470),
     (E(90.12), E(92.75), "THẺ 2 NĂM", 330, 470),
 ]
 PRICE = None
-CUTOUTS = [   # (t0, t1, sticker png, x, y, scale, tilt deg): khách cũ, faces covered
-    (E(63.77), E(68.15), "assets/sticker1.png", 875, 650, 0.80, -4),
-    (E(86.80), E(92.75), "assets/sticker2.png", 860, 690, 0.66, 3),
-]
+CUTOUTS = []
+BOARD = dict(   # whiteboard: before -> 6 tháng -> after (khách cũ, faces covered)
+    t0=E(60.88), t1=E(76.50), box=(40, 130, 1040, 680),
+    before=("assets/sticker2.png", E(61.28), 255, 390, 0.56, 2),
+    after=("assets/sticker1.png", E(67.12), 835, 385, 0.50, -3),
+    arrow=(E(64.44), E(66.24), (430, 410, 655)),
+    labels=[(E(61.28), "ban đầu", 255, 640, "S"), (E(64.84), "6 tháng", 542, 330, "L"),
+            (E(67.12), "đạt mục tiêu", 835, 640, "S")],
+)
 STRIKE_T = NEW_PRICE_T = 0
 RECAP = (E(246.90), END)
 RECAP_LINES = ["1.) khách đã tự tập được", "2.) vẫn quay lại vì gym thành nhiệm vụ",

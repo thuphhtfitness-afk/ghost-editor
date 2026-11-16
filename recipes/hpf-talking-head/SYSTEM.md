@@ -52,6 +52,9 @@ Skill talking head của HPF. Học từ 6 video reference:
 10. **Ảnh khách (case study)** = sticker giấy cắt: `sticker.py ảnh.jpg out.png --face cx,cy,r --emoji smile` (tách nền
    BiRefNet, emoji 3D che kín mặt, viền giấy trắng, bóng đổ); `CUTOUTS` trong beats.py, đặt ở dải tường cạnh đầu, sau khi
    tiêu đề tắt, không chồng chữ. Ảnh khách là dữ liệu riêng: để trong thư mục reel (`assets/`), không commit lên repo.
+11. **Before -> after của khách = bảng trắng** (`BOARD` trong beats.py): bảng trắng ở dải trên, sticker before pop trên chữ
+   "ban đầu", mũi tên marker xanh tự vẽ kèm mốc thời gian viết tay (Caveat) trên chữ "sau N tháng", sticker after pop trên
+   "đạt mục tiêu"; nhãn dùng đúng lời host; header nhường chỗ cho bảng; giữ bảng tới câu kế tiếp để kịp nhìn ảnh after.
 6. **Nhạc nền sôi động vừa phải** (sửa lần 2): `music_up.py` (108 BPM, kick đều, clap 2-4, pluck, bass nảy), `final.py --bed
    audio/bed_up.wav --bed-db -12.5`; vẫn sidechain hạ khi host nói, không át giọng. Có nhạc của kênh thì truyền `--bed`.
 
