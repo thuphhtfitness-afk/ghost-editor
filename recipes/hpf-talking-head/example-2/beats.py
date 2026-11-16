@@ -14,7 +14,7 @@ SECTIONS = [
     (E(63.77), E(92.75), "1.) KHÁCH CỦA EM", "6 tháng, đạt mục tiêu giảm cân"),
     (E(93.30), E(141.55), "2.) VÌ SAO VẪN QUAY LẠI", "gym thành một nhiệm vụ"),
     (E(152.85), E(229.25), "3.) HUẤN LUYỆN VIÊN LÀ", "một người đồng hành"),
-    (E(237.40), E(246.50), "4.) GYM NÊN LÀ", "một lối sống"),
+    (E(244.85), E(246.80), "4.) KHI GYM LÀ LỐI SỐNG", "dễ đồng hành, dễ đi lâu dài"),
 ]
 POPS = [
     (E(137.54), E(138.55), "nhiệm vụ", "ser"),
@@ -34,13 +34,14 @@ TAGS = [
     (E(157.00), E(158.25), "người đồng hành, người support"),
 ]
 EMOJI = [
-    (E(135.48), TITLE_T0, "office", 150, 800, 135),
-    (E(138.10), TITLE_T0, "lifting", 150, 980, 135),
+    (E(135.48), E(136.30), "office", 150, 800, 135),
+    (E(138.10), E(138.65), "lifting", 150, 980, 135),
     (E(63.80), E(68.15), "target", 150, 800, 135),
     (E(64.84), E(68.15), "calendar", 150, 970, 135),
     (E(140.70), E(141.55), "exhale", 860, 640, 170),
     (E(226.79), E(229.25), "thinking", 860, 640, 170),
     (E(246.52), E(249.45), "heart", 860, 640, 160),
+    (E(241.68), E(244.50), "seedling", 150, 800, 135),
 ]
 MARKS = []
 CHECKLIST = [  # ticked lines on the plain wall, left of the head
@@ -49,11 +50,15 @@ CHECKLIST = [  # ticked lines on the plain wall, left of the head
     (E(81.50), E(82.40), 70, 980, "biết phải làm gì"),
 ]
 NUMBERS = [
-    (E(64.84), E(68.15), "6 THÁNG", 640, 470),
-    (E(90.12), E(92.75), "THẺ 2 NĂM", 540, 470),
+    (E(64.84), E(68.15), "6 THÁNG", 330, 470),
+    (E(90.12), E(92.75), "THẺ 2 NĂM", 330, 470),
 ]
 PRICE = None
+CUTOUTS = [   # (t0, t1, sticker png, x, y, scale, tilt deg): khách cũ, faces covered
+    (E(63.77), E(68.15), "assets/sticker1.png", 875, 650, 0.80, -4),
+    (E(86.80), E(92.75), "assets/sticker2.png", 860, 690, 0.66, 3),
+]
 STRIKE_T = NEW_PRICE_T = 0
-RECAP = (E(246.50), END)
+RECAP = (E(246.90), END)
 RECAP_LINES = ["1.) khách đã tự tập được", "2.) vẫn quay lại vì gym thành nhiệm vụ",
                "3.) huấn luyện viên là người đồng hành", "4.) gym nên là một lối sống"]

@@ -319,6 +319,20 @@ def frame(t):
             paste(c, b, x, y, s, a)
             im = tag_img(line)
             paste(c, im, x + 44 + im.width / 2 - 15, y, 0.9 + 0.1 * s, a)
+    # ---- paper cut-out stickers of people (sticker.py), pop in with a small tilt ----
+    for t0, t1, path, x, y, sc, ang in globals().get("CUTOUTS", []):
+        a, s = env(t, t0, t1, 0.10, 0.18)
+        if a:
+            key = ("cut", path, sc, ang)
+            if key not in _cache:
+                im = Image.open(path).convert("RGBA")
+                im = im.resize((int(im.width * sc), int(im.height * sc)), Image.LANCZOS)
+                _cache[key] = im.rotate(ang, resample=Image.BICUBIC, expand=True)
+            wob = 1.5 * math.sin((t - t0) * 2.2)
+            im = _cache[key]
+            if abs(wob) > 0.3:
+                im = im.rotate(wob, resample=Image.BILINEAR, expand=True)
+            paste(c, im, x, y, s, a)
     # ---- big numbers (Oswald, cream) ----
     for t0, t1, txt, x, y in NUMBERS:
         a, s = env(t, t0, t1)
@@ -380,6 +394,8 @@ def sfx_events():
         ev.append((max(0, E(o0) - 0.22), "cc0-whoosh-reverse", -20))
     if PRICE:
         ev.append((STRIKE_T, "cc0-cartoon-zip", -18))
+    for t0, *_ in globals().get("CUTOUTS", []):
+        ev.append((t0, "cc0-paper-flip", -15))
     ev.append((RECAP[0], "cc0-paper-riffle", -16))
     return ev
 

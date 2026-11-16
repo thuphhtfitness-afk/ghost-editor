@@ -183,8 +183,28 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "case-study-kh-ch-c",
+   "say": "case study khách cũ: dùng ảnh khách, cut out tách nền chỉ giữ người, che mặt bằng effect",
+   "from": "user",
+   "kind": "prefer",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "case-study"
+   ],
+   "first": "2026-11-16",
+   "last": "2026-11-16",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],
- "updated": "2026-11-15"
+ "updated": "2026-11-16"
 }

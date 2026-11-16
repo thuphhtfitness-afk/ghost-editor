@@ -5,7 +5,7 @@ SRC = "raw/0082.mp4"
 VAD = "build/vad_0082.json"
 TX = "tx/0082.json"
 PIECES = [
-    (134.24, 138.70, 1.18),  # HOOK: làm hết nhiệm vụ ở công ty rồi, về lại có một nhiệm vụ nữa ở phòng gym
+    (237.85, 244.55, 1.18),  # HOOK: gym nên là một dạng lối sống, chứ không phải là một dạng nhiệm vụ
     (57.30, 59.75, 1.00),    # ok có thể lấy một case study là khách hàng của em nhé
     (60.40, 68.20, 1.12),    # khách ban đầu đến đây với mục tiêu giảm cân, sau 6 tháng đạt được mục tiêu
     (75.30, 79.50, 1.00),    # khách nắm được technique, tự tập được rồi, tự track được calo
@@ -17,15 +17,16 @@ PIECES = [
     (117.10, 120.60, 1.00),  # nó khiến cho việc đi tập không vui
     (125.80, 129.70, 1.18),  # nó không phải một dạng lifestyle, không phải lối sống
     (129.86, 133.40, 1.00),  # nên họ đi làm, nó giống như một dạng nhiệm vụ
+    (134.24, 138.70, 1.18),  # làm hết nhiệm vụ ở công ty rồi, về lại có một nhiệm vụ nữa ở phòng gym
     (139.00, 141.60, 1.18),  # thì họ sẽ thấy đôi khi nó khá nản, khá mệt
     (152.85, 158.30, 1.00),  # với họ huấn luyện viên như một người đồng hành, một người support
     (221.05, 223.65, 1.18),  # người ta biết người ta cần làm gì
     (223.85, 229.30, 1.32),  # nhưng cảm giác nó cứ thiếu một cái gì đấy, có thể là motivate
-    (237.40, 249.50, 1.00),  # gym nên là một dạng lối sống, không phải nhiệm vụ, dễ đồng hành, dễ đi lâu dài
+    (244.85, 249.50, 1.00),  # thì họ sẽ dễ đồng hành và dễ đi lâu dài với một cái bộ môn
 ]
 HOOK_PIECES = 1
 BROLL = [
-    (99.70, 102.90, "raw/new2.mp4", 2.0, 1.00, 0.5, 0.5, "cw"),    # không phải họ không làm được -> client on the machine, coach by
+    (99.70, 102.90, "raw/new4.mp4", 12.0, 1.00, 0.5, 0.5, "ccw"),  # không phải họ không làm được -> client squatting on her own, coach watching
     (117.10, 120.60, "raw/0089.mp4", 2.0, 1.00, 0.5, 0.5),         # đi tập không vui -> seated band row
     (155.35, 158.30, "raw/0092.mp4", 0.0, 1.00, 0.5, 0.5),         # người đồng hành, support -> coach beside her
 ]

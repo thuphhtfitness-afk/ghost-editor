@@ -49,6 +49,9 @@ Skill talking head của HPF. Học từ 6 video reference:
 9. **Cảnh trám không lặp.** Lập bảng nguồn cho cả đợt reel: một nguồn không dùng 2 lần trong cùng reel, tối đa 2 lần
    trong cả đợt và ở khoảnh khắc khác nhau; ưu tiên cảnh khớp đúng câu (reel squat dùng cảnh squat). Không dùng cảnh
    leg curl (0087) nữa. Clip quay ngang thiếu thông tin xoay: thêm `"cw"`/`"ccw"` cuối dòng `BROLL` (plate.py xoay + cắt 9:16).
+10. **Ảnh khách (case study)** = sticker giấy cắt: `sticker.py ảnh.jpg out.png --face cx,cy,r --emoji smile` (tách nền
+   BiRefNet, emoji 3D che kín mặt, viền giấy trắng, bóng đổ); `CUTOUTS` trong beats.py, đặt ở dải tường cạnh đầu, sau khi
+   tiêu đề tắt, không chồng chữ. Ảnh khách là dữ liệu riêng: để trong thư mục reel (`assets/`), không commit lên repo.
 6. **Nhạc nền sôi động vừa phải** (sửa lần 2): `music_up.py` (108 BPM, kick đều, clap 2-4, pluck, bass nảy), `final.py --bed
    audio/bed_up.wav --bed-db -12.5`; vẫn sidechain hạ khi host nói, không át giọng. Có nhạc của kênh thì truyền `--bed`.
 
