@@ -1,0 +1,254 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: Hand; src: url("file:///root/.fonts/PatrickHand-Regular.ttf"); }
+@font-face { font-family: Kick; src: url("file:///root/.fonts/BeVietnamPro-ExtraBold.ttf"); }
+@font-face { font-family: Cred; src: url("file:///root/.fonts/BeVietnamPro-Medium.ttf"); }
+html, body { margin: 0; background: transparent; }
+canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="2120" height="2560"></canvas>
+<script>
+// HPF anatomy cards, drawn in code (medical-illustration look: muscle with fibres, silver ligaments and tendons,
+// ivory bones). 7 cards of 1060x640 on a 2x4 sheet; anatomy_render.py crops them. render(t) is static.
+const cv = document.getElementById("c"), X = cv.getContext("2d");
+const CW = 1060, CH = 640;
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const C = { ink: "#1d3557", red: "#dc2d37", green: "#28a050", cream: "#f6eaaa", grey: "#7a7e84" };
+
+// ---------- primitives ----------
+let TENS = 0.18;
+function shape(pts, closed = true) {          // smooth closed path through points (Catmull-Rom -> Bezier)
+  const p = new Path2D(), n = pts.length;
+  p.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 0; i < (closed ? n : n - 1); i++) {
+    const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+    const t = TENS;
+    p.bezierCurveTo(p1[0] + (p2[0] - p0[0]) * t, p1[1] + (p2[1] - p0[1]) * t,
+                    p2[0] - (p3[0] - p1[0]) * t, p2[1] - (p3[1] - p1[1]) * t, p2[0], p2[1]);
+  }
+  if (closed) p.closePath();
+  return p;
+}
+const lerp = (a, b, u) => [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u];
+
+// muscle: outline + fibres running from an origin edge to an insertion edge, bowed, clipped to the outline
+function muscle(pts, o0, o1, i0, i1, opt = {}) {
+  const p = shape(pts), n = opt.n || 60, bow = opt.bow || 0;
+  const g = X.createLinearGradient(o0[0], o0[1], i1[0], i1[1]);
+  g.addColorStop(0, opt.c0 || "#d9564a"); g.addColorStop(0.55, opt.c1 || "#b8322c"); g.addColorStop(1, opt.c2 || "#8c1d1f");
+  X.save();
+  X.shadowColor = "rgba(60,0,0,.35)"; X.shadowBlur = 10; X.shadowOffsetY = 4;
+  X.fillStyle = g; X.fill(p); X.restore();
+  X.save(); X.clip(p);
+  for (let k = 0; k <= n; k++) {
+    const u = k / n, a = lerp(o0, o1, u), b = lerp(i0, i1, u);
+    const m = lerp(a, b, 0.5), dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1;
+    const bw = bow * (1 - Math.pow(2 * u - 1, 2)) + (rnd() - .5) * 4;
+    const cx = m[0] - dy / L * bw, cy = m[1] + dx / L * bw;
+    X.beginPath(); X.moveTo(a[0], a[1]); X.quadraticCurveTo(cx, cy, b[0], b[1]);
+    X.strokeStyle = k % 2 ? "rgba(255,205,195,.42)" : "rgba(95,10,12,.30)";
+    X.lineWidth = k % 2 ? 1.3 : 1.0; X.stroke();
+  }
+  // rim light + edge shade
+  const r = X.createRadialGradient((o0[0] + i1[0]) / 2 - 10, (o0[1] + i1[1]) / 2 - 10, 5, (o0[0] + i1[0]) / 2, (o0[1] + i1[1]) / 2, 160);
+  r.addColorStop(0, "rgba(255,230,220,.22)"); r.addColorStop(1, "rgba(60,0,0,.28)");
+  X.fillStyle = r; X.fill(p); X.restore();
+  X.lineWidth = 2; X.strokeStyle = "rgba(90,15,15,.75)"; X.stroke(p);
+  return p;
+}
+// tendon / ligament: silver-white fibrous band (or red when highlighted)
+function band(pts, o0, o1, i0, i1, opt = {}) {
+  const p = shape(pts), n = opt.n || 26, hot = opt.hot;
+  X.save(); if (hot) { X.shadowColor = "rgba(220,45,55,.85)"; X.shadowBlur = 26; }
+  const g = X.createLinearGradient(o0[0], o0[1], i1[0], i1[1]);
+  if (hot) { g.addColorStop(0, "#ff7b7b"); g.addColorStop(1, "#d42a33"); }
+  else { g.addColorStop(0, "#fbfaf6"); g.addColorStop(1, "#d8d9dc"); }
+  X.fillStyle = g; X.fill(p); X.restore();
+  X.save(); X.clip(p);
+  for (let k = 0; k <= n; k++) {
+    const u = k / n, a = lerp(o0, o1, u), b = lerp(i0, i1, u);
+    X.beginPath(); X.moveTo(a[0], a[1]); X.lineTo(b[0] + (rnd() - .5) * 2, b[1]);
+    X.strokeStyle = hot ? (k % 2 ? "rgba(255,220,220,.6)" : "rgba(120,0,10,.35)") : (k % 2 ? "rgba(255,255,255,.9)" : "rgba(130,135,145,.45)");
+    X.lineWidth = 1.1; X.stroke();
+  }
+  X.restore();
+  X.lineWidth = 1.6; X.strokeStyle = hot ? "rgba(140,10,20,.9)" : "rgba(120,124,132,.8)"; X.stroke(p);
+  return p;
+}
+function bone(pts, opt = {}) {
+  const T0 = TENS; TENS = 0.1; const p = shape(pts); TENS = T0;
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; pts.forEach(q => { x0 = Math.min(x0, q[0]); y0 = Math.min(y0, q[1]); x1 = Math.max(x1, q[0]); y1 = Math.max(y1, q[1]); });
+  const g = X.createLinearGradient(x0, y0, x1, y1);
+  g.addColorStop(0, "#fbf4e4"); g.addColorStop(0.6, "#ecdcbd"); g.addColorStop(1, "#cdb48b");
+  X.save(); X.shadowColor = "rgba(70,50,20,.35)"; X.shadowBlur = 8; X.shadowOffsetY = 3;
+  X.fillStyle = opt.alpha ? `rgba(240,228,205,${opt.alpha})` : g; X.fill(p); X.restore();
+  if (!opt.alpha) {                       // light cortical hatching
+    X.save(); X.clip(p); X.strokeStyle = "rgba(150,120,80,.18)"; X.lineWidth = 1;
+    for (let k = 0; k < 18; k++) { const yy = y0 + (y1 - y0) * k / 18; X.beginPath(); X.moveTo(x0, yy); X.lineTo(x1, yy + (x1 - x0) * .25); X.stroke(); }
+    X.restore();
+  }
+  X.lineWidth = 2; X.strokeStyle = opt.alpha ? "rgba(140,115,80,.6)" : "#9c8460"; X.stroke(p);
+  return p;
+}
+function cartilage(pts) { const p = shape(pts); X.fillStyle = "#cfe3ec"; X.fill(p); X.lineWidth = 1.5; X.strokeStyle = "#7fa2b3"; X.stroke(p); }
+function skin(pts) { const p = shape(pts); X.fillStyle = "rgba(240,196,170,.35)"; X.fill(p); X.lineWidth = 2; X.strokeStyle = "rgba(190,130,105,.55)"; X.stroke(p); }
+function arrow(x0, y0, x1, y1, col, w = 7) {
+  X.strokeStyle = col; X.fillStyle = col; X.lineWidth = w; X.lineCap = "round";
+  X.beginPath(); X.moveTo(x0, y0); X.lineTo(x1, y1); X.stroke();
+  const a = Math.atan2(y1 - y0, x1 - x0);
+  X.beginPath(); X.moveTo(x1 + Math.cos(a) * 6, y1 + Math.sin(a) * 6);
+  X.lineTo(x1 - Math.cos(a - .5) * 26, y1 - Math.sin(a - .5) * 26); X.lineTo(x1 - Math.cos(a + .5) * 26, y1 - Math.sin(a + .5) * 26); X.fill();
+}
+function hand(txt, x, y, col, size = 52, align = "center") { X.font = `${size}px Hand`; X.fillStyle = col; X.textAlign = align; X.textBaseline = "middle"; X.fillText(txt, x, y); }
+function tick(x, y, ok) {
+  X.fillStyle = ok ? C.green : C.red; X.beginPath(); X.arc(x, y, 24, 0, 7); X.fill();
+  X.strokeStyle = "#fff"; X.lineWidth = 6; X.lineCap = "round"; X.beginPath();
+  if (ok) { X.moveTo(x - 11, y + 1); X.lineTo(x - 3, y + 10); X.lineTo(x + 12, y - 9); }
+  else { X.moveTo(x - 9, y - 9); X.lineTo(x + 9, y + 9); X.moveTo(x + 9, y - 9); X.lineTo(x - 9, y + 9); }
+  X.stroke();
+}
+function labelTick(txt, x, y, col, ok, size = 48) { X.font = `${size}px Hand`; const w = X.measureText(txt).width; hand(txt, x, y, col, size); tick(x - w / 2 - 34, y + 2, ok); }
+function card(ox, oy, kicker) {
+  X.save(); X.translate(ox, oy);
+  X.save(); X.shadowColor = "rgba(0,0,0,.35)"; X.shadowBlur = 24; X.shadowOffsetY = 12;
+  X.fillStyle = "#fcfcfa"; X.beginPath(); X.roundRect(30, 30, 1000, 580, 30); X.fill(); X.restore();
+  X.strokeStyle = "#d4d6da"; X.lineWidth = 4; X.beginPath(); X.roundRect(30, 30, 1000, 580, 30); X.stroke();
+  X.font = "30px Kick"; const w = X.measureText(kicker).width;
+  X.fillStyle = C.cream; X.beginPath(); X.roundRect(60, 54, w + 36, 50, 8); X.fill();
+  X.fillStyle = "#1c1814"; X.textAlign = "left"; X.textBaseline = "middle"; X.fillText(kicker, 78, 80);
+  X.font = "19px Cred"; X.fillStyle = C.grey; X.textAlign = "right"; X.fillText("minh hoạ: HPF", 1004, 590);
+}
+const end = () => X.restore();
+
+// ---------- foot, medial side view; h = arch height ----------
+function foot(ox, oy, s, h) {
+  X.save(); X.translate(ox, oy); X.scale(s, s);
+  const base = 300, y = x => base - h * Math.pow(Math.max(0, Math.sin(Math.PI * Math.min(1, Math.max(0, (x - 70) / 420)))), 1.15);
+  skin([[20, 120], [40, 60], [110, 40], [160, 70], [250, y(250) - 95], [420, y(420) - 55], [560, 262], [610, 280], [600, 304], [470, 306], [300, Math.min(306, y(300) + 34)], [90, 308], [30, 290], [15, 220]]);
+  // plantar fascia + abductor hallucis under the arch
+  const sole = [[75, base - 22], [180, y(180) + 18], [300, y(300) + 22], [420, y(420) + 18], [480, base - 14]];
+  band([[70, base - 30], ...sole.slice(1, 4).map(q => [q[0], q[1] - 6]), [490, base - 22], [480, base - 8], ...sole.slice(1, 4).reverse().map(q => [q[0], q[1] + 8]), [72, base - 14]],
+       [70, base - 30], [72, base - 14], [490, base - 22], [480, base - 8], { n: 14 });
+  muscle([[80, base - 70], [200, y(200) - 8], [330, y(330) - 4], [470, base - 40], [520, base - 30], [470, base - 22], [330, y(330) + 12], [200, y(200) + 12], [85, base - 32]],
+         [80, base - 70], [85, base - 32], [520, base - 34], [470, base - 22], { n: 46, bow: 10 });
+  // bones
+  bone([[30, base - 70], [55, base - 115], [120, base - 128], [175, y(175) - 70], [200, y(200) - 40], [150, base - 25], [70, base - 10], [35, base - 30]]);              // calcaneus
+  bone([[130, base - 150], [175, base - 185], [225, y(225) - 135], [255, y(255) - 95], [215, y(215) - 70], [150, base - 115]]);                                            // talus
+  bone([[240, y(240) - 98], [275, y(275) - 104], [292, y(292) - 64], [262, y(262) - 52], [238, y(238) - 70]]);                                                             // navicular
+  bone([[292, y(292) - 98], [335, y(335) - 96], [345, y(345) - 52], [298, y(298) - 56]]);                                                                                   // cuneiform
+  bone([[342, y(342) - 92], [470, y(470) - 52], [500, base - 52], [490, base - 30], [462, base - 26], [338, y(338) - 54]]);                                                  // 1st metatarsal
+  bone([[500, base - 50], [548, base - 46], [552, base - 28], [498, base - 28]]); bone([[556, base - 44], [598, base - 38], [598, base - 26], [556, base - 26]]);           // phalanges
+  bone([[150, 30], [195, 30], [205, base - 175], [140, base - 160]]);                                                                                                       // tibia (end)
+  X.restore();
+  return y;
+}
+// ---------- leg, front view; m = medial sign (+1: medial is +x), knock 0..1 ----------
+function leg(ox, oy, m, knock, ring, sc = 0.78) {
+  X.save(); X.translate(ox, oy); X.scale(sc, sc);
+  const L1 = 235, L2 = 205;
+  const phi = -Math.asin(m * 38 * knock / L1), kx = -Math.sin(phi) * L1, ky = Math.cos(phi) * L1;
+  const psi = Math.asin(m * 52 * knock / L2);
+  // shank first (behind the thigh at the knee)
+  X.save(); X.translate(kx, ky); X.rotate(psi);
+  skin([[-m * 44, 10], [m * 46, 10], [m * 54, 90], [m * 30, 196], [m * 34, 214], [-m * 32, 214], [-m * 32, 196], [-m * 50, 90]]);
+  muscle([[m * 18, 40], [m * 48, 92], [m * 40, 150], [m * 22, 170], [m * 14, 100]], [m * 18, 40], [m * 48, 92], [m * 18, 168], [m * 30, 160], { n: 26, bow: 6, c0: "#c94a40" });     // gastrocnemius medial head
+  muscle([[-m * 4, 42], [-m * 34, 50], [-m * 30, 140], [-m * 12, 172], [-m * 4, 150]], [-m * 4, 42], [-m * 34, 50], [-m * 4, 170], [-m * 12, 172], { n: 26, bow: -5 });            // tibialis anterior
+  muscle([[-m * 34, 52], [-m * 44, 110], [-m * 32, 190], [-m * 26, 190], [-m * 30, 110]], [-m * 34, 52], [-m * 44, 110], [-m * 28, 190], [-m * 32, 190], { n: 14, c0: "#c44a42" }); // peroneus
+  bone([[m * 2, 40], [m * 22, 44], [m * 18, 192], [m * 26, 206], [m * 4, 206], [m * 4, 120]]);                                                                                // tibia shaft
+  band([[-m * 12, 160], [-m * 4, 150], [-m * 2, 200], [-m * 12, 204]], [-m * 12, 160], [-m * 4, 150], [-m * 12, 204], [-m * 2, 200], { n: 6 });                                  // TA tendon
+  bone([[-34, 205], [34, 205], [40, 230], [-40, 232]]);                                                                                                                      // foot (front)
+  band([[-12, 18], [12, 18], [9, 58], [-9, 58]], [-12, 18], [12, 18], [-9, 58], [9, 58], { n: 10 });                                                                       // patellar ligament
+  X.restore();
+  // thigh
+  X.save(); X.rotate(phi);
+  skin([[-m * 66, -6], [m * 54, -6], [m * 58, 150], [m * 40, 236], [-m * 42, 236], [-m * 68, 150]]);
+  band([[-m * 46, 0], [-m * 30, -4], [m * 40, 212], [m * 30, 226]], [-m * 46, 0], [-m * 30, -4], [m * 30, 226], [m * 40, 212], { n: 10 });                                       // sartorius tendon-ish strap
+  muscle([[-m * 56, 6], [-m * 30, 2], [-m * 18, 120], [-m * 22, 200], [-m * 34, 222], [-m * 50, 180], [-m * 60, 90]], [-m * 56, 6], [-m * 30, 2], [-m * 34, 222], [-m * 22, 200], { n: 40, bow: -8 }); // vastus lateralis
+  muscle([[m * 18, 110], [m * 46, 150], [m * 48, 190], [m * 26, 226], [m * 10, 205]], [m * 18, 110], [m * 46, 150], [m * 12, 210], [m * 26, 226], { n: 26, bow: 8 });            // vastus medialis
+  muscle([[0, 4], [m * 22, 50], [m * 18, 150], [0, 205], [-m * 18, 150], [-m * 22, 50]], [-m * 10, 4], [m * 10, 4], [-m * 5, 205], [m * 5, 205], { n: 40, bow: 0, c0: "#e0604f" }); // rectus femoris
+  band([[-14, 188], [14, 188], [12, 212], [-12, 212]], [-14, 188], [14, 188], [-12, 212], [12, 212], { n: 8 });                                                              // quad tendon
+  bone([[0, 206], [18, 214], [22, 236], [8, 254], [-8, 254], [-22, 236], [-18, 214]]);                                                                                     // patella
+  X.restore();
+  if (ring) { X.lineWidth = 6; X.strokeStyle = ring; X.beginPath(); X.arc(kx, ky + 8, 44, 0, 7); X.stroke(); }
+  X.restore();
+  return [ox + kx * sc, oy + ky * sc];
+}
+// ---------- lower leg + heel from behind; tilt in radians ----------
+function heelBack(ox, oy, tilt, col) {
+  X.save(); X.translate(ox, oy);
+  skin([[-78, 0], [78, 0], [70, 200], [44, 300], [46, 360], [30, 400], [-30, 400], [-46, 360], [-44, 300], [-70, 200]]);
+  muscle([[-70, 10], [-60, 120], [-30, 260], [-14, 250], [-4, 120], [-14, 6]], [-62, 8], [-14, 6], [-26, 258], [-12, 248], { n: 32, bow: -10 });  // soleus/gastroc medial
+  muscle([[70, 10], [60, 120], [30, 260], [14, 250], [4, 120], [14, 6]], [62, 8], [14, 6], [26, 258], [12, 248], { n: 32, bow: 10, c0: "#cf5246" });
+  X.save(); X.translate(0, 300); X.rotate(tilt);
+  band([[-16, -60], [16, -60], [12, 50], [-12, 50]], [-16, -60], [16, -60], [-12, 50], [12, 50], { n: 14 });   // Achilles
+  bone([[-46, 40], [46, 40], [50, 80], [34, 104], [-34, 104], [-50, 80]]);                                      // calcaneus
+  X.restore();
+  X.strokeStyle = "rgba(160,160,160,.9)"; X.lineWidth = 5; X.beginPath(); X.moveTo(-120, 404); X.lineTo(120, 404); X.stroke();
+  X.save(); X.translate(0, 300); X.rotate(tilt); X.strokeStyle = col; X.lineWidth = 8; X.setLineDash([16, 10]);
+  X.beginPath(); X.moveTo(0, -300 / Math.cos(tilt) * 0 - 300); X.lineTo(0, 120); X.stroke(); X.restore();
+  X.restore();
+}
+// ---------- knee joint, front view (right knee; medial = viewer's left) ----------
+function kneeFront(ox, oy, s, opt) {
+  X.save(); X.translate(ox, oy); X.scale(s, s);
+  bone([[-34, -60], [34, -60], [36, 80], [52, 120], [86, 148], [108, 176], [110, 206], [96, 226], [70, 232], [44, 226], [24, 206], [10, 194], [-10, 194], [-24, 206], [-44, 226], [-70, 232], [-96, 226], [-110, 206], [-108, 176], [-86, 148], [-52, 120], [-36, 80]]);   // femur: shaft + two condyles
+  muscle([[-34, -40], [-70, -10], [-96, 70], [-92, 140], [-56, 150], [-30, 110]], [-34, -40], [-70, -10], [-50, 152], [-88, 140], { n: 34, bow: 8 });   // vastus medialis (teardrop)
+  muscle([[36, -50], [84, -20], [100, 60], [80, 130], [50, 126], [38, 40]], [36, -50], [84, -20], [52, 126], [80, 130], { n: 34, bow: -8, c0: "#cf5246" }); // vastus lateralis
+  cartilage([[-100, 236], [-20, 234], [-14, 246], [-100, 250]]); cartilage([[20, 234], [100, 236], [100, 250], [14, 246]]);                               // menisci in the joint space
+  bone([[-112, 256], [-60, 252], [-14, 258], [14, 258], [60, 252], [112, 256], [114, 276], [96, 300], [54, 326], [44, 470], [-44, 470], [-54, 326], [-96, 300], [-114, 276]]);   // tibia
+  bone([[100, 312], [122, 304], [134, 316], [126, 470], [108, 470]]);                                                                                    // fibula
+  band([[100, 172], [114, 178], [130, 312], [114, 316]], [100, 172], [114, 178], [114, 316], [130, 312], { n: 10 });                                       // LCL
+  band([[-96, 160], [-118, 168], [-108, 390], [-84, 384]], [-96, 160], [-118, 168], [-84, 384], [-108, 390], { n: 28, hot: opt.hot });                     // MCL, on the bone edge
+  bone([[0, 96], [38, 112], [46, 156], [26, 196], [-26, 196], [-46, 156], [-38, 112]], { alpha: .78 });                                                  // patella
+  band([[-18, 196], [18, 196], [16, 318], [-16, 318]], [-18, 196], [18, 196], [-16, 318], [16, 318], { n: 16 });                                           // patellar ligament
+  X.restore();
+}
+function kneeInside(ox, oy, s) {
+  X.save(); X.translate(ox, oy); X.scale(s, s);
+  bone([[-34, -60], [34, -60], [36, 80], [52, 120], [86, 148], [108, 176], [110, 206], [96, 226], [70, 232], [44, 226], [28, 196], [12, 168], [-12, 168], [-28, 196], [-44, 226], [-70, 232], [-96, 226], [-110, 206], [-108, 176], [-86, 148], [-52, 120], [-36, 80]]); // femur with the notch
+  bone([[-112, 256], [-60, 252], [-14, 258], [14, 258], [60, 252], [112, 256], [114, 276], [96, 300], [54, 326], [44, 470], [-44, 470], [-54, 326], [-96, 300], [-114, 276]]);
+  cartilage([[-104, 236], [-26, 234], [-18, 246], [-34, 252], [-104, 252]]); cartilage([[26, 234], [104, 236], [104, 252], [34, 252], [18, 246]]);           // menisci
+  band([[10, 172], [30, 182], [-4, 262], [-24, 256]], [10, 172], [30, 182], [-24, 256], [-4, 262], { n: 18, hot: true });                                   // ACL
+  band([[-30, 176], [-12, 168], [20, 262], [2, 268]], [-30, 176], [-12, 168], [2, 268], [20, 262], { n: 14 });                                             // PCL
+  band([[-96, 160], [-118, 168], [-108, 390], [-84, 384]], [-96, 160], [-118, 168], [-84, 384], [-108, 390], { n: 18 });                                 // MCL
+  bone([[100, 312], [122, 304], [134, 316], [126, 470], [108, 470]]);
+  band([[100, 172], [114, 178], [130, 312], [114, 316]], [100, 172], [114, 178], [114, 316], [130, 312], { n: 8 });                                        // LCL
+  X.restore();
+}
+
+window.ready = false;
+window.render = function () {
+  X.clearRect(0, 0, cv.width, cv.height);
+  // 1 arch normal
+  card(0, 0, "VÒM BÀN CHÂN"); const y1 = foot(150, 110, 1.15, 72);
+  X.save(); X.translate(150, 110); X.scale(1.15, 1.15); X.strokeStyle = C.green; X.lineWidth = 6; X.setLineDash([14, 10]);
+  X.beginPath(); for (let x = 70; x <= 490; x += 10) { const yy = y1(x) + 34; x === 70 ? X.moveTo(x, yy) : X.lineTo(x, yy); } X.stroke(); X.restore();
+  hand("vòm bàn chân (cơ + mạc gan chân giữ vòm)", 530, 565, C.green, 44); end();
+  // 2 normal vs flat
+  card(CW, 0, "BÀN CHÂN BẸT"); foot(60, 150, 0.72, 72); foot(560, 150, 0.72, 8);
+  labelTick("có vòm", 280, 520, C.green, true); labelTick("vòm sập xuống", 790, 520, C.red, false);
+  X.strokeStyle = C.red; X.lineWidth = 5; X.setLineDash([12, 8]); X.beginPath(); X.moveTo(610, 362); X.lineTo(930, 362); X.stroke(); X.setLineDash([]); end();
+  // 3 heel axis
+  card(0, CH, "TRỤC GÓT CHÂN (NHÌN TỪ SAU)"); heelBack(300, 110, 0, C.green); heelBack(740, 110, -0.24, C.red);
+  labelTick("thẳng", 300, 560, C.green, true); labelTick("đổ vào trong", 760, 560, C.red, false); end();
+  // 4 legs straight
+  card(CW, CH, "KHỚP GỐI (NHÌN TỪ TRƯỚC)"); leg(460, 140, 1, 0, C.green); leg(600, 140, -1, 0, C.green);
+  labelTick("thẳng", 530, 570, C.green, true); end();
+  // 5 legs straight vs X
+  card(0, 2 * CH, "KHỚP GỐI (NHÌN TỪ TRƯỚC)"); leg(230, 140, 1, 0, C.green); leg(370, 140, -1, 0, C.green);
+  const a = leg(700, 140, 1, 1.5, C.red), b = leg(840, 140, -1, 1.5, C.red);
+  labelTick("thẳng", 300, 560, C.green, true); labelTick("chụm vào: chữ X", 730, 560, C.red, false); end();
+  // 6 MCL
+  card(CW, 2 * CH, "DÂY CHẰNG BÊN TRONG GỐI"); kneeFront(420, 190, 0.78, { hot: true });
+  arrow(190, 330, 290, 330, C.red, 6);
+  hand("dây chằng", 850, 250, C.red, 56); hand("bên này", 850, 305, C.red, 56); hand("chịu áp lực", 850, 380, C.ink, 46);
+  X.strokeStyle = C.red; X.lineWidth = 5; X.beginPath(); X.moveTo(745, 290); X.lineTo(345, 330); X.stroke(); end();
+  // 7 inside the knee
+  card(0, 3 * CH, "DÂY CHẰNG QUANH KHỚP GỐI"); kneeInside(600, 190, 0.78);
+  hand("ảnh hưởng", 230, 300, C.ink, 50); hand("lâu dài", 230, 355, C.red, 50);
+  X.strokeStyle = C.red; X.lineWidth = 4; X.beginPath(); X.moveTo(310, 330); X.lineTo(590, 345); X.stroke(); end();
+};
+document.fonts.load("40px Hand").then(() => document.fonts.load("30px Kick")).then(() => document.fonts.ready)
+  .then(() => { window.render(0); window.ready = true; });
+</script></body></html>

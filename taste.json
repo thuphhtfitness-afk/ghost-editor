@@ -243,6 +243,26 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "h-y-t-t-o",
+   "say": "hãy tự tạo ảnh anatomy phù hợp, có sợi cơ, đừng lấy wikipedia xấu vl",
+   "from": "user",
+   "kind": "prefer",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "ban-chan-bet"
+   ],
+   "first": "2026-11-18",
+   "last": "2026-11-18",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],

@@ -55,11 +55,13 @@ Skill talking head của HPF. Học từ 6 video reference:
 11. **Before -> after của khách = bảng trắng** (`BOARD` trong beats.py): bảng trắng ở dải trên, sticker before pop trên chữ
    "ban đầu", mũi tên marker xanh tự vẽ kèm mốc thời gian viết tay (Caveat) trên chữ "sau N tháng", sticker after pop trên
    "đạt mục tiêu"; nhãn dùng đúng lời host; header nhường chỗ cho bảng; giữ bảng tới câu kế tiếp để kịp nhìn ảnh after.
-12. **Minh hoạ giải phẫu (anatomy)** ở mọi chỗ host nói về xương, khớp, cơ, dây chằng: `anatomy_cards.py` dựng thẻ trắng
-   (kicker kem, chú thích viết tay Patrick Hand đỏ/xanh, ✓/✗ cạnh chữ, ghi nguồn trên thẻ). Hình: bản Gray's Anatomy 1918
-   (phạm vi công cộng) qua `commons.wikimedia.org/wiki/Special:FilePath/<file>` với UA riêng, nghỉ 3 s mỗi file (API hay báo 429);
-   không có hình hợp thì vẽ sơ đồ (trục gót chân, chân thẳng vs chữ X). `PANELS` trong beats.py, hiện đúng chữ host nói.
-   Font viết tay phải đủ dấu tiếng Việt: Patrick Hand (Caveat thiếu ơ ư ẳ ...).
+12. **Minh hoạ giải phẫu (anatomy) TỰ VẼ, không lấy Wikipedia/Gray** (sửa của chủ kênh): `anatomy/anatomy.html` vẽ bằng
+   Canvas kiểu minh hoạ y khoa: cơ đỏ có **thớ sợi** chạy từ nguyên uỷ tới bám tận (`muscle`), gân/dây chằng trắng bạc có
+   vân sợi (`band`, `hot` = tô đỏ phát sáng chỗ chịu lực), xương màu ngà đổ bóng (`bone`), sụn xanh nhạt, da hồng nhạt bao
+   ngoài; chú thích Patrick Hand, ✓/✗ cạnh chữ. Có sẵn: bàn chân nhìn trong (vòm), bàn chân bẹt, gót chân nhìn sau, chân
+   thẳng / chữ X, khớp gối trước (dây chằng bên trong), trong khớp gối (dây chằng chéo). Thêm thẻ mới = thêm một ô vào
+   `render()`; `anatomy/anatomy_render.py <thư mục>` xuất từng thẻ PNG (dùng renderer của xilo-opus-video). `PANELS` trong
+   beats.py hiện đúng chữ host nói.
 13. **Khung hình mặt nằm cao** (host đứng): đặt `KICKER_Y, TITLE_Y`, `RECAP_Y, RECAP_DY`, `CAP_Y`, `TAG_Y` trong beats.py,
    thẻ minh hoạ ở dải chân; zoom tối đa 1.18, FACE ~ (0.45, 0.24). Mẫu `example-7/`.
 6. **Nhạc nền sôi động vừa phải** (sửa lần 2): `music_up.py` (108 BPM, kick đều, clap 2-4, pluck, bass nảy), `final.py --bed
