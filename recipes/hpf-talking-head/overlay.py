@@ -21,6 +21,9 @@ RED = (230, 57, 70, 255)
 FD = "/root/.fonts/"
 EMO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "emoji/")
 CAP_Y = 1420          # word caption centre (chest)
+KICKER_Y, TITLE_Y = 150, 265   # hook title (a reel with the face high in frame moves them up)
+RECAP_Y, RECAP_DY = 175, 72
+TAG_Y = 1290          # tag pill centre (a reel can override CAP_Y / TAG_Y in beats.py)
 
 
 def font(name, size, wght=None):
@@ -40,8 +43,8 @@ F_TAG = font("BeVietnamPro-SemiBold.ttf", 42)
 F_SER_XL = font("PlayfairDisplay-Italic%5Bwght%5D.ttf", 112, 500)
 F_SER_L = font("PlayfairDisplay-Italic%5Bwght%5D.ttf", 92, 500)
 F_SER_M = font("PlayfairDisplay-Italic%5Bwght%5D.ttf", 72, 600)
-F_HAND = font("Caveat%5Bwght%5D.ttf", 66, 700)
-F_HAND_L = font("Caveat%5Bwght%5D.ttf", 88, 700)
+F_HAND = font("PatrickHand-Regular.ttf", 62)  # full Vietnamese (Caveat lacks ơ ư ẳ ...)
+F_HAND_L = font("PatrickHand-Regular.ttf", 82)
 INKB = (29, 53, 87, 255)       # marker blue
 F_SER_S = font("PlayfairDisplay-Italic%5Bwght%5D.ttf", 58, 600)
 F_OSW = font("Oswald%5Bwght%5D.ttf", 150, 600)
@@ -269,12 +272,12 @@ def frame(t):
         a = min(1, (HOOK_END - t) / 0.2)
         t = t - TITLE_T0  # title clock
         k = kicker_img(f"✦ {KICKER} ✦")
-        paste(c, k, W / 2, 150, 0.9 + 0.1 * ease_back(t / 0.25), a * min(1, t / 0.12))
+        paste(c, k, W / 2, KICKER_Y, 0.9 + 0.1 * ease_back(t / 0.25), a * min(1, t / 0.12))
         hc = Image.new("RGBA", (W, H))
         t_line = 0.10
         tf = F_SER_XL if all(text_img(l, F_SER_XL, CREAM, glow=True).width - 80 < W - 90 for l in TITLE_LINES) else F_SER_L
         for li, line in enumerate(TITLE_LINES):
-            draw_typed(hc, line, tf, CREAM, W / 2, 265 + li * (120 if tf is F_SER_XL else 104), t, t_line, 24, cursor=li == len(TITLE_LINES) - 1)
+            draw_typed(hc, line, tf, CREAM, W / 2, TITLE_Y + li * (120 if tf is F_SER_XL else 104), t, t_line, 24, cursor=li == len(TITLE_LINES) - 1)
             t_line += len(line) / 24
         if a < 1:
             hc.putalpha(hc.split()[3].point(lambda v: int(v * a)))
@@ -304,13 +307,13 @@ def frame(t):
             c.alpha_composite(hc)
     # ---- recap ----
     if RECAP[0] <= t:
-        y = 175
+        y = RECAP_Y
         for i, line in enumerate(RECAP_LINES):
             tt = RECAP[0] + i * 0.18
             if t >= tt:
                 a = min(1, (t - tt) / 0.15)
                 im = text_img(line, F_RECAP, CREAM if i % 2 == 0 else WHITE)
-                paste(c, im, W / 2, y + i * 72, 0.9 + 0.1 * a, a)
+                paste(c, im, W / 2, y + i * RECAP_DY, 0.9 + 0.1 * a, a)
     # ---- emoji ----
     for t0, t1, name, x, y, sz in EMOJI:
         a, s = env(t, t0, t1, kind="sticker")
@@ -383,6 +386,15 @@ def frame(t):
         if a < 1:
             layer.putalpha(layer.split()[3].point(lambda v: int(v * a)))
         c.alpha_composite(layer, (0, int(slide)))
+    # ---- illustration cards (anatomy_cards.py etc.): steady, card spring ----
+    for t0, t1, path, x, y, sc in globals().get("PANELS", []):
+        a, s = env(t, t0, t1, 0.10, 0.15, kind="card")
+        if a:
+            key = ("panel", path, sc)
+            if key not in _cache:
+                im = Image.open(path).convert("RGBA")
+                _cache[key] = im.resize((int(im.width * sc), int(im.height * sc)), Image.LANCZOS)
+            paste(c, _cache[key], x, y, 0.92 + 0.08 * s, a)
     # ---- paper cut-out stickers of people (sticker.py), pop in with a small tilt ----
     for t0, t1, path, x, y, sc, ang in globals().get("CUTOUTS", []):
         a, s = env(t, t0, t1, 0.10, 0.18, kind="sticker")
@@ -423,7 +435,7 @@ def frame(t):
     for t0, t1, txt in TAGS:
         a, s = env(t, t0, t1)
         if a:
-            paste(c, tag_img(txt), W / 2, 1290, 0.85 + 0.15 * s, a)
+            paste(c, tag_img(txt), W / 2, TAG_Y, 0.85 + 0.15 * s, a)
     # ---- keyword pops ----
     for t0, t1, txt, st in POPS:
         a, s = env(t, t0, t1, 0.08, 0.12, kind="heavy")
@@ -463,6 +475,8 @@ def sfx_events():
         ev.append((bd["t0"], "cc0-paper-flip", -15))
         ev.append((bd["arrow"][0], "cc0-whoosh-reverse", -20))
         ev.append((bd["after"][1], "cc0-paper-riffle", -18))
+    for p_ in globals().get("PANELS", []):
+        ev.append((p_[0], "cc0-paper-flip", -17))
     for t0, *_ in globals().get("CUTOUTS", []):
         ev.append((t0, "cc0-paper-flip", -15))
     ev.append((RECAP[0], "cc0-paper-riffle", -16))

@@ -223,8 +223,28 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "ph-n-n-o-c",
+   "say": "phần nào cần anatomy hãy bổ sung thêm anatomy vào minh hoạ",
+   "from": "user",
+   "kind": "prefer",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "ban-chan-bet"
+   ],
+   "first": "2026-11-18",
+   "last": "2026-11-18",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],
- "updated": "2026-11-16"
+ "updated": "2026-11-18"
 }

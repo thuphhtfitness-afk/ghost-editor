@@ -55,6 +55,13 @@ Skill talking head của HPF. Học từ 6 video reference:
 11. **Before -> after của khách = bảng trắng** (`BOARD` trong beats.py): bảng trắng ở dải trên, sticker before pop trên chữ
    "ban đầu", mũi tên marker xanh tự vẽ kèm mốc thời gian viết tay (Caveat) trên chữ "sau N tháng", sticker after pop trên
    "đạt mục tiêu"; nhãn dùng đúng lời host; header nhường chỗ cho bảng; giữ bảng tới câu kế tiếp để kịp nhìn ảnh after.
+12. **Minh hoạ giải phẫu (anatomy)** ở mọi chỗ host nói về xương, khớp, cơ, dây chằng: `anatomy_cards.py` dựng thẻ trắng
+   (kicker kem, chú thích viết tay Patrick Hand đỏ/xanh, ✓/✗ cạnh chữ, ghi nguồn trên thẻ). Hình: bản Gray's Anatomy 1918
+   (phạm vi công cộng) qua `commons.wikimedia.org/wiki/Special:FilePath/<file>` với UA riêng, nghỉ 3 s mỗi file (API hay báo 429);
+   không có hình hợp thì vẽ sơ đồ (trục gót chân, chân thẳng vs chữ X). `PANELS` trong beats.py, hiện đúng chữ host nói.
+   Font viết tay phải đủ dấu tiếng Việt: Patrick Hand (Caveat thiếu ơ ư ẳ ...).
+13. **Khung hình mặt nằm cao** (host đứng): đặt `KICKER_Y, TITLE_Y`, `RECAP_Y, RECAP_DY`, `CAP_Y`, `TAG_Y` trong beats.py,
+   thẻ minh hoạ ở dải chân; zoom tối đa 1.18, FACE ~ (0.45, 0.24). Mẫu `example-7/`.
 6. **Nhạc nền sôi động vừa phải** (sửa lần 2): `music_up.py` (108 BPM, kick đều, clap 2-4, pluck, bass nảy), `final.py --bed
    audio/bed_up.wav --bed-db -12.5`; vẫn sidechain hạ khi host nói, không át giọng. Có nhạc của kênh thì truyền `--bed`.
 
