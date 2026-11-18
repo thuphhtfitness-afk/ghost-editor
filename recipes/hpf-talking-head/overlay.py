@@ -21,6 +21,7 @@ RED = (230, 57, 70, 255)
 FD = "/root/.fonts/"
 EMO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "emoji/")
 CAP_Y = 1420          # word caption centre (chest)
+TITLE_CPS = 24                 # typing speed of the title (a short title window types faster)
 KICKER_Y, TITLE_Y = 150, 265   # hook title (a reel with the face high in frame moves them up)
 RECAP_Y, RECAP_DY = 175, 72
 TAG_Y = 1290          # tag pill centre (a reel can override CAP_Y / TAG_Y in beats.py)
@@ -306,8 +307,8 @@ def frame(t):
         t_line = 0.10
         tf = F_SER_XL if all(text_img(l, F_SER_XL, CREAM, glow=True).width - 80 < W - 90 for l in TITLE_LINES) else F_SER_L
         for li, line in enumerate(TITLE_LINES):
-            draw_typed(hc, line, tf, CREAM, W / 2, TITLE_Y + li * (120 if tf is F_SER_XL else 104), t, t_line, 24, cursor=li == len(TITLE_LINES) - 1)
-            t_line += len(line) / 24
+            draw_typed(hc, line, tf, CREAM, W / 2, TITLE_Y + li * (120 if tf is F_SER_XL else 104), t, t_line, TITLE_CPS, cursor=li == len(TITLE_LINES) - 1)
+            t_line += len(line) / TITLE_CPS
         if a < 1:
             hc.putalpha(hc.split()[3].point(lambda v: int(v * a)))
         c.alpha_composite(hc)

@@ -6,7 +6,8 @@ TOTAL = timeline()[1]
 END = TOTAL / FPS + 0.6
 
 TITLE_T0 = hook_end()
-TITLE_END = E(60.40)
+TITLE_END = E(60.85)
+TITLE_CPS = 42
 HOOK_END = TITLE_END
 KICKER = "CASE STUDY"
 TITLE_LINES = ["tự tập được rồi,", "sao vẫn quay lại?"]
@@ -53,7 +54,7 @@ NUMBERS = [
 PRICE = None
 CUTOUTS = []
 BOARD = dict(   # whiteboard: before -> 6 tháng -> after (khách cũ, faces covered)
-    t0=E(60.88), t1=E(76.50), box=(40, 130, 1040, 680),
+    t0=E(60.95), t1=E(76.50), box=(40, 130, 1040, 680),
     before=("assets/sticker2.png", E(61.28), 255, 390, 0.56, 2),
     after=("assets/sticker1.png", E(67.12), 835, 385, 0.50, -3),
     arrow=(E(64.44), E(66.24), (430, 410, 655)),
