@@ -263,6 +263,26 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "i-font-ch-broll-th",
+   "say": "đổi font chữ ở broll thành montserrat hoặc barlow; ảnh bàn chân bẹt dùng ảnh của kênh, thêm motion tách nền, chuyển động; video cần trám source kid tập luyện thì dùng source kid, ưu tiên squat",
+   "from": "user",
+   "kind": "prefer",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "ban-chan-bet"
+   ],
+   "first": "2026-11-18",
+   "last": "2026-11-18",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],

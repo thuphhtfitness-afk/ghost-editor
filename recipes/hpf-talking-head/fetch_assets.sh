@@ -6,6 +6,8 @@ b=https://raw.githubusercontent.com/google/fonts/main/ofl
 for u in "playfairdisplay/PlayfairDisplay-Italic%5Bwght%5D.ttf" "oswald/Oswald%5Bwght%5D.ttf" "patrickhand/PatrickHand-Regular.ttf" \
          "bevietnampro/BeVietnamPro-SemiBold.ttf" "bevietnampro/BeVietnamPro-ExtraBold.ttf"; do
   curl -sS -fL -o ~/.fonts/$(basename "$u") "$b/$u"; done
+curl -sS -fL -o ~/.fonts/Montserrat-VF.ttf "$b/montserrat/Montserrat%5Bwght%5D.ttf"   # plain name: browsers decode %5B in file URLs
+curl -sS -fL -o ~/.fonts/PatrickHand-Regular.ttf "$b/patrickhand/PatrickHand-Regular.ttf"
 fc-cache -f >/dev/null || true
 e=https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets
 get(){ curl -sS -fL -o "emoji/$1.png" "$e/$2/3D/$3"; }

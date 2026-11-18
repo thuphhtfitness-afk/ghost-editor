@@ -121,6 +121,35 @@ def kicker_img(txt):
     return im
 
 
+F_MONT = font("Montserrat%5Bwght%5D.ttf", 44, 700)
+
+
+def flabel_img(txt, kind=None):
+    """Montserrat label on a white pill, with a ✓/✗ badge (photo and anatomy call-outs)"""
+    key = ("flab", txt, kind)
+    if key in _cache:
+        return _cache[key]
+    txt = N(txt); bb = F_MONT.getbbox(txt)
+    badge = 58 if kind else 0
+    w, h = bb[2] - bb[0] + 44 + badge, bb[3] - bb[1] + 30
+    im = Image.new("RGBA", (w + 30, h + 30))
+    sh = Image.new("RGBA", im.size); ImageDraw.Draw(sh).rounded_rectangle((15, 21, 15 + w, 21 + h), h // 2, fill=(0, 0, 0, 100))
+    im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(6)))
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle((15, 15, 15 + w, 15 + h), h // 2, fill=(255, 255, 255, 255))
+    col = (40, 160, 80, 255) if kind == "ok" else RED if kind == "no" else INK
+    if kind:
+        cx, cy = 15 + 22 + 18, 15 + h // 2
+        d.ellipse((cx - 22, cy - 22, cx + 22, cy + 22), fill=col)
+        if kind == "ok":
+            d.line((cx - 10, cy + 1, cx - 3, cy + 9, cx + 11, cy - 8), fill=WHITE, width=6, joint="curve")
+        else:
+            d.line((cx - 8, cy - 8, cx + 8, cy + 8), fill=WHITE, width=6); d.line((cx + 8, cy - 8, cx - 8, cy + 8), fill=WHITE, width=6)
+    d.text((15 + 22 + badge - bb[0], 15 + 15 - bb[1]), txt, font=F_MONT, fill=col if kind else INK)
+    _cache[key] = im
+    return im
+
+
 def emoji(name, size):
     key = ("emo", name, size)
     if key not in _cache:
@@ -395,6 +424,37 @@ def frame(t):
                 im = Image.open(path).convert("RGBA")
                 _cache[key] = im.resize((int(im.width * sc), int(im.height * sc)), Image.LANCZOS)
             paste(c, _cache[key], x, y, 0.92 + 0.08 * s, a)
+    # ---- moving cut-out photos (slide in on a spring, slow drift / zoom while held) ----
+    for item in globals().get("MOVERS", []):
+        t0, t1, path, x, y, sc = item[:6]
+        o = item[6] if len(item) > 6 else {}
+        if not (t0 <= t <= t1):
+            continue
+        key = ("mover", path, sc)
+        if key not in _cache:
+            im = Image.open(path).convert("RGBA")
+            im = im.resize((int(im.width * sc), int(im.height * sc)), Image.LANCZOS)
+            sh = Image.new("RGBA", (im.width + 60, im.height + 60))
+            sh.paste((0, 0, 0, 110), (30, 42), im)
+            out = sh.filter(ImageFilter.GaussianBlur(12)); out.alpha_composite(im, (30, 30))
+            _cache[key] = out
+        u = t - t0 - o.get("delay", 0)
+        if u < 0:
+            continue
+        k = spring(u, 15, 0.72)
+        dx, dy = o.get("slide", (0, 120))
+        life = max(0.01, t1 - t0)
+        ddx, ddy = o.get("drift", (0, 0))
+        z0, z1 = o.get("zoom", (1.0, 1.0))
+        a = min(1, u / 0.12, (t1 - t) / 0.15)
+        paste(c, _cache[key], x + dx * (1 - k) + ddx * (t - t0) / life, y + dy * (1 - k) + ddy * (t - t0) / life,
+              z0 + (z1 - z0) * (t - t0) / life, a)
+    for item in globals().get("FLABELS", []):
+        t0, t1, txt, x, y = item[:5]
+        kind = item[5] if len(item) > 5 else None
+        a, s = env(t, t0, t1, kind="card")
+        if a:
+            paste(c, flabel_img(txt, kind), x, y, 0.9 + 0.1 * s, a)
     # ---- paper cut-out stickers of people (sticker.py), pop in with a small tilt ----
     for t0, t1, path, x, y, sc, ang in globals().get("CUTOUTS", []):
         a, s = env(t, t0, t1, 0.10, 0.18, kind="sticker")

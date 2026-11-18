@@ -62,6 +62,11 @@ Skill talking head của HPF. Học từ 6 video reference:
    thẳng / chữ X, khớp gối trước (dây chằng bên trong), trong khớp gối (dây chằng chéo). Thêm thẻ mới = thêm một ô vào
    `render()`; `anatomy/anatomy_render.py <thư mục>` xuất từng thẻ PNG (dùng renderer của xilo-opus-video). `PANELS` trong
    beats.py hiện đúng chữ host nói.
+14. **Chữ trên thẻ minh hoạ / cảnh trám: Montserrat** (sửa của chủ kênh; Barlow cũng được), không dùng chữ viết tay.
+15. **Ảnh thật của kênh (vd. bàn chân bẹt) = tách nền + chuyển động**: tách nền rembg `birefnet-general-lite`, giữ mảng lớn
+   nhất (bỏ icon, chữ, đường chú thích của ảnh gốc), đặt trên thẻ trắng `photo_card.py`, `MOVERS` trượt vào bằng lò xo, trôi
+   và zoom nhẹ khi giữ, `FLABELS` nhãn Montserrat trên pill trắng có ✓/✗. Thứ tự lớp: thẻ -> ảnh -> nhãn.
+16. **Video về trẻ em: cảnh trám dùng source trẻ em tập**, ưu tiên squat, không dùng source người lớn.
 13. **Khung hình mặt nằm cao** (host đứng): đặt `KICKER_Y, TITLE_Y`, `RECAP_Y, RECAP_DY`, `CAP_Y`, `TAG_Y` trong beats.py,
    thẻ minh hoạ ở dải chân; zoom tối đa 1.18, FACE ~ (0.45, 0.24). Mẫu `example-7/`.
 6. **Nhạc nền sôi động vừa phải** (sửa lần 2): `music_up.py` (108 BPM, kick đều, clap 2-4, pluck, bass nảy), `final.py --bed

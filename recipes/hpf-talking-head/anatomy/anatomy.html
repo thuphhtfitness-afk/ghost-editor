@@ -3,6 +3,7 @@
 <style>
 @font-face { font-family: Hand; src: url("file:///root/.fonts/PatrickHand-Regular.ttf"); }
 @font-face { font-family: Kick; src: url("file:///root/.fonts/BeVietnamPro-ExtraBold.ttf"); }
+@font-face { font-family: Mont; src: url("file:///root/.fonts/Montserrat-VF.ttf"); font-weight: 100 900; }
 @font-face { font-family: Cred; src: url("file:///root/.fonts/BeVietnamPro-Medium.ttf"); }
 html, body { margin: 0; background: transparent; }
 canvas { display: block; }
@@ -100,7 +101,7 @@ function arrow(x0, y0, x1, y1, col, w = 7) {
   X.beginPath(); X.moveTo(x1 + Math.cos(a) * 6, y1 + Math.sin(a) * 6);
   X.lineTo(x1 - Math.cos(a - .5) * 26, y1 - Math.sin(a - .5) * 26); X.lineTo(x1 - Math.cos(a + .5) * 26, y1 - Math.sin(a + .5) * 26); X.fill();
 }
-function hand(txt, x, y, col, size = 52, align = "center") { X.font = `${size}px Hand`; X.fillStyle = col; X.textAlign = align; X.textBaseline = "middle"; X.fillText(txt, x, y); }
+function hand(txt, x, y, col, size = 52, align = "center") { X.font = `700 ${Math.round(size * 0.78)}px Mont`; X.fillStyle = col; X.textAlign = align; X.textBaseline = "middle"; X.fillText(txt, x, y); }
 function tick(x, y, ok) {
   X.fillStyle = ok ? C.green : C.red; X.beginPath(); X.arc(x, y, 24, 0, 7); X.fill();
   X.strokeStyle = "#fff"; X.lineWidth = 6; X.lineCap = "round"; X.beginPath();
@@ -108,15 +109,15 @@ function tick(x, y, ok) {
   else { X.moveTo(x - 9, y - 9); X.lineTo(x + 9, y + 9); X.moveTo(x + 9, y - 9); X.lineTo(x - 9, y + 9); }
   X.stroke();
 }
-function labelTick(txt, x, y, col, ok, size = 48) { X.font = `${size}px Hand`; const w = X.measureText(txt).width; hand(txt, x, y, col, size); tick(x - w / 2 - 34, y + 2, ok); }
+function labelTick(txt, x, y, col, ok, size = 48) { X.font = `700 ${Math.round(size * 0.78)}px Mont`; const w = X.measureText(txt).width; hand(txt, x, y, col, size); tick(x - w / 2 - 34, y + 2, ok); }
 function card(ox, oy, kicker) {
   X.save(); X.translate(ox, oy);
   X.save(); X.shadowColor = "rgba(0,0,0,.35)"; X.shadowBlur = 24; X.shadowOffsetY = 12;
   X.fillStyle = "#fcfcfa"; X.beginPath(); X.roundRect(30, 30, 1000, 580, 30); X.fill(); X.restore();
   X.strokeStyle = "#d4d6da"; X.lineWidth = 4; X.beginPath(); X.roundRect(30, 30, 1000, 580, 30); X.stroke();
-  X.font = "30px Kick"; const w = X.measureText(kicker).width;
+  X.font = "800 28px Mont"; const w = X.measureText(kicker).width;
   X.fillStyle = C.cream; X.beginPath(); X.roundRect(60, 54, w + 36, 50, 8); X.fill();
-  X.fillStyle = "#1c1814"; X.textAlign = "left"; X.textBaseline = "middle"; X.fillText(kicker, 78, 80);
+  X.font = "800 28px Mont"; X.fillStyle = "#1c1814"; X.textAlign = "left"; X.textBaseline = "middle"; X.fillText(kicker, 78, 80);
   X.font = "19px Cred"; X.fillStyle = C.grey; X.textAlign = "right"; X.fillText("minh hoạ: HPF", 1004, 590);
 }
 const end = () => X.restore();
@@ -249,6 +250,6 @@ window.render = function () {
   hand("ảnh hưởng", 230, 300, C.ink, 50); hand("lâu dài", 230, 355, C.red, 50);
   X.strokeStyle = C.red; X.lineWidth = 4; X.beginPath(); X.moveTo(310, 330); X.lineTo(590, 345); X.stroke(); end();
 };
-document.fonts.load("40px Hand").then(() => document.fonts.load("30px Kick")).then(() => document.fonts.ready)
-  .then(() => { window.render(0); window.ready = true; });
+document.fonts.load("700 40px Mont").then(() => document.fonts.load("800 28px Mont")).then(() => document.fonts.ready)
+  .catch(() => {}).then(() => { window.render(0); window.ready = true; });
 </script></body></html>

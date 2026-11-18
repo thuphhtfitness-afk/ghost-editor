@@ -53,8 +53,9 @@ A = "assets/"
 PY = 1480   # anatomy band centre (legs area)
 PANELS = [   # (t0, t1, card png, x, y, scale)
     (E(79.96), E(80.74), A + "knee_mcl.png", 540, PY, 0.98),
-    (E(23.02), E(23.95), A + "arch_normal.png", 540, PY, 0.98),
-    (E(25.86), E(27.60), A + "arch_flat.png", 540, PY, 0.98),
+    (E(23.02), E(25.80), A + "card_flatfoot.png", 540, PY, 0.98),
+    (E(25.86), E(27.60), A + "card_arch.png", 540, PY, 0.98),
+    (E(93.58), E(95.85), A + "card_stand.png", 540, PY, 0.98),
     (E(27.64), E(31.62), A + "heel_axis.png", 540, PY, 0.98),
     (E(37.72), E(40.70), A + "legs_straight.png", 540, PY, 0.98),
     (E(40.80), E(48.40), A + "legs_x.png", 540, PY, 0.98),
@@ -65,3 +66,18 @@ PANELS = [   # (t0, t1, card png, x, y, scale)
 RECAP = (E(116.10), END)
 RECAP_LINES = ["1.) bàn chân bẹt: gót đổ vào trong", "2.) khớp gối chụm thành chữ X",
                "3.) dây chằng chịu áp lực", "4.) chơi thể thao dễ chấn thương", "5.) dáng đi đứng trông xấu"]
+
+# the channel's own foot photos, cut out (rembg BiRefNet) and moving on the white card
+MOVERS = [   # (t0, t1, png, x, y, scale, {slide, delay, drift, zoom})
+    (E(23.02), E(25.80), A + "healthy_clean.png", 300, 1455, 0.92, dict(slide=(-150, 0), drift=(-10, 0), zoom=(1.0, 1.04))),
+    (E(23.02), E(25.80), A + "flat_clean.png", 780, 1455, 0.92, dict(slide=(150, 0), delay=0.25, drift=(10, 0), zoom=(1.0, 1.04))),
+    (E(25.86), E(27.60), A + "supported_clean.png", 300, 1450, 0.55, dict(slide=(0, 160), zoom=(1.0, 1.05))),
+    (E(25.86), E(27.60), A + "collapsed_clean.png", 780, 1450, 0.55, dict(slide=(0, 160), delay=0.2, zoom=(1.0, 1.05))),
+    (E(93.58), E(95.85), A + "insole_clean.png", 540, 1455, 0.92, dict(slide=(170, 0), drift=(-30, 0), zoom=(1.0, 1.06))),
+]
+FLABELS = [  # (t0, t1, text, x, y, ok/no)
+    (E(23.25), E(25.80), "bình thường", 300, 1690, "ok"),
+    (E(23.50), E(25.80), "bàn chân bẹt", 780, 1690, "no"),
+    (E(26.00), E(27.60), "có vòm", 300, 1690, "ok"),
+    (E(26.20), E(27.60), "vòm sập xuống", 780, 1690, "no"),
+]
