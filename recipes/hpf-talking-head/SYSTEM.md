@@ -88,3 +88,19 @@ python3 $H/music_synth.py <giây>              # audio/bed.wav + audio/click.wav
 python3 $H/final.py finals/<tên>.mp4 [--bed <nhạc>] [--bed-db -17]
 ```
 Duyệt sheet trước khi render: không đồ hoạ nào chạm mặt ở shot tight 1.32, chữ không tràn mép, mỗi beat đúng chữ.
+
+
+## Học từ xilo-opus-video (skill làm video bằng code, cài ở ~/.claude/skills/xilo-opus-video)
+- **Lò xo dạng công thức thay cho easing**: mọi pop là hàm thuần của thời gian `spring(t, w, z)`, một preset cho mỗi loại
+  phần tử, cùng loại thì cùng preset trong cả reel: `sticker` (w 18, z 0.45: emoji, người cắt, badge, nảy rõ), `card`
+  (w 15, z 0.72: tag, checklist), `heavy` (w 10, z 0.90: chữ lớn, con số, keyword pop, gần như không nảy). `SPRING` trong overlay.py.
+- **Tự chấm điểm trước khi giao**: `qa_score.py finals/<reel>.mp4 --out qa/<reel>` -> bảng khung mỗi 2 s, bản 360 px như trên
+  điện thoại, mẫu chấm 7 hạng mục vào `qa/review_log.md` (hook 2 s, đọc được trên điện thoại, chuyển động, mỗi 2-4 s có
+  thứ mới, bố cục, đúng lời host / taste, âm-hình khớp). Nhìn như người lạ, ghi 3 lỗi nặng nhất kèm giây, sửa, chấm lại tới khi
+  mọi hạng mục >= 8. Đoạn chuyển động nhanh: `--strip <giây>` (12 khung liền nhau).
+- **Không bao giờ hai khối chữ cùng lúc ở một vùng**: header cũ tắt hẳn 0,22 s trước header mới (lỗi bắt được nhờ bản 360 px).
+- **Nhạc kênh có sẵn**: `python3 ~/.claude/skills/xilo-opus-video/scripts/audio_tools.py beats <nhạc> > build/beats.json`,
+  đặt đổi mục / pop lớn lên downbeat, SFX lên hit.
+- **Đồ hoạ chuyển động làm bằng code** (intro, biểu đồ, giải thích nguyên lý) khi footage không có: dựng bằng xilo-opus-video
+  ở 1080x1920 (`render(t)` + `render.py`), rồi đưa vào reel như một dòng `BROLL` (file mp4). Ở môi trường này đặt
+  `PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers`.

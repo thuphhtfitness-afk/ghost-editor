@@ -156,13 +156,28 @@ def _safe(canvas, im, x, y):
     canvas.alpha_composite(tmp)
 
 
-def env(t, t0, t1, fin=0.12, fout=0.15):
+# closed-form spring (from xilo-opus-video craft rules): a pure function of time, no state between frames.
+# One preset per kind of element, the same preset for the same kind across the reel.
+SPRING = {"sticker": (18, 0.45),   # emoji, cut-out people, badges: lively, visible bounce
+          "card": (15, 0.72),      # tags, checklist pills: default
+          "heavy": (10, 0.90)}     # big words, numbers, keyword pops: settles with almost no bounce
+
+
+def spring(x, w=15, z=0.72):
+    if x <= 0:
+        return 0.0
+    wd = w * math.sqrt(1 - z * z)
+    return 1 - math.exp(-z * w * x) * (math.cos(wd * x) + (z * w / wd) * math.sin(wd * x))
+
+
+def env(t, t0, t1, fin=0.12, fout=0.15, kind="card"):
     """alpha envelope and pop scale for an element living t0..t1"""
     if t < t0 or t > t1:
         return 0, 0
     a = min(1, (t - t0) / fin) if fin else 1
     a = min(a, (t1 - t) / fout) if fout else a
-    s = 0.6 + 0.4 * ease_back((t - t0) / 0.28)
+    w, z = SPRING.get(kind, SPRING["card"])
+    s = 0.6 + 0.4 * spring(t - t0, w, z)
     return a, s
 
 
@@ -270,8 +285,11 @@ def frame(t):
             paste(c, emoji("star", 60), 170, 225, 1.1 - tw * 0.2, a)
     t = t_abs
     # ---- section headers ----
-    for t0, t1, l1, l2 in SECTIONS:
+    for si, (t0, t1, l1, l2) in enumerate(SECTIONS):
         t1 = min(t1, RECAP[0] - 0.25)   # the recap owns the top band: never two blocks of text at once
+        nxt = [s_[0] for s_ in SECTIONS if s_[0] > t0]
+        if nxt:
+            t1 = min(t1, min(nxt) - 0.22)  # the old header is gone before the next one types in
         bd_ = globals().get("BOARD")
         if bd_ and bd_["t0"] - 0.1 <= t <= bd_["t1"]:
             continue                    # the whiteboard owns the top band too
@@ -295,12 +313,12 @@ def frame(t):
                 paste(c, im, W / 2, y + i * 72, 0.9 + 0.1 * a, a)
     # ---- emoji ----
     for t0, t1, name, x, y, sz in EMOJI:
-        a, s = env(t, t0, t1)
+        a, s = env(t, t0, t1, kind="sticker")
         if a:
             bob = 6 * math.sin((t - t0) * 4)
             paste(c, emoji(name, sz), x, y + bob, s, a)
     for t0, t1, x, y, kind in MARKS:
-        a, s = env(t, t0, t1)
+        a, s = env(t, t0, t1, kind="sticker")
         if a:
             b = Image.new("RGBA", (84, 84))
             d = ImageDraw.Draw(b)
@@ -367,7 +385,7 @@ def frame(t):
         c.alpha_composite(layer, (0, int(slide)))
     # ---- paper cut-out stickers of people (sticker.py), pop in with a small tilt ----
     for t0, t1, path, x, y, sc, ang in globals().get("CUTOUTS", []):
-        a, s = env(t, t0, t1, 0.10, 0.18)
+        a, s = env(t, t0, t1, 0.10, 0.18, kind="sticker")
         if a:
             key = ("cut", path, sc, ang)
             if key not in _cache:
@@ -381,12 +399,12 @@ def frame(t):
             paste(c, im, x, y, s, a)
     # ---- big numbers (Oswald, cream) ----
     for t0, t1, txt, x, y in NUMBERS:
-        a, s = env(t, t0, t1)
+        a, s = env(t, t0, t1, kind="heavy")
         if a:
             paste(c, text_img(txt, F_OSW_M, CREAM, glow=True), x, y, s, a)
     # ---- price card ----
     if PRICE and PRICE[0] <= t <= PRICE[1]:
-        a, s = env(t, PRICE[0], PRICE[1])
+        a, s = env(t, PRICE[0], PRICE[1], kind="heavy")
         old = text_img(PRICE[2], F_OSW, WHITE)
         fit = min(1.0, 980 / old.width)
         if fit < 1:
@@ -399,7 +417,7 @@ def frame(t):
             x1 = x0 + (old.width - 80) * p
             d.line((x0, 480, x1, 460), fill=RED, width=14)
         if t >= NEW_PRICE_T:
-            a2, s2 = env(t, NEW_PRICE_T, PRICE[1])
+            a2, s2 = env(t, NEW_PRICE_T, PRICE[1], kind="heavy")
             paste(c, text_img(PRICE[3], F_OSW_M, CREAM, glow=True), W / 2 + 40, 630, s2, a2)
     # ---- tags ----
     for t0, t1, txt in TAGS:
@@ -408,7 +426,7 @@ def frame(t):
             paste(c, tag_img(txt), W / 2, 1290, 0.85 + 0.15 * s, a)
     # ---- keyword pops ----
     for t0, t1, txt, st in POPS:
-        a, s = env(t, t0, t1, 0.08, 0.12)
+        a, s = env(t, t0, t1, 0.08, 0.12, kind="heavy")
         if a:
             lines = txt.split("\n")
             for i, ln in enumerate(lines):
