@@ -311,6 +311,19 @@ def intro_stack(c, u, fade, it):
     """stacked title (ref: gym reel intro): white caps line, a huge coral word that slides in from the left on a spring
     with a motion-blur trail, then sub words popping one by one, flashing yellow before settling"""
     y = it.get("y", TITLE_Y + 10)
+    key = ("intrograd", y)
+    if key not in _cache:                                 # dark band behind the stack: soft top/bottom edges
+        g = Image.new("RGBA", (W, H)); d = ImageDraw.Draw(g)
+        y0, y1 = y - 220, y + 400
+        for yy in range(max(0, y0), min(H, y1)):
+            u_ = (yy - y0) / (y1 - y0)
+            d.line((0, yy, W, yy), fill=(0, 0, 0, int(205 * math.sin(math.pi * u_) ** 0.6)))
+        _cache[key] = g
+    gb = _cache[key]
+    ga = min(1, u / 0.2) * fade
+    if ga < 0.999:
+        gb = gb.copy(); gb.putalpha(gb.split()[3].point(lambda v: int(v * ga)))
+    c.alpha_composite(gb)
     top = text_img(it["top"], F_INTRO_TOP, WHITE)
     paste(c, top, W / 2, y, 0.92 + 0.08 * spring(u, 15, .75), min(1, u / 0.12) * fade)
     fb = _fit(it["big"], it.get("big_size", 190))
