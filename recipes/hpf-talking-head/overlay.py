@@ -540,7 +540,9 @@ def frame(t):
     for t0, t1, txt in TAGS:
         a, s = env(t, t0, t1)
         if a:
-            paste(c, tag_img(txt), cap_x(t) if TAG_X == W / 2 else TAG_X, TAG_Y, 0.85 + 0.15 * s, a)
+            ti = tag_img(txt); tx = cap_x(t) if TAG_X == W / 2 else TAG_X
+            tx = min(max(tx, ti.width / 2 + 10), W - ti.width / 2 - 10)   # a long tag stays on screen
+            paste(c, ti, tx, TAG_Y, 0.85 + 0.15 * s, a)
     # ---- keyword pops ----
     for t0, t1, txt, st in POPS:
         a, s = env(t, t0, t1, 0.08, 0.12, kind="heavy")
@@ -609,7 +611,14 @@ def frame(t):
             al = min(1, (u - tc) / 0.25)
             paste(c, kicker_img(ec["cta"]), W / 2, y + 60, 0.9 + 0.1 * spring(u - tc, 15, .7), al)
         if ec.get("question") and u >= tc + 0.5:
-            paste(c, text_img(ec["question"], F_SER_M, CREAM, glow=True), W / 2, y + 190, 1, min(1, (u - tc - 0.5) / 0.3))
+            qa = min(1, (u - tc - 0.5) / 0.3); q = ec["question"]
+            qf = F_SER_M if text_img(q, F_SER_M, CREAM, glow=True).width - 80 < W - 100 else F_SER_S
+            if text_img(q, qf, CREAM, glow=True).width - 80 < W - 100:
+                paste(c, text_img(q, qf, CREAM, glow=True), W / 2, y + 190, 1, qa)
+            else:
+                ws = q.split(); h_ = len(ws) // 2
+                for k_, ln in enumerate((" ".join(ws[:h_]), " ".join(ws[h_:]))):
+                    paste(c, text_img(ln, qf, CREAM, glow=True), W / 2, y + 170 + k_ * 70, 1, qa)
     # ---- outro: brand screen after the last word ----
     if ot and t_abs >= t_out:
         u = t_abs - t_out
