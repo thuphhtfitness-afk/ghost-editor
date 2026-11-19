@@ -63,15 +63,15 @@ Skill talking head của HPF. Học từ 6 video reference:
    `render()`; `anatomy/anatomy_render.py <thư mục>` xuất từng thẻ PNG (dùng renderer của xilo-opus-video). `PANELS` trong
    beats.py hiện đúng chữ host nói.
 22. **Thương hiệu** (sửa của chủ kênh): logo HT Fitness bản **trắng** (chuyển từ logo đỏ của kênh: giữ alpha, tô trắng)
-   mờ 25 % ở góc trái dưới suốt video (`WATERMARK`), và **outro của kênh** (clip 6,5 s "Hệ sinh thái HT Fitness Việt Nam")
+   mờ ~30 % ở **góc trên bên phải**, trên mảng nền trơn / nan gỗ, dưới dòng tiêu đề mục (`WATERMARK x=955, y=390`; sửa lần 2 của chủ kênh), và **outro của kênh** (clip 6,5 s "Hệ sinh thái HT Fitness Việt Nam")
    nối sau lời cuối: `final.py ... --append assets/outro_ht.mp4` (âm thanh outro +8 dB có limiter, không loudnorm vì chỉ là
    vài tiếng hit). Không có clip thì `OUTRO` tự dựng (nền tối đỏ, logo nảy vào, "Theo dõi để xem thêm"). Logo là tài sản của kênh: để trong `assets/` của reel, không commit lên repo.
 24. **Tiêu đề mở đầu kiểu xếp tầng** (sửa của chủ kênh, theo video mẫu): `INTRO = dict(top="VÌ SAO BẠN HAY", big="MỎI CỔ - VAI - GÁY",
    sub="...", coral=[...])`: dòng trên trắng in hoa Be Vietnam ExtraBold, dòng giữa Oswald 700 rất lớn màu san hô #F28C7A trượt
    vào từ trái (lò xo + vệt mờ chuyển động), dòng dưới hiện từng chữ, loé vàng rồi về trắng / san hô. Chữ lớn tự co cho vừa
    980 px. Vị trí mặc định: GIỮA khung, dưới mặt (`y=800`, sửa của chủ kênh), có dải nền tối gradient phía sau (đậm ~80 % ở giữa, mờ dần hai mép, hiện/tắt cùng tiêu đề); nếu dòng dưới chạm người thì gộp thành 2 tầng.
-23. **Thẻ nhóm cơ ở cột TRÁI, không che mặt** (sửa của chủ kênh, áp dụng mặc định): `RX, CY, SC = 200, 760, 0.42`,
-   phụ đề/tag/emoji sang phải (`CAP_X = 690`, emoji x ~900). Chỉ dùng cột phải khi host quay hẳn sang trái và cột trái có người.
+23. **Thẻ nhóm cơ ở cột TRÁI, không che mặt** (sửa của chủ kênh, áp dụng mặc định): `RX, CY, SC = 200, 760, 0.42`;
+   **phụ đề, pop, tag luôn căn GIỮA khung** (`CAP_X = 540`, sửa của chủ kênh), emoji bên phải (x ~900). Chỉ dùng cột phải khi host quay hẳn sang trái và cột trái có người.
 20. **Host đứng (khung mặt cao): thẻ minh hoạ khổ DỌC ở cột bên phải** (sửa của chủ kênh), x ~660-1055, y ~340-1140
    (`RX, CY, SC = 858, 740, 0.47`); khi host đứng nghiêng quay sang phải thì cột trái (`LX = 222`). Phụ đề/pop/tag dời sang
    phía còn trống: `CAP_X`, `CAP_X_AT`.

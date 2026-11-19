@@ -3,12 +3,12 @@ from plan import to_edit as E, hook_end, timeline, FPS, BROLL
 FIX = {"gái": "gáy", "vây": "vai", "biển": "ra", "dãn": "giãn", "cuộc": "cột", "Thằng": "cơ", "thằng": "cái", "gây": "kinh", "tọa": "toạ", "bí": "ý", "từ": "kiến", "ruỗi": "duỗi", "Đố": "cột", "rén": "rén", "elit": "elite", "cây": "cột", "cầu": "sống", "Không": "rồi", "Nhấp": "nhấc"}
 TOTAL = timeline()[1]
 OUTRO = None   # final.py --append assets/outro_ht.mp4
-WATERMARK = dict(path="assets/logo_ht_white.png", x=120, y=1690, width=190, alpha=0.25)
+WATERMARK = dict(path="assets/logo_ht_white.png", x=955, y=390, width=170, alpha=0.3)   # top right, on the wood slats (owner)
 CAP_Y = 1150
 TAG_Y = 1035
 KICKER_Y, TITLE_Y = 95, 190
 RECAP_Y, RECAP_DY = 105, 58
-CAP_X = 690
+CAP_X = 540   # captions centred (owner)
 A = "assets/"
 RX, CY, SC = 200, 760, 0.42   # muscle cards in the LEFT column (owner: never over the face)
 WIN = (40, 160, 800, 1160)
