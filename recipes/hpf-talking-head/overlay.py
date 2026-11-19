@@ -216,6 +216,10 @@ def env(t, t0, t1, fin=0.12, fout=0.15, kind="card"):
 
 # ---------------- words ----------------
 from beats import FIX  # caption fixes for mis-heard words
+try:
+    from beats import FIX_AT
+except ImportError:
+    FIX_AT = {}
 
 
 def load_words():
@@ -225,16 +229,20 @@ def load_words():
         for seg in json.load(open(tx)):
             d.append({**seg, "words": [{**w, "s": w["s"] + off, "e": w["e"] + off} for w in seg["words"]]})
     tl, total = timeline()
-    words = []
+    words, seen = [], set()
     for a, b, es, n, z, pi in tl:
         for s in d:
             for w in s["words"]:
-                if w["e"] > a + 0.1 and w["s"] < b - 0.05:
+                if w["e"] > a + 0.1 and w["s"] < b - 0.05 and (w["s"], w["w"]) not in seen:
+                    seen.add((w["s"], w["w"]))   # a word straddling a silence cut belongs to the first piece only
                     words.append([es + max(0, w["s"] + WORD_LAG - a), es + (min(w["e"] + WORD_LAG, b) - a), w["w"], w["s"]])
     # merge "60" "-70" style number pairs, apply fixes, strip punctuation
     out = []
     for w in words:
         txt = FIX.get(w[2].strip(",.?"), w[2].strip(",.?"))
+        fa = globals().get('FIX_AT', {}).get(round(w[3], 2))   # a fix for one word at one moment
+        if fa is not None:
+            txt = fa
         if not txt:
             continue
         if txt.startswith("-") and out:
@@ -417,8 +425,12 @@ def frame(t):
             layer.putalpha(layer.split()[3].point(lambda v: int(v * a)))
         c.alpha_composite(layer, (0, int(slide)))
     # ---- illustration cards (anatomy_cards.py etc.): steady, card spring ----
-    for t0, t1, path, x, y, sc in globals().get("PANELS", []):
+    for item in globals().get("PANELS", []):
+        t0, t1, path, x, y, sc = item[:6]
+        bg = item[6] if len(item) > 6 else None      # e.g. (244, 244, 242): full-screen card over the footage
         a, s = env(t, t0, t1, 0.10, 0.15, kind="card")
+        if a and bg:
+            c.alpha_composite(Image.new("RGBA", (W, H), tuple(bg) + (int(255 * a),)))
         if a:
             key = ("panel", path, sc)
             if key not in _cache:

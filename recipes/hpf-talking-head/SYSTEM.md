@@ -62,6 +62,13 @@ Skill talking head của HPF. Học từ 6 video reference:
    thẳng / chữ X, khớp gối trước (dây chằng bên trong), trong khớp gối (dây chằng chéo). Thêm thẻ mới = thêm một ô vào
    `render()`; `anatomy/anatomy_render.py <thư mục>` xuất từng thẻ PNG (dùng renderer của xilo-opus-video). `PANELS` trong
    beats.py hiện đúng chữ host nói.
+17. **Host đứng nghiêng để minh hoạ tư thế**: không che phần cơ thể đang minh hoạ; chỉ nhãn trên người, thẻ ở dải chân
+   (hông vẫn lộ phía trên). Thẻ toàn màn hình (`PANELS` có màu nền) chỉ khi không còn chỗ nào khác, vì trông trống.
+18. **Phụ đề**: một từ vắt qua chỗ cắt khoảng lặng chỉ hiện một lần; sửa chữ nghe sai theo đúng thời điểm bằng `FIX_AT`
+   (`{giây gốc: "chữ đúng"}`, "" để ẩn) khi `FIX` theo từ sẽ làm hỏng chỗ khác (vd. "bằng" trong "thăng bằng").
+19. **Bộ hình giải phẫu theo chủ đề**: `anatomy/prims.js` (bộ vẽ chung) + một trang mỗi chủ đề (`anatomy.html` bàn chân/gối,
+   `heels.html` giày cao gót: bắp chân, cơ gấp hông, khung chậu, lưng võng, chuỗi đau lưng);
+   `anatomy_render.py <thư mục> heels.html`. Kiểm tra chiều cong giải phẫu (lưng võng = thắt lưng cong ra trước).
 14. **Chữ trên thẻ minh hoạ / cảnh trám: Montserrat** (sửa của chủ kênh; Barlow cũng được), không dùng chữ viết tay.
 15. **Ảnh thật của kênh (vd. bàn chân bẹt) = tách nền + chuyển động**: tách nền rembg `birefnet-general-lite`, giữ mảng lớn
    nhất (bỏ icon, chữ, đường chú thích của ảnh gốc), đặt trên thẻ trắng `photo_card.py`, `MOVERS` trượt vào bằng lò xo, trôi
