@@ -4,8 +4,8 @@ from plan import to_edit as E, hook_end, timeline, FPS, BROLL
 FIX = {"dày": "giày", "hót": "gót", "giấy": "gây", "hằng": "đằng"}
 FIX_AT = {54.94: "ra đằng", 46.7: "", 46.82: "", 67.92: "ấy"}   # (original second of the word): text
 TOTAL = timeline()[1]
-OUTRO = dict(dur=2.6, logo="assets/logo_ht_white.png", line="Theo dõi để xem thêm")
-END = TOTAL / FPS + 0.3 + OUTRO["dur"]
+OUTRO = None   # the channel outro clip is appended instead (final.py --append assets/outro_ht.mp4)
+END = TOTAL / FPS + 0.6
 WATERMARK = dict(path="assets/logo_ht_white.png", x=120, y=1690, width=190, alpha=0.25)   # faint logo, lower left
 CAP_Y = 1090
 TAG_Y = 975

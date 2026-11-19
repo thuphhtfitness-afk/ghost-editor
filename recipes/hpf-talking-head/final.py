@@ -46,4 +46,16 @@ cmd = ["ffmpeg", "-v", "error", "-stats", "-y"] + inp + ["-filter_complex", ";".
 gen = subprocess.Popen([sys.executable, f"{HERE}/overlay.py", "--frames"], stdout=subprocess.PIPE)
 r = subprocess.run(cmd, stdin=gen.stdout)
 gen.wait()
+if r.returncode == 0 and "--append" in sys.argv:          # the channel's own outro clip after the reel
+    clip = sys.argv[sys.argv.index("--append") + 1]
+    body = out + ".body.mp4"; os.replace(out, body)
+    r = subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", body, "-i", clip, "-filter_complex",
+        "[0:v]fps=30,scale=1080:1920,setsar=1,format=yuv420p[v0];[1:v]fps=30,scale=1080:1920:force_original_aspect_ratio=decrease,"
+        "pad=1080:1920:(ow-iw)/2:(oh-ih)/2,setsar=1,format=yuv420p[v1];"
+        "[0:a]aresample=48000,aformat=channel_layouts=stereo[a0];[1:a]aresample=48000,aformat=channel_layouts=stereo,"
+        "volume=8dB,alimiter=limit=0.84[a1];[v0][a0][v1][a1]concat=n=2:v=1:a=1[v][a]",
+        "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-preset", "slow", "-crf", str(CRF), "-profile:v", "high",
+        "-level", "4.2", "-maxrate", "20M", "-bufsize", "30M", "-color_primaries", "bt709", "-color_trc", "bt709",
+        "-colorspace", "bt709", "-movflags", "+faststart", "-c:a", "aac", "-b:a", "256k", out])
+    os.remove(body)
 sys.exit(r.returncode)
