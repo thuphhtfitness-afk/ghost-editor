@@ -343,6 +343,26 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "ph-n-title-intro-m",
+   "say": "phần title intro mở đầu edit theo style video reference (chữ xếp tầng: dòng trắng nhỏ, chữ san hô cực lớn trượt vào, dòng dưới hiện từng chữ)",
+   "from": "user",
+   "kind": "prefer",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "office-0178"
+   ],
+   "first": "2026-11-19",
+   "last": "2026-11-19",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],

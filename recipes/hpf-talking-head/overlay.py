@@ -293,6 +293,55 @@ def cap_x(t):
     return CAP_X
 
 
+CORAL = (242, 140, 122, 255)
+F_INTRO_TOP = font("BeVietnamPro-ExtraBold.ttf", 58)
+F_INTRO_SUB = font("BeVietnamPro-ExtraBold.ttf", 62)
+
+
+def _fit(txt, size, maxw=980):
+    while size > 60:
+        f = font("Oswald%5Bwght%5D.ttf", size, 700)
+        if f.getbbox(N(txt))[2] <= maxw:
+            return f
+        size -= 8
+    return font("Oswald%5Bwght%5D.ttf", size, 700)
+
+
+def intro_stack(c, u, fade, it):
+    """stacked title (ref: gym reel intro): white caps line, a huge coral word that slides in from the left on a spring
+    with a motion-blur trail, then sub words popping one by one, flashing yellow before settling"""
+    y = it.get("y", TITLE_Y + 10)
+    top = text_img(it["top"], F_INTRO_TOP, WHITE)
+    paste(c, top, W / 2, y, 0.92 + 0.08 * spring(u, 15, .75), min(1, u / 0.12) * fade)
+    fb = _fit(it["big"], it.get("big_size", 190))
+    big = text_img(it["big"], fb, CORAL)
+    t0 = 0.18
+    if u >= t0:
+        k = spring(u - t0, 13, 0.78)
+        x = W / 2 - (W * 0.9) * (1 - k)
+        yb = y + 40 + big.height / 2 - 40
+        if u - t0 < 0.3:                                  # trail
+            for g in (3, 2, 1):
+                paste(c, big, x - g * 46 * (1 - k), yb, 1, 0.18 * fade)
+        paste(c, big, x, yb, 1, fade)
+        y = yb + big.height / 2 - 30
+    words = it.get("sub", "").split()
+    if words:
+        ts = t0 + 0.45
+        line, xs = [], 0
+        ims = [text_img(w_, F_INTRO_SUB, WHITE) for w_ in words]
+        total = sum(i.width - 80 for i in ims) + 22 * (len(ims) - 1)
+        x = W / 2 - total / 2
+        for i, (w_, im) in enumerate(zip(words, ims)):
+            tw = ts + i * 0.12
+            if u < tw:
+                break
+            col = (255, 214, 64, 255) if u - tw < 0.16 else (CORAL if w_ in it.get("coral", []) else WHITE)
+            imc = text_img(w_, F_INTRO_SUB, col)
+            paste(c, imc, x + (im.width - 80) / 2, y + 56, 0.85 + 0.15 * spring(u - tw, 18, .5), fade)
+            x += im.width - 80 + 22
+
+
 def caption_zone_busy(t):
     for t0, t1, *_ in POPS:
         if t0 <= t <= t1:
@@ -315,7 +364,9 @@ def frame(t):
     t_abs = t
     c = GRAD.copy()
     # ---- hook (ref 1 + ref 6 title) ----
-    if TITLE_T0 <= t < HOOK_END:
+    if globals().get("INTRO") and TITLE_T0 <= t < HOOK_END:
+        intro_stack(c, t - TITLE_T0, min(1, (HOOK_END - t) / 0.2), INTRO)
+    elif TITLE_T0 <= t < HOOK_END:
         a = min(1, (HOOK_END - t) / 0.2)
         t = t - TITLE_T0  # title clock
         k = kicker_img(f"✦ {KICKER} ✦")

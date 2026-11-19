@@ -44,3 +44,4 @@ ZPANELS = [
 ]
 RECAP = (E(199.10), TOTAL / FPS + 0.2)
 RECAP_LINES = []
+INTRO = dict(top="ĐAU LƯNG DƯỚI", big="CỨ GIÃN MÔNG?")

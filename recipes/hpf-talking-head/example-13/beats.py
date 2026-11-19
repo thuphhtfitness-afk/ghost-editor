@@ -41,3 +41,4 @@ FLABELS = [(E(309.56), E(312.90), "ngồi lệch một bên", 690, 930, "no"), (
 ZPANELS = [(E(313.82), E(320.40), A + "p_lean.png", A + "p_lean.png", RX, CY, SC, dict(focus=(420, 700), zoom=1.0, zoom_at=None, win=WIN))]
 RECAP = (E(408.95), TOTAL / FPS + 0.2)
 RECAP_LINES = []
+INTRO = dict(top="TẬP GYM CHO NGƯỜI", big="THOÁT VỊ ĐĨA ĐỆM?", y=110, big_size=170)
