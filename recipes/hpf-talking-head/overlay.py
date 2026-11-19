@@ -559,6 +559,38 @@ def frame(t):
                 k = min(1, (t - s0) / 0.06)
                 paste(c, text_img(txt.lower(), F_CAP, WHITE), cap_x(t), cy, 0.92 + 0.08 * k, 1)
                 break
+    # ---- brand watermark (faint logo), hidden under the outro ----
+    wm = globals().get("WATERMARK")
+    ot = globals().get("OUTRO")
+    t_out = (TOTAL / FPS + 0.3) if ot else 1e9
+    if wm and t_abs < t_out + 0.3:
+        key = ("wm", wm["path"], wm["width"])
+        if key not in _cache:
+            im = Image.open(wm["path"]).convert("RGBA")
+            _cache[key] = im.resize((wm["width"], int(im.height * wm["width"] / im.width)), Image.LANCZOS)
+        paste(c, _cache[key], wm["x"], wm["y"], 1, wm.get("alpha", 0.35))
+    # ---- outro: brand screen after the last word ----
+    if ot and t_abs >= t_out:
+        u = t_abs - t_out
+        a = min(1, u / 0.3)
+        bgc = Image.new("RGBA", (W, H))
+        d = ImageDraw.Draw(bgc)
+        for yy in range(0, H, 4):
+            k = yy / H
+            d.rectangle((0, yy, W, yy + 4), fill=(int(20 + 30 * k), int(14 + 2 * k), int(16 + 4 * k), int(255 * a)))
+        c.alpha_composite(bgc)
+        key = ("outro", ot["logo"])
+        if key not in _cache:
+            im = Image.open(ot["logo"]).convert("RGBA")
+            _cache[key] = im.resize((640, int(im.height * 640 / im.width)), Image.LANCZOS)
+        lg = _cache[key]
+        s_ = 0.7 + 0.3 * spring(u - 0.15, 12, 0.7)
+        paste(c, lg, W / 2, 860, s_, min(1, max(0, (u - 0.15) / 0.2)))
+        dl = ImageDraw.Draw(c)
+        lw = 260 * min(1, max(0, (u - 0.5) / 0.4))
+        dl.line((W / 2 - lw, 860 + lg.height / 2 + 60, W / 2 + lw, 860 + lg.height / 2 + 60), fill=(220, 45, 55, 255), width=6)
+        if ot.get("line") and u > 0.7:
+            paste(c, text_img(ot["line"], F_MONT, WHITE), W / 2, 860 + lg.height / 2 + 140, 1, min(1, (u - 0.7) / 0.25))
     # ---- flash on the hook -> scene cut (white, 0.35 s) ----
     if TITLE_T0 - 0.04 <= t_abs < TITLE_T0 + 0.35:
         k = (t_abs - TITLE_T0 + 0.04) / 0.39
@@ -580,6 +612,8 @@ def sfx_events():
         ev.append((bd["t0"], "cc0-paper-flip", -15))
         ev.append((bd["arrow"][0], "cc0-whoosh-reverse", -20))
         ev.append((bd["after"][1], "cc0-paper-riffle", -18))
+    if globals().get("OUTRO"):
+        ev.append((TOTAL / FPS + 0.25, "cc0-swell-short", -12))
     for p_ in globals().get("PANELS", []):
         ev.append((p_[0], "cc0-paper-flip", -17))
     for p_ in globals().get("ZPANELS", []):

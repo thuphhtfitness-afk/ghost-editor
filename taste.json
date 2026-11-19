@@ -303,6 +303,26 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "th-m-outtro-logo-ht",
+   "say": "thêm outtro + logo HT Fitness mờ ở phần bên tay trái; logo chuyển thành màu trắng và giảm opacity",
+   "from": "user",
+   "kind": "default",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "giay-cao-got"
+   ],
+   "first": "2026-11-19",
+   "last": "2026-11-19",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],

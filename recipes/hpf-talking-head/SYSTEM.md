@@ -62,6 +62,9 @@ Skill talking head của HPF. Học từ 6 video reference:
    thẳng / chữ X, khớp gối trước (dây chằng bên trong), trong khớp gối (dây chằng chéo). Thêm thẻ mới = thêm một ô vào
    `render()`; `anatomy/anatomy_render.py <thư mục>` xuất từng thẻ PNG (dùng renderer của xilo-opus-video). `PANELS` trong
    beats.py hiện đúng chữ host nói.
+22. **Thương hiệu** (sửa của chủ kênh): logo HT Fitness bản **trắng** (chuyển từ logo đỏ của kênh: giữ alpha, tô trắng)
+   mờ 25 % ở góc trái dưới suốt video (`WATERMARK`), và **outro** 2,6 s sau lời cuối (`OUTRO`: nền tối đỏ, logo nảy vào, gạch
+   đỏ, "Theo dõi để xem thêm", tiếng swell). Logo là tài sản của kênh: để trong `assets/` của reel, không commit lên repo.
 20. **Host đứng (khung mặt cao): thẻ minh hoạ khổ DỌC ở cột bên phải** (sửa của chủ kênh), x ~660-1055, y ~340-1140
    (`RX, CY, SC = 858, 740, 0.47`); khi host đứng nghiêng quay sang phải thì cột trái (`LX = 222`). Phụ đề/pop/tag dời sang
    phía còn trống: `CAP_X`, `CAP_X_AT`.

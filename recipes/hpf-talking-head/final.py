@@ -16,7 +16,7 @@ inp = ["-i", "build/plate.mp4", "-f", "rawvideo", "-pix_fmt", "rgba", "-s", "108
        "-i", "build/voice_raw.wav", "-i", bed]
 k = 4
 fv, fa = [], []
-fv.append("[0:v]tpad=stop_mode=clone:stop_duration=1[p0]")
+fv.append(f"[0:v]tpad=stop_mode=clone:stop_duration={max(1.0, END - ev['total'] / 30 + 0.5):.2f}[p0]")   # held tail covers an outro too
 last = "p0"
 for i, b in enumerate(br):
     inp += ["-i", b["file"]]
