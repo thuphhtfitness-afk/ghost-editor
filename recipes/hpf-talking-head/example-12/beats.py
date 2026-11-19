@@ -3,7 +3,7 @@ from plan import to_edit as E, hook_end, timeline, FPS, BROLL
 FIX = {"gái": "gáy", "vây": "vai", "biển": "ra", "dãn": "giãn", "cuộc": "cột", "Thằng": "cơ", "thằng": "cái", "gây": "kinh", "tọa": "toạ", "bí": "ý", "từ": "kiến", "ruỗi": "duỗi", "Đố": "cột", "rén": "rén", "elit": "elite", "cây": "cột", "cầu": "sống", "Không": "rồi", "Nhấp": "nhấc"}
 TOTAL = timeline()[1]
 OUTRO = None   # final.py --append assets/outro_ht.mp4
-WATERMARK = dict(path="assets/logo_ht_white.png", x=955, y=390, width=170, alpha=0.3)   # top right, on the wood slats (owner)
+WATERMARK = dict(path="assets/logo_ht_white.png", x=955, y=480, width=170, alpha=0.3)   # top right, on the wood slats (owner)
 CAP_Y = 1150
 TAG_Y = 1035
 KICKER_Y, TITLE_Y = 95, 190

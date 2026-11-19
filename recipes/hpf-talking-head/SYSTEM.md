@@ -63,7 +63,7 @@ Skill talking head của HPF. Học từ 6 video reference:
    `render()`; `anatomy/anatomy_render.py <thư mục>` xuất từng thẻ PNG (dùng renderer của xilo-opus-video). `PANELS` trong
    beats.py hiện đúng chữ host nói.
 22. **Thương hiệu** (sửa của chủ kênh): logo HT Fitness bản **trắng** (chuyển từ logo đỏ của kênh: giữ alpha, tô trắng)
-   mờ ~30 % ở **góc trên bên phải**, trên mảng nền trơn / nan gỗ, dưới dòng tiêu đề mục (`WATERMARK x=955, y=390`; sửa lần 2 của chủ kênh), và **outro của kênh** (clip 6,5 s "Hệ sinh thái HT Fitness Việt Nam")
+   mờ ~30 % ở **góc trên bên phải**, trên mảng nền trơn / nan gỗ, dưới dòng tiêu đề mục (`WATERMARK x=955, y=480`: không chạm dòng tiêu đề mục; sửa lần 3 của chủ kênh), và **outro của kênh** (clip 6,5 s "Hệ sinh thái HT Fitness Việt Nam")
    nối sau lời cuối: `final.py ... --append assets/outro_ht.mp4` (âm thanh outro +8 dB có limiter, không loudnorm vì chỉ là
    vài tiếng hit). Không có clip thì `OUTRO` tự dựng (nền tối đỏ, logo nảy vào, "Theo dõi để xem thêm"). Logo là tài sản của kênh: để trong `assets/` của reel, không commit lên repo.
 24. **Tiêu đề mở đầu kiểu xếp tầng** (sửa của chủ kênh, theo video mẫu): `INTRO = dict(top="VÌ SAO BẠN HAY", big="MỎI CỔ - VAI - GÁY",
