@@ -8,9 +8,9 @@ CAP_Y = 1150
 TAG_Y = 1035
 KICKER_Y, TITLE_Y = 95, 190
 RECAP_Y, RECAP_DY = 105, 58
-CAP_X = 400
+CAP_X = 690
 A = "assets/"
-RX, CY, SC = 858, 760, 0.47
+RX, CY, SC = 200, 760, 0.42   # muscle cards in the LEFT column (owner: never over the face)
 WIN = (40, 160, 800, 1160)
 MARKS = []; CHECKLIST = []; NUMBERS = []; PRICE = None; STRIKE_T = NEW_PRICE_T = 0; CUTOUTS = []; PANELS = []; EMOJI = []
 TITLE_T0 = hook_end()
@@ -37,7 +37,7 @@ TAGS = [
     (E(320.48), E(325.85), "thói quen ngồi lệch lâu ngày là MỘT yếu tố"),
     (E(399.86), E(408.95), "đã được bác sĩ cho phép · HLV điều chỉnh riêng"),
 ]
-FLABELS = [(E(309.56), E(312.90), "ngồi lệch một bên", 400, 930, "no"), (E(319.12), E(320.40), "gác chân", 400, 930, "no")]
+FLABELS = [(E(309.56), E(312.90), "ngồi lệch một bên", 690, 930, "no"), (E(319.12), E(320.40), "gác chân", 690, 930, "no")]
 ZPANELS = [(E(313.82), E(320.40), A + "p_lean.png", A + "p_lean.png", RX, CY, SC, dict(focus=(420, 700), zoom=1.0, zoom_at=None, win=WIN))]
 RECAP = (E(408.95), TOTAL / FPS + 0.2)
 RECAP_LINES = []

@@ -8,9 +8,9 @@ CAP_Y = 1150
 TAG_Y = 1035
 KICKER_Y, TITLE_Y = 95, 190
 RECAP_Y, RECAP_DY = 105, 58
-CAP_X = 400
+CAP_X = 690
 A = "assets/"
-RX, CY, SC = 858, 760, 0.47
+RX, CY, SC = 200, 760, 0.42   # muscle cards in the LEFT column (owner: never over the face)
 WIN = (40, 160, 800, 1160)
 MARKS = []; CHECKLIST = []; NUMBERS = []; PRICE = None; STRIKE_T = NEW_PRICE_T = 0; CUTOUTS = []; PANELS = []; EMOJI = []
 TITLE_T0 = hook_end()
@@ -36,7 +36,7 @@ TAGS = [
     (E(62.49), E(64.30), "vấn đề chung: đau mỏi cổ vai gáy"),
     (E(118.77), E(120.50), "vai xoay ra trước"),
 ]
-EMOJI = [(E(58.25), E(59.20), "laptop", 220, 760, 150), (E(124.99), E(125.55), "weary", 220, 760, 160)]
+EMOJI = [(E(58.25), E(59.20), "laptop", 900, 760, 150), (E(124.99), E(125.55), "weary", 900, 760, 160)]
 ZPANELS = [(E(111.77), E(125.55), A + "p_trap.png", A + "p_trap_hot.png", RX, CY, SC, dict(focus=(420, 560), zoom=1.9, zoom_at=E(122.10), win=WIN))]
 RECAP = (E(125.55), TOTAL / FPS + 0.2)
 RECAP_LINES = []

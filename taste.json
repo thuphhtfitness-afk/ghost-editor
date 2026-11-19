@@ -323,6 +323,26 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "tag-nh-m-c-b",
+   "say": "tag nhóm cơ để bên phía tay trái, không bị che mặt",
+   "from": "user",
+   "kind": "prefer",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "office-0178"
+   ],
+   "first": "2026-11-19",
+   "last": "2026-11-19",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],

@@ -8,9 +8,9 @@ CAP_Y = 1150
 TAG_Y = 1035
 KICKER_Y, TITLE_Y = 95, 190
 RECAP_Y, RECAP_DY = 105, 58
-CAP_X = 400
+CAP_X = 690
 A = "assets/"
-RX, CY, SC = 858, 760, 0.47
+RX, CY, SC = 200, 760, 0.42   # muscle cards in the LEFT column (owner: never over the face)
 WIN = (40, 160, 800, 1160)
 MARKS = []; CHECKLIST = []; NUMBERS = []; PRICE = None; STRIKE_T = NEW_PRICE_T = 0; CUTOUTS = []; PANELS = []; EMOJI = []
 TITLE_T0 = hook_end()
@@ -37,7 +37,7 @@ TAGS = [
     (E(145.41), E(149.40), "cơ mông căng là MỘT nguyên nhân có thể gặp"),
     (E(197.19), E(199.10), "đau lan xuống chân, tê chân: đi khám"),
 ]
-EMOJI = [(E(171.11), E(171.40), "weary", 220, 760, 160)]
+EMOJI = [(E(171.11), E(171.40), "weary", 900, 760, 160)]
 ZPANELS = [
     (E(162.45), E(164.65), A + "p_glute.png", A + "p_glute_hot.png", RX, CY, SC, dict(focus=(270, 650), zoom=1.8, zoom_at=E(164.40), win=WIN)),
     (E(147.07), E(158.30), A + "p_glute.png", A + "p_glute_hot.png", RX, CY, SC, dict(focus=(300, 830), zoom=1.9, zoom_at=E(150.63), win=WIN)),

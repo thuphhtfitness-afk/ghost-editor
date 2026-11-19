@@ -66,6 +66,8 @@ Skill talking head của HPF. Học từ 6 video reference:
    mờ 25 % ở góc trái dưới suốt video (`WATERMARK`), và **outro của kênh** (clip 6,5 s "Hệ sinh thái HT Fitness Việt Nam")
    nối sau lời cuối: `final.py ... --append assets/outro_ht.mp4` (âm thanh outro +8 dB có limiter, không loudnorm vì chỉ là
    vài tiếng hit). Không có clip thì `OUTRO` tự dựng (nền tối đỏ, logo nảy vào, "Theo dõi để xem thêm"). Logo là tài sản của kênh: để trong `assets/` của reel, không commit lên repo.
+23. **Thẻ nhóm cơ ở cột TRÁI, không che mặt** (sửa của chủ kênh, áp dụng mặc định): `RX, CY, SC = 200, 760, 0.42`,
+   phụ đề/tag/emoji sang phải (`CAP_X = 690`, emoji x ~900). Chỉ dùng cột phải khi host quay hẳn sang trái và cột trái có người.
 20. **Host đứng (khung mặt cao): thẻ minh hoạ khổ DỌC ở cột bên phải** (sửa của chủ kênh), x ~660-1055, y ~340-1140
    (`RX, CY, SC = 858, 740, 0.47`); khi host đứng nghiêng quay sang phải thì cột trái (`LX = 222`). Phụ đề/pop/tag dời sang
    phía còn trống: `CAP_X`, `CAP_X_AT`.
