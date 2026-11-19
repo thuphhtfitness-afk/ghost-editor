@@ -31,4 +31,4 @@ FLABELS = [(E(222.94), E(227.05), "ngồi yên một tư thế cả ngày", 690,
 ZPANELS = [(E(237.24), E(262.10), A + "p_disc.png", A + "p_disc.png", RX, CY, SC, dict(focus=(420, 700), zoom=1.0, zoom_at=None, win=WIN))]
 RECAP = (E(262.10), TOTAL / FPS + 0.2)
 RECAP_LINES = []
-INTRO = dict(top="NGỒI THẲNG", big="CŨNG ĐAU LƯNG?")
+INTRO = dict(top="NGỒI THẲNG", big="CŨNG ĐAU LƯNG?", y=800)

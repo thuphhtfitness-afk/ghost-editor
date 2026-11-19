@@ -40,4 +40,4 @@ EMOJI = [(E(58.25), E(59.20), "laptop", 900, 760, 150), (E(124.99), E(125.55), "
 ZPANELS = [(E(111.77), E(125.55), A + "p_trap.png", A + "p_trap_hot.png", RX, CY, SC, dict(focus=(420, 560), zoom=1.9, zoom_at=E(122.10), win=WIN))]
 RECAP = (E(125.55), TOTAL / FPS + 0.2)
 RECAP_LINES = []
-INTRO = dict(top="VÌ SAO BẠN HAY", big="MỎI CỔ - VAI - GÁY")
+INTRO = dict(top="VÌ SAO BẠN HAY", big="MỎI CỔ - VAI - GÁY", y=800)

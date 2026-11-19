@@ -363,6 +363,29 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "text-ti-u-m-u",
+   "say": "text tiêu đề mở đầu cho xuống giữa frame",
+   "from": "user",
+   "kind": "default",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "office-0178"
+   ],
+   "first": "2026-11-19",
+   "last": "2026-11-19",
+   "times": 1,
+   "active": true,
+   "set": {
+    "intro.y": 800
+   },
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],

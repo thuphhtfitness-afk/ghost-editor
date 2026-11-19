@@ -69,7 +69,7 @@ Skill talking head của HPF. Học từ 6 video reference:
 24. **Tiêu đề mở đầu kiểu xếp tầng** (sửa của chủ kênh, theo video mẫu): `INTRO = dict(top="VÌ SAO BẠN HAY", big="MỎI CỔ - VAI - GÁY",
    sub="...", coral=[...])`: dòng trên trắng in hoa Be Vietnam ExtraBold, dòng giữa Oswald 700 rất lớn màu san hô #F28C7A trượt
    vào từ trái (lò xo + vệt mờ chuyển động), dòng dưới hiện từng chữ, loé vàng rồi về trắng / san hô. Chữ lớn tự co cho vừa
-   980 px; nếu chạm đầu host thì gộp thành 2 tầng (`big` dài) và đẩy `y` lên.
+   980 px. Vị trí mặc định: GIỮA khung, dưới mặt (`y=800`, sửa của chủ kênh); nếu dòng dưới chạm người thì gộp thành 2 tầng.
 23. **Thẻ nhóm cơ ở cột TRÁI, không che mặt** (sửa của chủ kênh, áp dụng mặc định): `RX, CY, SC = 200, 760, 0.42`,
    phụ đề/tag/emoji sang phải (`CAP_X = 690`, emoji x ~900). Chỉ dùng cột phải khi host quay hẳn sang trái và cột trái có người.
 20. **Host đứng (khung mặt cao): thẻ minh hoạ khổ DỌC ở cột bên phải** (sửa của chủ kênh), x ~660-1055, y ~340-1140
