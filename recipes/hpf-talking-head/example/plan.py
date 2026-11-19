@@ -74,8 +74,8 @@ def subpieces():
 
 
 def timeline():
-    """[(a, b_snapped, edit_start, nframes, zoom, piece_index)]"""
-    out, t = [], 0
+    """[(a, b_snapped, edit_start, nframes, zoom, piece_index)]; PRE_ROLL seconds of picture come before the first word"""
+    out, t = [], round(globals().get("PRE_ROLL", 0) * FPS)
     subs = subpieces()
     for a, b, z, pi in subs:
         n = max(1, round((b - a) * FPS))
@@ -88,7 +88,10 @@ _TL = None
 
 
 def to_edit(orig_t):
-    """original second -> edit second (a time inside a removed silence snaps to the next kept frame)"""
+    """original second -> edit second (a time inside a removed silence snaps to the next kept frame);
+    "@3.5" is already an edit second (pre-roll graphics, b-roll over the lead-in)"""
+    if isinstance(orig_t, str) and orig_t.startswith("@"):
+        return float(orig_t[1:])
     global _TL
     if _TL is None:
         _TL = timeline()[0]

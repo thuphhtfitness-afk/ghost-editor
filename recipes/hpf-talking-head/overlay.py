@@ -569,6 +569,47 @@ def frame(t):
             im = Image.open(wm["path"]).convert("RGBA")
             _cache[key] = im.resize((wm["width"], int(im.height * wm["width"] / im.width)), Image.LANCZOS)
         paste(c, _cache[key], wm["x"], wm["y"], 1, wm.get("alpha", 0.35))
+    # ---- end card after the last word (advice the host did not say: shown as the channel's text) ----
+    ec = globals().get("ENDCARD")
+    if ec and t_abs >= TOTAL / FPS + 0.2:
+        u = t_abs - TOTAL / FPS - 0.2
+        a = min(1, u / 0.3)
+        bgc = Image.new("RGBA", (W, H)); d = ImageDraw.Draw(bgc)
+        for yy in range(0, H, 4):
+            k = yy / H
+            d.rectangle((0, yy, W, yy + 4), fill=(int(22 + 26 * k), int(15 + 2 * k), int(17 + 3 * k), int(250 * a)))
+        c.alpha_composite(bgc)
+        hc = Image.new("RGBA", (W, H))
+        y0 = ec.get("top", 560)
+        draw_typed(hc, ec["title"], F_SER_XL, CREAM, W / 2, y0, u, 0.15, 30, cursor=False)
+        c.alpha_composite(hc)
+        y = y0 + 170
+        for i, line in enumerate(ec["bullets"]):
+            tb = 0.6 + i * 0.5
+            if u < tb:
+                break
+            al = min(1, (u - tb) / 0.25)
+            words, rows, cur = line.split(), [], ""
+            for wd in words:                        # wrap to 820 px
+                trial = (cur + " " + wd).strip()
+                if F_MONT.getbbox(N(trial))[2] > 820 and cur:
+                    rows.append(cur); cur = wd
+                else:
+                    cur = trial
+            rows.append(cur)
+            dot = Image.new("RGBA", (40, 40)); ImageDraw.Draw(dot).ellipse((4, 4, 36, 36), fill=RED)
+            paste(c, dot, 95, y + 26, 0.8 + 0.2 * spring(u - tb, 15, .7), al)
+            for r_ in rows:
+                im = text_img(r_, F_MONT, WHITE)
+                paste(c, im, 140 + im.width / 2 - 40, y + 26, 1, al)
+                y += 62
+            y += 34
+        tc = 0.6 + len(ec["bullets"]) * 0.5 + 0.4
+        if ec.get("cta") and u >= tc:
+            al = min(1, (u - tc) / 0.25)
+            paste(c, kicker_img(ec["cta"]), W / 2, y + 60, 0.9 + 0.1 * spring(u - tc, 15, .7), al)
+        if ec.get("question") and u >= tc + 0.5:
+            paste(c, text_img(ec["question"], F_SER_M, CREAM, glow=True), W / 2, y + 190, 1, min(1, (u - tc - 0.5) / 0.3))
     # ---- outro: brand screen after the last word ----
     if ot and t_abs >= t_out:
         u = t_abs - t_out
@@ -592,7 +633,7 @@ def frame(t):
         if ot.get("line") and u > 0.7:
             paste(c, text_img(ot["line"], F_MONT, WHITE), W / 2, 860 + lg.height / 2 + 140, 1, min(1, (u - 0.7) / 0.25))
     # ---- flash on the hook -> scene cut (white, 0.35 s) ----
-    if TITLE_T0 - 0.04 <= t_abs < TITLE_T0 + 0.35:
+    if globals().get("FLASH", True) and TITLE_T0 - 0.04 <= t_abs < TITLE_T0 + 0.35:
         k = (t_abs - TITLE_T0 + 0.04) / 0.39
         fl = Image.new("RGBA", (W, H), (255, 255, 255, int(235 * (1 - k) ** 1.7)))
         c.alpha_composite(fl)
@@ -600,11 +641,12 @@ def frame(t):
 
 
 def sfx_events():
-    ev = [(TITLE_T0 - 0.03, "@click", -6), (TITLE_T0 + 0.05, "cc0-whoosh-reverse", -18)]
+    ev = [(TITLE_T0 - 0.03, "@click", -6), (TITLE_T0 + 0.05, "cc0-whoosh-reverse", -18)] if globals().get("FLASH", True) else [(max(0, TITLE_T0) + 0.05, "cc0-whoosh-reverse", -18)]
     for t0, *_ in SECTIONS:
         ev.append((t0, "cc0-paper-flip", -14))
     for o0, *_ in BROLL:
-        ev.append((max(0, E(o0) - 0.22), "cc0-whoosh-reverse", -20))
+        if E(o0) > 0.3:
+            ev.append((max(0, E(o0) - 0.22), "cc0-whoosh-reverse", -20))
     if PRICE:
         ev.append((STRIKE_T, "cc0-cartoon-zip", -18))
     if globals().get("BOARD"):
@@ -614,6 +656,8 @@ def sfx_events():
         ev.append((bd["after"][1], "cc0-paper-riffle", -18))
     if globals().get("OUTRO"):
         ev.append((TOTAL / FPS + 0.25, "cc0-swell-short", -12))
+    if globals().get("ENDCARD"):
+        ev.append((TOTAL / FPS + 0.2, "cc0-paper-flip", -15))
     for p_ in globals().get("PANELS", []):
         ev.append((p_[0], "cc0-paper-flip", -17))
     for p_ in globals().get("ZPANELS", []):

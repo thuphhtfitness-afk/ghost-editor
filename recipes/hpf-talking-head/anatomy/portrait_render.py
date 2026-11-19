@@ -5,7 +5,8 @@ import os, sys, subprocess
 from PIL import Image
 HERE = os.path.dirname(os.path.abspath(__file__)); OUT = sys.argv[1]; os.makedirs(OUT, exist_ok=True)
 html = sys.argv[2] if len(sys.argv) > 2 else "heels_portrait.html"
-NAMES = {"heels_portrait.html": ["p_calf", "p_hip", "p_pelvis", "p_lordosis", "p_chain"]}[html]
+NAMES = {"heels_portrait.html": ["p_calf", "p_hip", "p_pelvis", "p_lordosis", "p_chain"],
+         "foot_portrait.html": ["p_blank_flat", "p_heel", "p_legs", "p_mcl", "p_inside"]}[html]
 R = os.path.expanduser("~/.claude/skills/xilo-opus-video/scripts/render.py")
 env = {**os.environ, "PLAYWRIGHT_BROWSERS_PATH": os.environ.get("PLAYWRIGHT_BROWSERS_PATH", "/opt/pw-browsers")}
 src = open(os.path.join(HERE, html)).read()

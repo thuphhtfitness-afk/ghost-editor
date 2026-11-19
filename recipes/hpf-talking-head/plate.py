@@ -71,6 +71,17 @@ for i, (a, b, es, n, z, pi) in enumerate(tl):
     out = f"build/seg/{os.path.basename(src)}_{la:.3f}_{n}_{z}.mp4"
     lst[-1] = out
     cut(src, la, n, crop_expr(src, z, cx, cy), out)
+PRE = round(globals().get("PRE_ROLL", 0) * FPS)
+if PRE:                                    # lead-in: the first piece's first frame held, silent (b-roll covers it)
+    a0, _b0, _es0, _n0, z0, _p0 = tl[0]
+    src, la = source_of(a0)
+    cx, cy = (FACE if z0 > 1 else (0.5, 0.5))
+    pre = f"build/seg/pre_{PRE}_{os.path.basename(src)}_{la:.3f}.mp4"
+    cut(src, la, 1, crop_expr(src, z0, cx, cy), pre + ".1.mp4")
+    if not os.path.exists(pre):
+        run(["ffmpeg", "-v", "error", "-y", "-i", pre + ".1.mp4", "-vf", f"tpad=stop_mode=clone:stop={PRE - 1},format=yuv420p",
+             "-frames:v", str(PRE), "-c:v", "libx264", "-preset", "medium", "-crf", "14", pre])
+    lst.insert(0, pre)
 with open("build/seg/list.txt", "w") as f:
     for p in lst:
         f.write(f"file '{os.path.basename(p)}'\n")
@@ -84,6 +95,9 @@ for i, (a, b, es, n, z, pi) in enumerate(tl):
     k = srcs.index(src)
     fil.append(f"[{k}:a]atrim={la:.6f}:{la + d:.6f},asetpts=PTS-STARTPTS,aresample=48000,afade=t=in:d=0.008,afade=t=out:st={d - 0.008:.4f}:d=0.008[a{i}]")
     parts.append(f"[a{i}]")
+if PRE:
+    fil.append(f"anullsrc=r=48000:cl=mono,atrim=duration={PRE / FPS:.6f}[pre]")
+    parts.insert(0, "[pre]")
 fil.append("".join(parts) + f"concat=n={len(parts)}:v=0:a=1,aresample=48000[v]")
 ins = sum((["-i", s_] for s_ in srcs), [])
 run(["ffmpeg", "-v", "error", "-y"] + ins + ["-filter_complex", ";".join(fil), "-map", "[v]", "-ac", "1", "build/voice_raw.wav"])
