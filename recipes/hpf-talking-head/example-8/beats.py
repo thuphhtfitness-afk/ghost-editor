@@ -47,13 +47,20 @@ STRIKE_T = NEW_PRICE_T = 0
 CUTOUTS = []
 A = "assets/"
 PY = 1480
-PANELS = [   # (t0, t1, card, x, y, scale[, full-screen backdrop])
-    (E(35.14), E(42.70), A + "calf_heel.png", 540, PY, 0.98),
-    (E(44.88), E(47.90), A + "hip_flexor.png", 540, PY, 0.98),
-    (E(58.62), E(60.66), A + "pelvis_tilt.png", 540, PY, 0.98),   # low band: his hips stay visible above it
-    (E(65.06), E(72.10), A + "lordosis.png", 540, PY, 0.98),
-    (E(76.60), E(84.10), A + "back_chain.png", 540, PY, 0.98),
+PANELS = []
+# portrait cards in a side column (right while he faces the camera, left while he stands side-on facing right);
+# on the spoken muscle the window zooms into it and the muscle glows
+RX, LX, CY, SC = 858, 222, 740, 0.47
+WIN = (40, 160, 800, 1160)
+ZPANELS = [   # (t0, t1, plain, hot, x, y, scale, {focus (card px), zoom, zoom_at})
+    (E(35.14), E(42.70), A + "p_calf.png", A + "p_calf_hot.png", RX, CY, SC, dict(focus=(616, 470), zoom=2.1, zoom_at=E(35.60), win=WIN)),
+    (E(44.88), E(47.90), A + "p_hip.png", A + "p_hip_hot.png", RX, CY, SC, dict(focus=(540, 628), zoom=2.0, zoom_at=E(46.70), win=WIN)),
+    (E(58.62), E(60.66), A + "p_pelvis.png", A + "p_pelvis.png", LX, CY, SC, dict(focus=(330, 900), zoom=1.0, zoom_at=None, win=WIN)),
+    (E(65.06), E(72.10), A + "p_lordosis.png", A + "p_lordosis_hot.png", LX, CY, SC, dict(focus=(484, 514), zoom=1.9, zoom_at=E(65.06) + 0.6, win=WIN)),
+    (E(76.60), E(84.10), A + "p_chain.png", A + "p_chain.png", RX, CY, SC, dict(focus=(420, 700), zoom=1.0, zoom_at=None, win=WIN)),
 ]
+CAP_X = 400                       # captions/pops/tags shift left of the right-hand column
+CAP_X_AT = [(E(58.62), E(60.66), 660), (E(65.06), E(72.10), 660)]   # ...and right of a left-hand card
 RECAP = (E(81.24), END)
 RECAP_LINES = ["1.) kiễng gót: bắp chân căng", "2.) ngồi nhiều: cơ gấp hông căng",
                "3.) khung chậu lật ra trước", "4.) lưng võng, mỏi lưng"]

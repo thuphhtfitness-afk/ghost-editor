@@ -283,8 +283,28 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "h-nh-minh-h-a",
+   "say": "hình minh họa hãy cho sang các góc bên tay phải; phần người nói nhắc đến/miêu tả nhóm cơ nào, hãy làm ký hiệu highlight tô màu, zoom in vào phần nhóm cơ đó",
+   "from": "user",
+   "kind": "prefer",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "giay-cao-got"
+   ],
+   "first": "2026-11-19",
+   "last": "2026-11-19",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],
- "updated": "2026-11-18"
+ "updated": "2026-11-19"
 }

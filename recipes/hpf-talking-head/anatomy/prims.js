@@ -25,8 +25,10 @@ function muscle(pts, o0, o1, i0, i1, opt = {}) {
   const p = shape(pts), n = opt.n || 60, bow = opt.bow || 0;
   const g = X.createLinearGradient(o0[0], o0[1], i1[0], i1[1]);
   g.addColorStop(0, opt.c0 || "#d9564a"); g.addColorStop(0.55, opt.c1 || "#b8322c"); g.addColorStop(1, opt.c2 || "#8c1d1f");
+  const hot = opt.hot && window.HOT !== false;
+  if (hot && window.HOT === true) { g.addColorStop(0, "#ff7a5c"); }
   X.save();
-  if (opt.hot) { X.shadowColor = "rgba(255,40,40,.95)"; X.shadowBlur = 34; X.shadowOffsetY = 0; }
+  if (hot) { X.shadowColor = window.HOT === true ? "rgba(255,60,40,1)" : "rgba(255,40,40,.95)"; X.shadowBlur = window.HOT === true ? 46 : 34; X.shadowOffsetY = 0; }
   else { X.shadowColor = "rgba(60,0,0,.35)"; X.shadowBlur = 10; X.shadowOffsetY = 4; }
   X.fillStyle = g; X.fill(p); X.restore();
   X.save(); X.clip(p);
@@ -48,7 +50,7 @@ function muscle(pts, o0, o1, i0, i1, opt = {}) {
 }
 // tendon / ligament: silver-white fibrous band (or red when highlighted)
 function band(pts, o0, o1, i0, i1, opt = {}) {
-  const p = shape(pts), n = opt.n || 26, hot = opt.hot;
+  const p = shape(pts), n = opt.n || 26, hot = opt.hot && window.HOT !== false;
   X.save(); if (hot) { X.shadowColor = "rgba(220,45,55,.85)"; X.shadowBlur = 26; }
   const g = X.createLinearGradient(o0[0], o0[1], i1[0], i1[1]);
   if (hot) { g.addColorStop(0, "#ff7b7b"); g.addColorStop(1, "#d42a33"); }

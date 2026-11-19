@@ -62,6 +62,12 @@ Skill talking head của HPF. Học từ 6 video reference:
    thẳng / chữ X, khớp gối trước (dây chằng bên trong), trong khớp gối (dây chằng chéo). Thêm thẻ mới = thêm một ô vào
    `render()`; `anatomy/anatomy_render.py <thư mục>` xuất từng thẻ PNG (dùng renderer của xilo-opus-video). `PANELS` trong
    beats.py hiện đúng chữ host nói.
+20. **Host đứng (khung mặt cao): thẻ minh hoạ khổ DỌC ở cột bên phải** (sửa của chủ kênh), x ~660-1055, y ~340-1140
+   (`RX, CY, SC = 858, 740, 0.47`); khi host đứng nghiêng quay sang phải thì cột trái (`LX = 222`). Phụ đề/pop/tag dời sang
+   phía còn trống: `CAP_X`, `CAP_X_AT`.
+21. **Nhắc tên nhóm cơ nào -> zoom vào cơ đó + tô sáng nhấp nháy** (`ZPANELS`): thẻ hiện cả hình trước, đúng chữ host nói tên
+   cơ thì cửa sổ minh hoạ zoom (lò xo) vào cơ, cơ phát sáng đỏ và nhấp nháy; tiêu đề thẻ và nhãn đứng yên. Thẻ dọc vẽ 2 lần
+   (thường / tô sáng): `anatomy/portrait_render.py <thư mục> heels_portrait.html`.
 17. **Host đứng nghiêng để minh hoạ tư thế**: không che phần cơ thể đang minh hoạ; chỉ nhãn trên người, thẻ ở dải chân
    (hông vẫn lộ phía trên). Thẻ toàn màn hình (`PANELS` có màu nền) chỉ khi không còn chỗ nào khác, vì trông trống.
 18. **Phụ đề**: một từ vắt qua chỗ cắt khoảng lặng chỉ hiện một lần; sửa chữ nghe sai theo đúng thời điểm bằng `FIX_AT`

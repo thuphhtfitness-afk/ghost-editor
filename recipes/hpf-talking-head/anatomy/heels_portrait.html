@@ -1,0 +1,55 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: Mont; src: url("file:///root/.fonts/Montserrat-VF.ttf"); font-weight: 100 900; }
+@font-face { font-family: Cred; src: url("file:///root/.fonts/BeVietnamPro-Medium.ttf"); }
+@font-face { font-family: Kick; src: url("file:///root/.fonts/BeVietnamPro-ExtraBold.ttf"); }
+html, body { margin: 0; background: transparent; } canvas { display: block; }
+</style></head>
+<body><canvas id="c" width="4200" height="1560"></canvas>
+<script>window.HOT = (location.hash.match(/hot=(\w+)/) || [])[1] === "1" ? true : (location.hash.indexOf("plain") >= 0 ? false : undefined);</script>
+<script src="prims.js"></script>
+<script src="heels_kit.js"></script>
+<script>
+// Portrait anatomy cards (420x780 logical, drawn at 2x) for the right-hand column of a standing talking head.
+// Illustration window: x 20..400, y 80..580 (logical). Focus points for the zoom are in anatomy_render.py FOCUS.
+const PW = 420, PH = 780, S2 = 2;
+function pcard(i, kicker) {
+  X.save(); X.translate(i * PW * S2, 0); X.scale(S2, S2);
+  X.save(); X.shadowColor = "rgba(0,0,0,.35)"; X.shadowBlur = 16; X.shadowOffsetY = 8;
+  X.fillStyle = "#fcfcfa"; X.beginPath(); X.roundRect(10, 10, 400, 760, 24); X.fill(); X.restore();
+  X.strokeStyle = "#d4d6da"; X.lineWidth = 3; X.beginPath(); X.roundRect(10, 10, 400, 760, 24); X.stroke();
+  X.font = "800 19px Mont"; const w = X.measureText(kicker).width;
+  X.fillStyle = C.cream; X.beginPath(); X.roundRect(26, 28, w + 28, 38, 7); X.fill();
+  X.fillStyle = "#1c1814"; X.textAlign = "left"; X.textBaseline = "middle"; X.fillText(kicker, 40, 48);
+  X.font = "13px Cred"; X.fillStyle = C.grey; X.textAlign = "right"; X.fillText("minh hoạ: HPF", 396, 752);
+}
+const pend = () => X.restore();
+function lab(txt, y, col, size = 30) { hand(txt, 210, y, col, size); }
+
+window.ready = false;
+window.render = function () {
+  X.clearRect(0, 0, cv.width, cv.height);
+  pcard(0, "BẮP CHÂN KHI ĐI GIÀY CAO GÓT"); calfHeel(259, 112, 0.9);
+  lab("luôn phải kiễng", 630, C.ink); lab("bắp chân căng", 672, C.red, 36); pend();
+
+  pcard(1, "CƠ GẤP HÔNG (HIP FLEXOR)"); seatedHip(262, 205, 0.78);
+  lab("ngồi nhiều", 630, C.ink); lab("cơ gấp hông bị căng", 672, C.red, 34); pend();
+
+  pcard(2, "KHUNG CHẬU (NHÌN NGHIÊNG)"); pelvisTilt(150, 215, 0.62, false, C.green); pelvisTilt(150, 455, 0.62, true, C.red);
+  labelTick("trung tính", 305, 230, C.green, true, 30); labelTick("lật ra trước", 300, 470, C.red, false, 30); pend();
+
+  pcard(3, "LƯNG VÕNG"); lordosis(205, 290, 0.86);
+  lab("lưng võng", 630, C.red, 36); lab("cơ lưng gánh quá nhiều", 670, C.ink, 28); lab("→ mỏi lưng", 705, C.red, 30); pend();
+
+  pcard(4, "CHUỖI GÂY ĐAU LƯNG");
+  shoeIcon(130, 150, 0.8); arrow(130, 225, 130, 262, C.ink, 5);
+  pelvisTilt(135, 345, 0.42, true, C.red); arrow(130, 425, 130, 462, C.ink, 5);
+  lordosis(130, 555, 0.36);
+  hand("giày cao gót", 290, 135, C.ink, 26); hand("+ ngồi nhiều", 290, 168, C.ink, 26);
+  hand("chậu lật", 290, 330, C.red, 28); hand("ra trước", 290, 362, C.red, 28);
+  hand("lưng võng", 290, 540, C.red, 28); hand("đau mỏi lưng", 290, 574, C.red, 28); pend();
+};
+document.fonts.load("700 40px Mont").then(() => document.fonts.load("800 28px Mont")).then(() => document.fonts.ready)
+  .catch(() => {}).then(() => { window.render(0); window.ready = true; });
+</script></body></html>

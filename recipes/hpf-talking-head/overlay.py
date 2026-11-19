@@ -24,6 +24,7 @@ CAP_Y = 1420          # word caption centre (chest)
 TITLE_CPS = 24                 # typing speed of the title (a short title window types faster)
 KICKER_Y, TITLE_Y = 150, 265   # hook title (a reel with the face high in frame moves them up)
 RECAP_Y, RECAP_DY = 175, 72
+CAP_X = TAG_X = W / 2   # horizontal centre of captions / pops and of tags (a reel with a side column moves them)
 TAG_Y = 1290          # tag pill centre (a reel can override CAP_Y / TAG_Y in beats.py)
 
 
@@ -284,6 +285,14 @@ def draw_typed(c, txt, f, fill, cx, cy, t, t0, cps=22, cursor=True):
         d.rectangle((xe, cy - f.size * 0.42, xe + 4, cy + f.size * 0.42), fill=WHITE)
 
 
+def cap_x(t):
+    """captions sit opposite a side-column card: CAP_X_AT = [(t0, t1, x), ...] in beats.py, else CAP_X"""
+    for t0, t1, x in globals().get("CAP_X_AT", []):
+        if t0 - 0.1 <= t <= t1 + 0.1:
+            return x
+    return CAP_X
+
+
 def caption_zone_busy(t):
     for t0, t1, *_ in POPS:
         if t0 <= t <= t1:
@@ -424,6 +433,29 @@ def frame(t):
         if a < 1:
             layer.putalpha(layer.split()[3].point(lambda v: int(v * a)))
         c.alpha_composite(layer, (0, int(slide)))
+    # ---- zoom-and-pulse cards: whole figure first, then on the spoken muscle the window zooms into it and it glows ----
+    for t0, t1, plain, hot, x, y, sc, o in globals().get("ZPANELS", []):
+        a, s = env(t, t0, t1, 0.12, 0.18, kind="card")
+        if not a:
+            continue
+        key = ("zp", plain, hot)
+        if key not in _cache:
+            _cache[key] = (Image.open(plain).convert("RGBA"), Image.open(hot).convert("RGBA"))
+        P0, P1 = _cache[key]
+        card = P0.copy()
+        tz = o.get("zoom_at")
+        if tz is not None and t >= tz:
+            u = t - tz
+            z = 1 + (o.get("zoom", 2.0) - 1) * spring(u, 9, 0.9)
+            ha = min(1, u / 0.25) * (0.6 + 0.4 * math.sin(2 * math.pi * 1.3 * u))
+            src = Image.blend(P0, P1, max(0, min(1, ha)))
+            wx0, wy0, wx1, wy1 = o.get("win", (40, 160, 800, 1160))
+            fx, fy = o["focus"]
+            ww, wh = (wx1 - wx0) / z, (wy1 - wy0) / z
+            cx0 = min(max(fx - ww / 2, wx0), wx1 - ww); cy0 = min(max(fy - wh / 2, wy0), wy1 - wh)
+            card.paste(src.crop((int(cx0), int(cy0), int(cx0 + ww), int(cy0 + wh))).resize((wx1 - wx0, wy1 - wy0), Image.LANCZOS), (wx0, wy0))
+        card = card.resize((int(card.width * sc), int(card.height * sc)), Image.LANCZOS)
+        paste(c, card, x, y, 0.94 + 0.06 * s, a)
     # ---- illustration cards (anatomy_cards.py etc.): steady, card spring ----
     for item in globals().get("PANELS", []):
         t0, t1, path, x, y, sc = item[:6]
@@ -508,7 +540,7 @@ def frame(t):
     for t0, t1, txt in TAGS:
         a, s = env(t, t0, t1)
         if a:
-            paste(c, tag_img(txt), W / 2, TAG_Y, 0.85 + 0.15 * s, a)
+            paste(c, tag_img(txt), cap_x(t) if TAG_X == W / 2 else TAG_X, TAG_Y, 0.85 + 0.15 * s, a)
     # ---- keyword pops ----
     for t0, t1, txt, st in POPS:
         a, s = env(t, t0, t1, 0.08, 0.12, kind="heavy")
@@ -518,14 +550,14 @@ def frame(t):
                 f = F_OSW if st == "osw" else (F_SER_L if len(lines) > 1 else F_SER_XL)
                 im = text_img(ln, f, CREAM if st == "ser" else WHITE, glow=True)
                 yy = CAP_Y - (len(lines) - 1) * 55 + i * 110
-                paste(c, im, W / 2, yy, s, a)
+                paste(c, im, cap_x(t), yy, s, a)
     # ---- word captions ----
     if not caption_zone_busy(t):
         cy = CAP_Y
         for s0, s1, txt, _ in WORDS:
             if s0 <= t < s1:
                 k = min(1, (t - s0) / 0.06)
-                paste(c, text_img(txt.lower(), F_CAP, WHITE), W / 2, cy, 0.92 + 0.08 * k, 1)
+                paste(c, text_img(txt.lower(), F_CAP, WHITE), cap_x(t), cy, 0.92 + 0.08 * k, 1)
                 break
     # ---- flash on the hook -> scene cut (white, 0.35 s) ----
     if TITLE_T0 - 0.04 <= t_abs < TITLE_T0 + 0.35:
@@ -550,6 +582,10 @@ def sfx_events():
         ev.append((bd["after"][1], "cc0-paper-riffle", -18))
     for p_ in globals().get("PANELS", []):
         ev.append((p_[0], "cc0-paper-flip", -17))
+    for p_ in globals().get("ZPANELS", []):
+        ev.append((p_[0], "cc0-paper-flip", -17))
+        if p_[7].get("zoom_at") is not None:
+            ev.append((p_[7]["zoom_at"], "cc0-whoosh-reverse", -22))
     for t0, *_ in globals().get("CUTOUTS", []):
         ev.append((t0, "cc0-paper-flip", -15))
     ev.append((RECAP[0], "cc0-paper-riffle", -16))
