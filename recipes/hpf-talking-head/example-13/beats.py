@@ -38,6 +38,6 @@ TAGS = [
     (E(399.86), E(408.95), "đã được bác sĩ cho phép · HLV điều chỉnh riêng"),
 ]
 FLABELS = [(E(309.56), E(312.90), "ngồi lệch một bên", 400, 930, "no"), (E(319.12), E(320.40), "gác chân", 400, 930, "no")]
-ZPANELS = [(E(313.82), E(325.85), A + "p_lean.png", A + "p_lean.png", RX, CY, SC, dict(focus=(420, 700), zoom=1.0, zoom_at=None, win=WIN))]
+ZPANELS = [(E(313.82), E(320.40), A + "p_lean.png", A + "p_lean.png", RX, CY, SC, dict(focus=(420, 700), zoom=1.0, zoom_at=None, win=WIN))]
 RECAP = (E(408.95), TOTAL / FPS + 0.2)
 RECAP_LINES = []
