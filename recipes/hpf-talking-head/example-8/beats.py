@@ -20,7 +20,6 @@ SECTIONS = [
     (E(42.90), E(47.90), "2.) CƠ GẤP HÔNG", "căng khi ngồi nhiều"),
     (E(48.45), E(60.30), "3.) KHUNG CHẬU", "lật ra đằng trước"),
     (E(60.66), E(72.10), "4.) LƯNG VÕNG", "mỏi lưng, lưng tải quá nhiều"),
-    (E(75.30), E(84.10), "5.) KHÔNG PHẢI DO GIÀY", "mà giày + ngồi nhiều"),
 ]
 POPS = [
     (E(74.42), E(74.95), "không sai", "ser"),
@@ -38,6 +37,8 @@ EMOJI = [
     (E(73.48), E(74.95), "heel", 880, 760, 160),
     (E(44.66), E(45.75), "laptop", 880, 760, 150),
     (E(65.06), E(65.80), "weary", 880, 760, 160),
+    (E(78.00), E(79.60), "laptop", 220, 760, 150),
+    (E(83.30), E(84.10), "weary", 220, 760, 160),
 ]
 MARKS = []
 CHECKLIST = []
@@ -61,6 +62,6 @@ ZPANELS = [   # (t0, t1, plain, hot, x, y, scale, {focus (card px), zoom, zoom_a
 ]
 CAP_X = 400                       # captions/pops/tags shift left of the right-hand column
 CAP_X_AT = [(E(58.62), E(60.66), 660), (E(65.06), E(72.10), 660)]   # ...and right of a left-hand card
-RECAP = (E(81.24), END)
+RECAP = (E(70.60), END)
 RECAP_LINES = ["1.) kiễng gót: bắp chân căng", "2.) ngồi nhiều: cơ gấp hông căng",
                "3.) khung chậu lật ra trước", "4.) lưng võng, mỏi lưng"]

@@ -5,14 +5,14 @@ SRC = "raw/th8.mp4"
 VAD = "build/vad_th8.json"
 TX = "tx/th8.json"
 PIECES = [
-    (73.10, 75.00, 1.10),   # HOOK: nên là thực ra cái việc đi giày cao gót không sai
+    (75.30, 84.15, 1.10),   # HOOK: đi giày cao gót cùng với ngồi nhiều dẫn đến bọn này bị căng, nên mới đau mỏi lưng
+    (73.10, 75.00, 1.00),   # nên là thực ra cái việc đi giày cao gót không sai
     (24.60, 28.80, 1.00),   # với việc nữ đi giày cao gót nhiều ảnh hưởng đến tư thế
     (31.80, 42.80, 1.10),   # thứ nhất: khá căng bắp chân vì luôn phải kiễng; một nhóm cơ thôi thì không ảnh hưởng nhiều
     (42.90, 47.95, 1.00),   # nhưng làm văn phòng ngồi nhiều, nó căng hip flexor
     (48.45, 55.60, 1.00),   # đi kiễng ở cao, để giữ thăng bằng thì đẩy cái mông ra đằng sau
     (55.95, 64.15, 1.00),   # gây ra tình trạng lật cái chậu về đằng trước, dẫn đến lưng võng
     (65.05, 72.15, 1.10),   # mỏi lưng; đứng tình trạng ấy lâu ngày, lưng tải quá nhiều, ảnh hưởng đến cả cuộc sống
-    (75.30, 84.15, 1.00),   # đi giày cao gót cùng với ngồi nhiều dẫn đến bọn này bị căng, nên mới đau mỏi lưng
 ]
 HOOK_PIECES = 1
 BROLL = []
