@@ -9,6 +9,7 @@ PIECES = [
     (56.05, 66.95, 1.00),    # khách của em đa số là dân văn phòng, vấn đề chung là đau mỏi cổ vai gáy
     (91.05, 102.40, 1.10),   # thông thường khách văn phòng đau mỏi cổ vai, lưng dưới; nghĩ là do ngồi nhiều
     (111.72, 125.60, 1.00),  # là bởi vì ngồi khiến vai xoay ra trước nên con này bị co lên, dẫn đến đau mỏi cổ vai gáy
+    (125.70, 142.98, 1.10),  # hay đau lưng dưới... mọi người sẽ ngồi như này (demo)... nên đau mỏi cổ vai gáy, đau mỏi lưng dưới
 ]
 BROLL = []
 HOOK_PIECES = 1

@@ -27,6 +27,7 @@ TITLE_LINES = ["mỏi cổ vai gáy", "không phải do ngồi nhiều"]
 SECTIONS = [
     (E(91.05), E(101.95), "1.) MỌI NGƯỜI HAY NGHĨ", "do ngồi nhiều"),
     (E(111.72), E(125.55), "2.) THỰC RA", "vai xoay ra trước, cơ thang co lên"),
+    (E(125.75), E(142.90), "3.) NGỒI SAI TƯ THẾ", "mỏi cổ vai gáy, đau lưng dưới"),
 ]
 POPS = [
     (E(108.27), E(111.00), "chưa phải lý do", "ser"),
@@ -38,6 +39,7 @@ TAGS = [
 ]
 EMOJI = [(E(58.25), E(59.20), "laptop", 900, 760, 150), (E(124.99), E(125.55), "weary", 900, 760, 160)]
 ZPANELS = [(E(111.77), E(125.55), A + "p_trap.png", A + "p_trap_hot.png", RX, CY, SC, dict(focus=(420, 560), zoom=1.9, zoom_at=E(122.10), win=WIN))]
-RECAP = (E(125.55), TOTAL / FPS + 0.2)
+RECAP = (E(142.90), TOTAL / FPS + 0.2)
+FLABELS = [(E(133.35), E(136.50), "ngồi như này cả ngày", 540, 1035, "no")]
 RECAP_LINES = []
 INTRO = dict(top="VÌ SAO BẠN HAY", big="MỎI CỔ - VAI - GÁY", y=800)
