@@ -466,6 +466,26 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "c-nh-u-ti-n",
+   "say": "cảnh đầu tiên đừng để sound, lồng hook của HLV, không chèn sub; các phần text đừng chèn lên nhau; text ghi chú ảnh đặt dưới hình, không đè vào hình",
+   "from": "user",
+   "kind": "check",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "ban-chan-bet-tre-em"
+   ],
+   "first": "2026-11-20",
+   "last": "2026-11-20",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],

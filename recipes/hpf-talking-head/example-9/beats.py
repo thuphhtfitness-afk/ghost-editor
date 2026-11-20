@@ -12,9 +12,10 @@ CAP_Y = 1090
 TAG_Y = 975
 KICKER_Y, TITLE_Y = 95, 190
 RECAP_Y, RECAP_DY = 105, 58
-FLASH = True
+FLASH = False
+TITLE_SFX = False   # owner: no sound effect on the opening shot
 
-TITLE_T0 = 1.2                     # the freeze: flash + click, then the photo and the title
+TITLE_T0 = 1.2                     # the freeze, then the photo and the title (silent: only the coach's voice)
 TITLE_END = hook_end()
 TITLE_CPS = 40
 HOOK_END = TITLE_END
@@ -56,17 +57,17 @@ ZPANELS = [   # (t0, t1, plain, hot, x, y, scale, {focus, zoom, zoom_at})
     (E(64.74), E(68.25), A + "p_inside.png", A + "p_inside_hot.png", RX, CY, SC, dict(focus=(400, 520), zoom=2.0, zoom_at=E(67.10), win=WIN)),
 ]
 # the channel's foot photos, cut out, moving inside the blank portrait card (card centre RX, CY; 395 x 733 on screen)
-MOVERS = [
-    (E(23.02), E(25.40), A + "healthy_clean.png", RX, CY - 150, 0.55, dict(slide=(120, 0), zoom=(1.0, 1.04))),
-    (E(23.02), E(25.40), A + "flat_clean.png", RX, CY + 150, 0.55, dict(slide=(120, 0), delay=0.25, zoom=(1.0, 1.04))),
-    (E(25.45), E(27.60), A + "supported_clean.png", RX, CY - 150, 0.33, dict(slide=(0, 80), zoom=(1.0, 1.04))),
-    (E(25.45), E(27.60), A + "collapsed_clean.png", RX, CY + 150, 0.33, dict(slide=(0, 80), delay=0.2, zoom=(1.0, 1.04))),
+MOVERS = [   # the channel's foot photos in the blank portrait card; each label sits UNDER its photo, never on it
+    (E(23.02), E(25.40), A + "healthy_clean.png", RX, CY - 175, 0.48, dict(slide=(120, 0), zoom=(1.0, 1.03))),
+    (E(23.02), E(25.40), A + "flat_clean.png", RX, CY + 150, 0.48, dict(slide=(120, 0), delay=0.25, zoom=(1.0, 1.03))),
+    (E(25.45), E(27.60), A + "supported_clean.png", RX, CY - 175, 0.30, dict(slide=(0, 80), zoom=(1.0, 1.03))),
+    (E(25.45), E(27.60), A + "collapsed_clean.png", RX, CY + 150, 0.30, dict(slide=(0, 80), delay=0.2, zoom=(1.0, 1.03))),
 ]
-FLABELS = [
-    (E(23.25), E(25.40), "bình thường", RX, CY - 20, "ok"),
-    (E(23.50), E(25.40), "bàn chân bẹt", RX, CY + 255, "no"),
-    (E(25.60), E(27.60), "có vòm", RX, CY - 20, "ok"),
-    (E(25.80), E(27.60), "vòm sập xuống", RX, CY + 255, "no"),
+FLABELS = [   # (t0, t1, text, x, y, ok/no, scale)
+    (E(23.25), E(25.40), "bình thường", RX, CY - 20, "ok", 0.72),
+    (E(23.50), E(25.40), "bàn chân bẹt", RX, CY + 305, "no", 0.72),
+    (E(25.60), E(27.60), "có vòm", RX, CY - 45, "ok", 0.72),
+    (E(25.80), E(27.60), "vòm sập xuống", RX, CY + 280, "no", 0.72),
 ]
 CAP_X = 540   # captions centred (owner)
 RECAP = (E(116.05), END)

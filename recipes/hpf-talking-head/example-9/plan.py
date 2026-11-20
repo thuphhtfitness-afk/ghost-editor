@@ -4,7 +4,7 @@ FPS = 30
 SRC = "raw/th7.mp4"
 VAD = "build/vad_th7.json"
 TX = "tx/th7.json"
-PRE_ROLL = 3.0          # 0-3 s: kid's feet push-in, freeze at 1.2 s (flash + click), photo + title
+PRE_ROLL = 0            # owner: the kid shot plays UNDER the coach's hook (voice from 0 s), no lead-in silence
 PIECES = [
     (111.30, 115.95, 1.10),  # HOOK: nhất là khi càng lớn thì mọi người sẽ càng thấy vấn đề đấy ảnh hưởng nhiều đến sinh hoạt hằng ngày
     (40.75, 43.85, 1.00),    # nhưng với bàn chân bẹt thì nó chụm, nó tạo thành chữ X

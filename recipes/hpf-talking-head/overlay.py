@@ -403,6 +403,27 @@ def intro_on(t):
     return bool(globals().get("INTRO")) and TITLE_T0 <= t < HOOK_END
 
 
+def intro_quiet(t):
+    """a two-line intro owns the screen from the first frame to its end: no captions, pops or tags under it"""
+    it = globals().get("INTRO")
+    return bool(it) and it.get("kind") == "two" and t < HOOK_END
+
+
+def clear_x(t, x, w):
+    """shift a centred text of width w so it never overlaps an on-screen side card (ZPANELS / PANELS)"""
+    for item in list(globals().get("ZPANELS", [])) + list(globals().get("PANELS", [])):
+        t0, t1, path = item[0], item[1], item[2]
+        if not (t0 - 0.1 <= t <= t1 + 0.1):
+            continue
+        px = item[4] if item in globals().get("ZPANELS", []) else item[3]
+        sc = item[6] if item in globals().get("ZPANELS", []) else item[5]
+        cw = 840 * sc if item in globals().get("ZPANELS", []) else 1060 * sc
+        l, r = px - cw / 2 - 16, px + cw / 2 + 16
+        if x + w / 2 > l and x - w / 2 < r:
+            x = (l - w / 2) if px > W / 2 else (r + w / 2)
+    return min(max(x, w / 2 + 10), W - w / 2 - 10)
+
+
 def caption_zone_busy(t):
     for t0, t1, *_ in POPS:
         if t0 <= t <= t1:
@@ -609,9 +630,10 @@ def frame(t):
     for item in globals().get("FLABELS", []):
         t0, t1, txt, x, y = item[:5]
         kind = item[5] if len(item) > 5 else None
+        sc_ = item[6] if len(item) > 6 else 1.0
         a, s = env(t, t0, t1, kind="card")
         if a:
-            paste(c, flabel_img(txt, kind), x, y, 0.9 + 0.1 * s, a)
+            paste(c, flabel_img(txt, kind), x, y, sc_ * (0.9 + 0.1 * s), a)
     # ---- paper cut-out stickers of people (sticker.py), pop in with a small tilt ----
     for t0, t1, path, x, y, sc, ang in globals().get("CUTOUTS", []):
         a, s = env(t, t0, t1, 0.10, 0.18, kind="sticker")
@@ -651,27 +673,27 @@ def frame(t):
     # ---- tags ----
     for t0, t1, txt in TAGS:
         a, s = env(t, t0, t1)
-        if a:
+        if a and not intro_quiet(t):
             ti = tag_img(txt); tx = cap_x(t) if TAG_X == W / 2 else TAG_X
-            tx = min(max(tx, ti.width / 2 + 10), W - ti.width / 2 - 10)   # a long tag stays on screen
+            tx = clear_x(t, tx, ti.width - 30)                          # on screen, off any side card
             paste(c, ti, tx, TAG_Y, 0.85 + 0.15 * s, a)
     # ---- keyword pops ----
     for t0, t1, txt, st in POPS:
         a, s = env(t, t0, t1, 0.08, 0.12, kind="heavy")
-        if a:
+        if a and not intro_quiet(t):
             lines = txt.split("\n")
             for i, ln in enumerate(lines):
                 f = F_OSW if st == "osw" else (F_SER_L if len(lines) > 1 else F_SER_XL)
                 im = text_img(ln, f, CREAM if st == "ser" else WHITE, glow=True)
                 yy = CAP_Y - (len(lines) - 1) * 55 + i * 110
-                paste(c, im, cap_x(t), yy, s, a)
+                paste(c, im, clear_x(t, cap_x(t), im.width - 80), yy, s, a)
     # ---- word captions ----
-    if not caption_zone_busy(t) and not (intro_on(t) and globals().get("INTRO", {}).get("kind") == "two"):
+    if not caption_zone_busy(t) and not intro_quiet(t):
         cy = CAP_Y
         for s0, s1, txt, _ in WORDS:
             if s0 <= t < s1:
                 k = min(1, (t - s0) / 0.06)
-                paste(c, text_img(txt.lower(), F_CAP, WHITE), cap_x(t), cy, 0.92 + 0.08 * k, 1)
+                paste(c, text_img(txt.lower(), F_CAP, WHITE), clear_x(t, cap_x(t), text_img(txt.lower(), F_CAP, WHITE).width - 80), cy, 0.92 + 0.08 * k, 1)
                 break
     # ---- brand watermark (faint logo), hidden under the outro ----
     wm = globals().get("WATERMARK")
@@ -762,7 +784,8 @@ def frame(t):
 
 
 def sfx_events():
-    ev = [(TITLE_T0 - 0.03, "@click", -6), (TITLE_T0 + 0.05, "cc0-whoosh-reverse", -18)] if globals().get("FLASH", True) else [(max(0, TITLE_T0) + 0.05, "cc0-whoosh-reverse", -18)]
+    ev = [(TITLE_T0 - 0.03, "@click", -6), (TITLE_T0 + 0.05, "cc0-whoosh-reverse", -18)] if globals().get("FLASH", True) else \
+        ([(max(0, TITLE_T0) + 0.05, "cc0-whoosh-reverse", -18)] if globals().get("TITLE_SFX", True) else [])
     for t0, *_ in SECTIONS:
         ev.append((t0, "cc0-paper-flip", -14))
     for o0, *_ in BROLL:
