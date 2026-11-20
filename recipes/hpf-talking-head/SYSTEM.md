@@ -73,6 +73,8 @@ Skill talking head của HPF. Học từ 6 video reference:
 25. **Tiêu đề 2 dòng kiểu "HỘI CHỨNG / BÀN CHÂN BẸT"** (video mẫu của chủ kênh): `INTRO = dict(kind="two", l1=..., l2=...,
    photo=..., photo_until=..., y=1060)`: dòng 1 Oswald trắng rất to, dòng 2 Oswald vàng #F7C440, trồi lên từ vệt mờ, giữa khung,
    gradient tối phía sau, ảnh minh hoạ phía trên (tắt trước khi mặt host xuất hiện); phụ đề ẩn trong lúc tiêu đề hiện.
+28. **Kết video = lời chốt của chính host + outro kênh**, không thẻ kết nền đen (sửa của chủ kênh; `ENDCARD = None`). Tìm câu
+   host tự tóm ý và đặt làm đoạn cuối.
 26. **Mở đầu: zoom dần vào chi tiết -> dừng hình (freeze) + flash + click -> ảnh minh hoạ + tiêu đề** (vd. bàn chân bé, clip dựng sẵn
    bằng ffmpeg zoompan + tpad, `PRE_ROLL`, `TITLE_T0` = lúc dừng hình).
 27. **Trẻ em trên màn hình: không lộ mặt** (sửa của chủ kênh): zoom vào phần cơ thể đang nói tới (vd. bàn chân), hoặc chọn đoạn

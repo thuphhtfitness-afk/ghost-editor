@@ -4,12 +4,8 @@ from plan import to_edit as E, hook_end, timeline, FPS, BROLL
 
 FIX = {"trụng": "chụm", "trăng": "chằng", "trắng": "chằng", "tiết": "tiếp", "Ngoạt": "ngoặt"}
 TOTAL = timeline()[1]
-ENDCARD = dict(dur=8.5, title="NÊN LÀM GÌ?",
-               bullets=["Trẻ nhỏ chân bẹt thường là bình thường: vòm bàn chân hình thành dần theo tuổi",
-                        "Quan sát gót chân và dáng đi của con",
-                        "Đưa con đi khám bác sĩ chỉnh hình / vật lý trị liệu nếu con hay đau chân, mỏi nhanh, đi lại khó, hoặc đã lớn mà vẫn bẹt rõ"],
-               cta="ĐẶT LỊCH THẨM ĐỊNH VỚI HLV HPF", question="Con bạn mấy tuổi?")
-END = TOTAL / FPS + 0.2 + ENDCARD["dur"]
+ENDCARD = None   # owner: no black end card; the host finishes his point, then the channel outro
+END = TOTAL / FPS + 0.6
 OUTRO = None   # the channel outro clip is appended: final.py --append assets/outro_ht.mp4
 WATERMARK = dict(path="assets/logo_ht_white.png", x=955, y=480, width=170, alpha=0.3)
 CAP_Y = 1090
@@ -40,6 +36,7 @@ TAGS = [
     (E(114.86), E(115.90), "sinh hoạt hằng ngày"),
     (E(77.04), E(79.20), "chỉ cần tiếp đất sai"),
     (E(81.86), E(83.30), "nói đứt thì hơi quá"),
+    (E(116.66), E(118.10), "nhất là khi chơi thể thao nhiều"),
     (E(58.58), E(61.25), "chịu áp lực không phải của nó"),
 ]
 EMOJI = [
@@ -72,7 +69,7 @@ FLABELS = [
     (E(25.80), E(27.60), "vòm sập xuống", RX, CY + 255, "no"),
 ]
 CAP_X = 540   # captions centred (owner)
-RECAP = (E(84.10), TOTAL / FPS + 0.2)
+RECAP = (E(116.05), END)
 RECAP_LINES = ["1.) bàn chân bẹt: gót đổ vào trong", "2.) khớp gối chụm thành chữ X",
                "3.) dây chằng chịu áp lực", "4.) chơi thể thao dễ chấn thương"]
 

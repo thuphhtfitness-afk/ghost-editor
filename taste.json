@@ -446,6 +446,26 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "kh-ng-c-n-o",
+   "say": "không cần đoạn nền đen kết luận, cứ để video người nói chạy hết ý rồi thêm outro; hook dùng source bé chạy nhảy bình thường, chỉ zoom vào chân",
+   "from": "user",
+   "kind": "default",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "ban-chan-bet-tre-em"
+   ],
+   "first": "2026-11-20",
+   "last": "2026-11-20",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],

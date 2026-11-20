@@ -18,10 +18,11 @@ PIECES = [
     (62.30, 68.30, 1.10),    # về lâu dài ảnh hưởng đến khớp gối, những dây chằng xung quanh khớp gối
     (68.95, 74.25, 1.00),    # thứ hai là khi chơi thể thao, gối như thế rất dễ gặp chấn thương
     (74.65, 87.65, 1.10),    # vốn đổ vào trong rồi, tiếp đất sai, ngoặt phát... nói đứt thì hơi quá, nhưng rất dễ chấn thương
+    (116.05, 120.65, 1.00),  # nhất là mọi người chơi thể thao nhiều, càng thấy việc đấy ảnh hưởng nhiều (host's own close)
 ]
 HOOK_PIECES = 1
 BROLL = [
-    ("@0", "@3.0", "raw/kid_feet_freeze.mp4", 0.0, 1.00, 0.5, 0.5),  # lead-in: cu Bo's feet (face out of frame), push-in then freeze
+    ("@0", "@3.0", "raw/kid_feet_freeze.mp4", 0.0, 1.00, 0.5, 0.5),  # lead-in: cu Bo running about, zoomed on the feet (face out of frame), push-in then freeze
     (84.28, 87.60, "raw/kid_squat.mov", 1.0, 1.10, 0.42, 0.45),  # gối không đủ ổn định -> kid climbing with the coach (back to camera)
 ]
 FACE = (0.45, 0.24)
