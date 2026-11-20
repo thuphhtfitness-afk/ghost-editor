@@ -426,8 +426,28 @@
      "hpf-talking-head"
     ]
    }
+  },
+  {
+   "id": "zoom-ph-n-b-n",
+   "say": "zoom phần bàn chân, che mặt trẻ con; title đẩy xuống giữa video, text to lên, kiểu chữ như video reference (2 dòng trắng / vàng)",
+   "from": "user",
+   "kind": "prefer",
+   "origin": "correction",
+   "source": [],
+   "reels": [
+    "ban-chan-bet-tre-em"
+   ],
+   "first": "2026-11-20",
+   "last": "2026-11-20",
+   "times": 1,
+   "active": true,
+   "when": {
+    "style": [
+     "hpf-talking-head"
+    ]
+   }
   }
  ],
  "reels": [],
- "updated": "2026-11-19"
+ "updated": "2026-11-20"
 }

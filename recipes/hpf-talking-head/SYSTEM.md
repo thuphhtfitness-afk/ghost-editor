@@ -70,6 +70,11 @@ Skill talking head của HPF. Học từ 6 video reference:
    sub="...", coral=[...])`: dòng trên trắng in hoa Be Vietnam ExtraBold, dòng giữa Oswald 700 rất lớn màu san hô #F28C7A trượt
    vào từ trái (lò xo + vệt mờ chuyển động), dòng dưới hiện từng chữ, loé vàng rồi về trắng / san hô. Chữ lớn tự co cho vừa
    980 px. Vị trí mặc định: GIỮA khung, dưới mặt (`y=800`, sửa của chủ kênh), có dải nền tối gradient phía sau (đậm ~80 % ở giữa, mờ dần hai mép, hiện/tắt cùng tiêu đề); nếu dòng dưới chạm người thì gộp thành 2 tầng.
+25. **Tiêu đề 2 dòng kiểu "HỘI CHỨNG / BÀN CHÂN BẸT"** (video mẫu của chủ kênh): `INTRO = dict(kind="two", l1=..., l2=...,
+   photo=..., photo_until=..., y=1060)`: dòng 1 Oswald trắng rất to, dòng 2 Oswald vàng #F7C440, trồi lên từ vệt mờ, giữa khung,
+   gradient tối phía sau, ảnh minh hoạ phía trên (tắt trước khi mặt host xuất hiện); phụ đề ẩn trong lúc tiêu đề hiện.
+26. **Trẻ em trên màn hình: không lộ mặt** (sửa của chủ kênh): zoom vào phần cơ thể đang nói tới (vd. bàn chân), hoặc chọn đoạn
+   bé quay lưng; không dùng đoạn thấy rõ mặt trẻ.
 23. **Thẻ nhóm cơ ở cột TRÁI, không che mặt** (sửa của chủ kênh, áp dụng mặc định): `RX, CY, SC = 200, 760, 0.42`;
    **phụ đề, pop, tag luôn căn GIỮA khung** (`CAP_X = 540`, sửa của chủ kênh), emoji bên phải (x ~900). Chỉ dùng cột phải khi host quay hẳn sang trái và cột trái có người.
 20. **Host đứng (khung mặt cao): thẻ minh hoạ khổ DỌC ở cột bên phải** (sửa của chủ kênh), x ~660-1055, y ~340-1140

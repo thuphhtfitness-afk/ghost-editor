@@ -11,7 +11,7 @@ ENDCARD = dict(dur=8.5, title="NÊN LÀM GÌ?",
                cta="ĐẶT LỊCH THẨM ĐỊNH VỚI HLV HPF", question="Con bạn mấy tuổi?")
 END = TOTAL / FPS + 0.2 + ENDCARD["dur"]
 OUTRO = None   # the channel outro clip is appended: final.py --append assets/outro_ht.mp4
-WATERMARK = dict(path="assets/logo_ht_white.png", x=120, y=1690, width=190, alpha=0.25)
+WATERMARK = dict(path="assets/logo_ht_white.png", x=955, y=480, width=170, alpha=0.3)
 CAP_Y = 1090
 TAG_Y = 975
 KICKER_Y, TITLE_Y = 95, 190
@@ -19,7 +19,7 @@ RECAP_Y, RECAP_DY = 105, 58
 FLASH = False
 
 TITLE_T0 = 0.05                    # the big question sits on the kid clip, before the first word
-TITLE_END = 2.0
+TITLE_END = hook_end()
 TITLE_CPS = 40
 HOOK_END = TITLE_END
 KICKER = "PHỤ HUYNH CẦN BIẾT"
@@ -71,7 +71,9 @@ FLABELS = [
     (E(25.60), E(27.60), "có vòm", RX, CY - 20, "ok"),
     (E(25.80), E(27.60), "vòm sập xuống", RX, CY + 255, "no"),
 ]
-CAP_X = 400
+CAP_X = 540   # captions centred (owner)
 RECAP = (E(84.10), TOTAL / FPS + 0.2)
 RECAP_LINES = ["1.) bàn chân bẹt: gót đổ vào trong", "2.) khớp gối chụm thành chữ X",
                "3.) dây chằng chịu áp lực", "4.) chơi thể thao dễ chấn thương"]
+
+INTRO = dict(kind="two", l1="BÀN CHÂN BẸT", l2="Ở TRẺ EM?", photo="assets/flat_clean.png", photo_until=1.9, y=1060)

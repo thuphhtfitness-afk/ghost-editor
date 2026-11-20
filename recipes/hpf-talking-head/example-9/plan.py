@@ -21,8 +21,8 @@ PIECES = [
 ]
 HOOK_PIECES = 1
 BROLL = [
-    ("@0", "@2.0", "raw/kid_cubo.mov", 0.2, 1.25, 0.5, 0.6),     # lead-in: the kid training at HT (burned-in caption cropped off)
-    (84.28, 87.60, "raw/new6.mp4", 8.0, 1.00, 0.5, 0.5),         # gối không đủ ổn định -> squat, knees tracking
+    ("@0", "@2.0", "raw/kid_cubo.mov", 0.2, 2.6, 0.55, 0.92),    # lead-in: zoomed on the kid's feet, face out of frame
+    (84.28, 87.60, "raw/kid_squat.mov", 1.0, 1.10, 0.42, 0.45),  # gối không đủ ổn định -> kid climbing with the coach (back to camera)
 ]
 FACE = (0.45, 0.24)
 GAP_KEEP = 0.22

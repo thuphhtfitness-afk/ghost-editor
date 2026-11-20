@@ -355,6 +355,54 @@ def intro_stack(c, u, fade, it):
             x += im.width - 80 + 22
 
 
+GOLD = (247, 196, 64, 255)
+
+
+def intro_two(c, u, fade, it):
+    """two-line title (ref: 'HỘI CHỨNG / BÀN CHÂN BẸT'): a photo card pops in above, then a huge white condensed line and a
+    gold line under it slide up out of a blur; dark gradient band behind; sits in the middle of the frame"""
+    y = it.get("y", 1000)
+    key = ("introtwo_grad", y)
+    if key not in _cache:
+        g = Image.new("RGBA", (W, H)); d = ImageDraw.Draw(g)
+        y0, y1 = y - 520, y + 330
+        for yy in range(max(0, y0), min(H, y1)):
+            u_ = (yy - y0) / (y1 - y0)
+            d.line((0, yy, W, yy), fill=(0, 0, 0, int(200 * math.sin(math.pi * u_) ** 0.6)))
+        _cache[key] = g
+    gb = _cache[key]; ga = min(1, u / 0.2) * fade
+    if ga < 0.999:
+        gb = gb.copy(); gb.putalpha(gb.split()[3].point(lambda v: int(v * ga)))
+    c.alpha_composite(gb)
+    if it.get("photo"):
+        kp = ("introtwo_photo", it["photo"])
+        if kp not in _cache:
+            im = Image.open(it["photo"]).convert("RGBA"); im = im.resize((560, int(im.height * 560 / im.width)), Image.LANCZOS)
+            card = Image.new("RGBA", (680, max(380, im.height + 60))); d = ImageDraw.Draw(card)
+            d.rounded_rectangle((0, 0, card.width - 1, card.height - 1), 22, fill=(250, 246, 238, 235))
+            card.alpha_composite(im, ((card.width - im.width) // 2, (card.height - im.height) // 2))
+            _cache[kp] = card
+        card = _cache[kp]
+        pu = it.get("photo_until")                     # the photo leaves before the host's face comes on screen
+        pa = 1.0 if pu is None else max(0.0, min(1.0, (pu - u) / 0.2))
+        if pa > 0:
+            paste(c, card, W / 2, y - 120 - card.height / 2, 0.85 + 0.15 * spring(u, 15, 0.72), min(1, u / 0.15) * fade * pa)
+    for i, (txt, col, size) in enumerate(((it["l1"], WHITE, it.get("s1", 210)), (it["l2"], GOLD, it.get("s2", 170)))):
+        ti = 0.15 + 0.2 * i
+        if u < ti:
+            continue
+        k = spring(u - ti, 13, 0.8)
+        im = text_img(txt, _fit(txt, size), col)
+        yy = (y + 30 if i == 0 else y + 30 + 175) + 50 * (1 - k)
+        if u - ti < 0.25:
+            im = im.filter(ImageFilter.GaussianBlur(10 * (1 - (u - ti) / 0.25)))
+        paste(c, im, W / 2, yy, 1, min(1, (u - ti) / 0.12) * fade)
+
+
+def intro_on(t):
+    return bool(globals().get("INTRO")) and TITLE_T0 <= t < HOOK_END
+
+
 def caption_zone_busy(t):
     for t0, t1, *_ in POPS:
         if t0 <= t <= t1:
@@ -378,7 +426,7 @@ def frame(t):
     c = GRAD.copy()
     # ---- hook (ref 1 + ref 6 title) ----
     if globals().get("INTRO") and TITLE_T0 <= t < HOOK_END:
-        intro_stack(c, t - TITLE_T0, min(1, (HOOK_END - t) / 0.2), INTRO)
+        (intro_two if INTRO.get("kind") == "two" else intro_stack)(c, t - TITLE_T0, min(1, (HOOK_END - t) / 0.2), INTRO)
     elif TITLE_T0 <= t < HOOK_END:
         a = min(1, (HOOK_END - t) / 0.2)
         t = t - TITLE_T0  # title clock
@@ -618,7 +666,7 @@ def frame(t):
                 yy = CAP_Y - (len(lines) - 1) * 55 + i * 110
                 paste(c, im, cap_x(t), yy, s, a)
     # ---- word captions ----
-    if not caption_zone_busy(t):
+    if not caption_zone_busy(t) and not (intro_on(t) and globals().get("INTRO", {}).get("kind") == "two"):
         cy = CAP_Y
         for s0, s1, txt, _ in WORDS:
             if s0 <= t < s1:
