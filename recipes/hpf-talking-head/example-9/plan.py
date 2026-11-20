@@ -4,7 +4,7 @@ FPS = 30
 SRC = "raw/th7.mp4"
 VAD = "build/vad_th7.json"
 TX = "tx/th7.json"
-PRE_ROLL = 2.0          # 0-2 s: the kid clip and the big question, before the first word
+PRE_ROLL = 3.0          # 0-3 s: kid's feet push-in, freeze at 1.2 s (flash + click), photo + title
 PIECES = [
     (111.30, 115.95, 1.10),  # HOOK: nhất là khi càng lớn thì mọi người sẽ càng thấy vấn đề đấy ảnh hưởng nhiều đến sinh hoạt hằng ngày
     (40.75, 43.85, 1.00),    # nhưng với bàn chân bẹt thì nó chụm, nó tạo thành chữ X
@@ -21,7 +21,7 @@ PIECES = [
 ]
 HOOK_PIECES = 1
 BROLL = [
-    ("@0", "@2.0", "raw/kid_cubo.mov", 0.2, 2.6, 0.55, 0.92),    # lead-in: zoomed on the kid's feet, face out of frame
+    ("@0", "@3.0", "raw/kid_feet_freeze.mp4", 0.0, 1.00, 0.5, 0.5),  # lead-in: cu Bo's feet (face out of frame), push-in then freeze
     (84.28, 87.60, "raw/kid_squat.mov", 1.0, 1.10, 0.42, 0.45),  # gối không đủ ổn định -> kid climbing with the coach (back to camera)
 ]
 FACE = (0.45, 0.24)

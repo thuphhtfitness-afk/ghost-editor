@@ -16,9 +16,9 @@ CAP_Y = 1090
 TAG_Y = 975
 KICKER_Y, TITLE_Y = 95, 190
 RECAP_Y, RECAP_DY = 105, 58
-FLASH = False
+FLASH = True
 
-TITLE_T0 = 0.05                    # the big question sits on the kid clip, before the first word
+TITLE_T0 = 1.2                     # the freeze: flash + click, then the photo and the title
 TITLE_END = hook_end()
 TITLE_CPS = 40
 HOOK_END = TITLE_END
@@ -76,4 +76,4 @@ RECAP = (E(84.10), TOTAL / FPS + 0.2)
 RECAP_LINES = ["1.) bàn chân bẹt: gót đổ vào trong", "2.) khớp gối chụm thành chữ X",
                "3.) dây chằng chịu áp lực", "4.) chơi thể thao dễ chấn thương"]
 
-INTRO = dict(kind="two", l1="BÀN CHÂN BẸT", l2="Ở TRẺ EM?", photo="assets/flat_clean.png", photo_until=1.9, y=1060)
+INTRO = dict(kind="two", l1="BÀN CHÂN BẸT", l2="Ở TRẺ EM?", photo="assets/flat_clean.png", photo_until=1.75, y=1060)
